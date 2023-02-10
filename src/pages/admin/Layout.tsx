@@ -32,7 +32,7 @@ function Layout(props: Props) {
       <div className="flex w-full flex-col">
         <Header setMenuStatus={setMenuStatus} />
         {/* BODY/CONTENT */}
-        <div className="h-full w-full overflow-y-auto bg-gray-200 p-6 text-gray-700 ">
+        <div className="h-full w-full overflow-y-auto bg-gray-200 text-gray-700 ">
           {loading ? <Loading /> : props?.children}
         </div>
       </div>

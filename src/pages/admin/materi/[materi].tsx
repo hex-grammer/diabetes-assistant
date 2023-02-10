@@ -23,7 +23,7 @@ function Materi() {
   return (
     <Layout>
       <>
-        <div className="grid h-fit w-full grid-cols-1 gap-2 sm:grid-cols-6">
+        <div className="grid h-fit w-full grid-cols-1 gap-2 p-6 sm:grid-cols-6">
           <div className="col-span-full mb-2">
             <h1 className="text-center text-2xl font-bold">{title}</h1>
             <div>

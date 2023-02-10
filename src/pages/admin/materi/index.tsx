@@ -45,7 +45,7 @@ function Materi() {
   return (
     <Layout>
       <>
-        <div className="grid h-fit w-full grid-cols-1 gap-4 sm:grid-cols-4">
+        <div className="relative grid h-fit w-full grid-cols-1 gap-4 p-6 sm:grid-cols-4">
           {MATERI.map((materi) => (
             <MateriCard
               key={materi.id}

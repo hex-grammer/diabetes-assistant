@@ -5,12 +5,16 @@ type Props = {
   children?: JSX.Element;
   title?: string;
   image?: string;
+  showModal?: () => void;
 };
 
 const AbjadCard = (props: Props) => {
   const blob = props.title?.toLocaleLowerCase().replace(/ /g, "-");
   return (
-    <div className="group h-fit overflow-hidden rounded-md bg-gray-50 hover:shadow-md">
+    <div
+      className="group h-fit cursor-pointer overflow-hidden rounded-md bg-gray-50 hover:shadow-md"
+      onClick={props?.showModal}
+    >
       <div className="overflow-hidden">
         <img
           src={props.image}
