@@ -22,11 +22,13 @@ type Props = {
 
 const SideMenu = (props: Props) => {
   const router = useRouter();
-  const selectedMenu = router.pathname.replace("/panel/", "");
+  const selectedMenu = router.pathname.replace("/admin/", "");
+  // const selectedMenu = router.pathname.split('/').includes();
 
   const { setLoading } = useGlobalContext();
 
   const MENUS = [
+    { title: "Dashboard", notif: false, icon: <MdOutlineSpaceDashboard /> },
     { title: "Materi", notif: false, icon: <MdSlowMotionVideo /> },
     { title: "Peserta", notif: false, icon: <RiTeamLine /> },
     // { title: "Hasil Survei", notif: false, icon: <AiOutlinePieChart /> },
@@ -47,12 +49,12 @@ const SideMenu = (props: Props) => {
 
   return (
     <div
-      className={`${handleAnimation()} absolute z-50 flex h-screen w-full flex-col border-r-[1px] border-gray-500 border-opacity-50 bg-primary text-gray-100 sm:relative sm:right-0 sm:w-[22%] sm:animate-none`}
+      className={`${handleAnimation()} absolute z-50 flex h-screen w-full flex-col border-r-[1px] border-gray-500 border-opacity-50 bg-primary text-gray-100 sm:relative sm:right-0 sm:w-[22%] sm:animate-none `}
     >
-      <div className="flex items-center justify-between border-none border-gray-500 bg-primary-dark px-6 sm:border-b-[1px]">
+      <div className="flex items-center justify-between border-none border-gray-500 bg-primary-dark px-6 sm:mb-4 sm:border-b-[1px]">
         <Link
           href={"/"}
-          className="font-fredoka flex  min-h-[10vh] items-center text-2xl text-primary sm:min-h-[12vh]"
+          className="font-fredoka flex  min-h-[10vh] items-center text-2xl text-primary sm:min-h-[8vh]"
         >
           <div className="text-xxl font-bold text-red-500">BISINDO</div>
         </Link>
@@ -87,15 +89,15 @@ const SideMenu = (props: Props) => {
         return (
           <Link
             key={i}
-            href={`/panel/${eachMenu}`}
+            href={`/admin/${eachMenu}`}
             className={`${
-              eachMenu === selectedMenu && "bg-primary-dark"
-            } mx-3 my-2 flex cursor-pointer items-center rounded-sm py-3 px-6 text-left hover:bg-primary-dark`}
+              selectedMenu.includes(eachMenu) && "bg-primary-dark"
+            } mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-3 px-6 text-left hover:bg-primary-dark`}
             onClick={(e) => {
               e.preventDefault();
               props.setMenuStatus("close");
               setLoading(true);
-              router.push(`/panel/${eachMenu}`);
+              router.push(`/admin/${eachMenu}`);
             }}
           >
             <span className="w-6 text-xl">{menu.icon}</span>

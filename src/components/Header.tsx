@@ -13,7 +13,7 @@ const Header = (props: Props) => {
   const src = "https://i.pravatar.cc/300";
 
   return (
-    <div className="flex min-h-[10vh] items-center justify-between bg-primary py-2 px-6 text-white shadow-md sm:min-h-[12vh] sm:justify-end">
+    <div className="flex min-h-[10vh] items-center justify-between bg-primary py-2 px-6 text-white shadow-md sm:min-h-[8vh] sm:justify-end">
       {/* profil */}
       <div className="flex items-center sm:flex-row-reverse ">
         <Image
@@ -24,11 +24,9 @@ const Header = (props: Props) => {
           src={src}
           className="mr-2 rounded-full sm:ml-2"
         />
-        <div>
-          <div className="font-semibold text-gray-200">
-            {/* {session?.user?.name} */}
-            Nama Pengguna
-          </div>
+        <div className="font-semibold text-gray-200">
+          {/* {session?.user?.name} */}
+          Nama Pengguna
         </div>
       </div>
       <button
