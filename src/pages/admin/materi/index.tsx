@@ -22,7 +22,7 @@ function Materi() {
     },
     {
       id: 2,
-      title: "Kata-Kata Dasar",
+      title: "Kamus BISINDO",
       image: "https://loremflickr.com/250/150/hand?random=2",
     },
     {
