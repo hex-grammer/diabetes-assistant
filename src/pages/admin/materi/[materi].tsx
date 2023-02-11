@@ -14,6 +14,10 @@ import AbjadCard from "../../../components/AbjadCard";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Breadcrump from "../../../components/Breadcrump";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+const ReactPlayer = dynamic(() => import("react-player/youtube"), {
+  ssr: false,
+});
 
 function Materi() {
   const router = useRouter();
@@ -23,27 +27,47 @@ function Materi() {
   return (
     <Layout>
       <>
-        <div className="grid h-fit w-full grid-cols-1 gap-2 p-6 sm:grid-cols-6">
+        <div className="grid h-fit w-full grid-cols-1 gap-4 p-6 sm:grid-cols-12">
           <div className="col-span-full mb-2">
-            <h1 className="text-center text-2xl font-bold">{title}</h1>
-            <div>
+            {/* <div>
               <Link href={`/admin/materi`}>/materi/</Link>
               <span className="text-blue-600">{materi}</span>
-            </div>
+            </div> */}
+            <h1 className="text-center text-2xl font-bold">{title}</h1>
           </div>
-          {/* {ABJAD.map((abjad) => (
-            <AbjadCard
-              key={abjad}
-              title={abjad}
-              image={`https://loremflickr.com/250/150/${abjad}`}
+          {/* COURSE VIDEOS */}
+          {/* MAIN VIDEO */}
+          <div className="col-span-full h-fit sm:col-span-8">
+            <ReactPlayer
+              width="100%"
+              // height="100%"
+              controls={true}
+              url="https://www.youtube.com/watch?v=6_gXiBe9y9A"
             />
-          ))} */}
-          {/* <Link
-            href={`/admin/materi/tambah-materi`}
-            className="flex items-center justify-center rounded-md bg-gray-100 text-[4rem] text-gray-500 transition-all delay-75 hover:text-[5rem] hover:text-blue-500 hover:shadow-md"
-          >
-            <IoMdAddCircleOutline />
-          </Link> */}
+            <h3 className="text-xl font-medium">Judul Video</h3>
+          </div>
+          {/* other videos */}
+          <div className="col-span-full flex w-full flex-col gap-2 sm:col-span-4">
+            <Link
+              href={`/admin/materi/tambah-kalimat`}
+              className="flex items-center justify-center rounded-md bg-gray-100 py-3 text-[3rem] text-gray-500 transition-all delay-75 hover:text-[4rem] hover:text-blue-500 hover:shadow-md"
+            >
+              <IoMdAddCircleOutline />
+            </Link>
+            {[...new Array(10)].map((_, i) => (
+              <div className="flex gap-2">
+                <ReactPlayer
+                  width={120}
+                  height={70}
+                  playIcon={<div />}
+                  controls={false}
+                  light={true}
+                  url="https://www.youtube.com/watch?v=6_gXiBe9y9A"
+                />
+                Judul Video {i + 1}
+              </div>
+            ))}
+          </div>
         </div>
         <ToastContainer position="top-right" />
       </>
