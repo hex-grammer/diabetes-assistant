@@ -174,7 +174,7 @@ function Materi() {
                 </div>
               </div>
               {/* {[...new Array(10)].map((_, i) => (
-                <div className="flex gap-2">
+                <div className="flex gap-2" key={i}>
                   <ReactPlayer
                     width={120}
                     height={70}
