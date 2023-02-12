@@ -10,7 +10,6 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useSWR from "swr";
-import { useRouter } from "next/router";
 
 // type Props = {
 //   userData: {
@@ -38,18 +37,13 @@ import { useRouter } from "next/router";
 
 // function Admin(props: Props) {
 function Admin() {
-  const router = useRouter();
-  useEffect(() => {
-    router.push("/admin/dashboard");
-  }, []);
-
   return (
     <Layout>
       <>
         {/* say wellcome */}
-        <div className="grid grid-cols-12 gap-4 p-6">
-          <div className="col-span-8 h-20  w-full animate-pulse rounded-md bg-gray-300 text-2xl font-bold" />
-          <div className="col-span-4 h-20 w-full animate-pulse rounded-md bg-gray-300 text-2xl font-bold" />
+        <div className="flex flex-col items-center justify-center p-6">
+          {/* <h1 className="text-2xl font-bold">Selamat Datang, {props.userData.name}</h1> */}
+          <h1 className="text-2xl font-bold">Selamat Datang, Admin</h1>
         </div>
         <ToastContainer position="top-right" />
       </>
