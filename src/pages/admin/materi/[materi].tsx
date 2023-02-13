@@ -15,6 +15,8 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import Breadcrump from "../../../components/Breadcrump";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import { BiDownArrow, BiUpArrow } from "react-icons/bi";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ssr: false,
 });
@@ -23,7 +25,12 @@ function Materi() {
   const router = useRouter();
   const { materi } = router.query;
   const [activateAdd, setActivateAdd] = useState(false);
+  const [editLabel, setEditLabel] = useState("");
   const title = materi?.toString().toUpperCase().replaceAll("-", " ");
+  const handleBatalUpdate = () => {
+    setActivateAdd(false);
+    setEditLabel("");
+  };
   return (
     <Layout>
       <>
@@ -38,24 +45,27 @@ function Materi() {
           {/* COURSE VIDEOS */}
           {/* MAIN VIDEO */}
           <div className="col-span-full h-fit sm:col-span-8">
-            <ReactPlayer
-              width="100%"
-              // height="100%"
-              controls={true}
-              url="https://www.youtube.com/watch?v=6_gXiBe9y9A"
-            />
+            <div className="rounded-md shadow-lg">
+              <ReactPlayer
+                width="100%"
+                // height="100%"
+                controls={true}
+                url="https://www.youtube.com/watch?v=6_gXiBe9y9A"
+              />
+            </div>
             <h3 className="text-xl font-medium">Judul Video</h3>
           </div>
           {/* other videos */}
           <div className="col-span-full flex w-full flex-col gap-2 sm:col-span-4">
             <div className="">
               {/* input judul video and link youtube */}
-              {activateAdd ? (
+              {activateAdd || editLabel ? (
                 <div className="flex flex-col gap-2 rounded-md bg-gray-600 p-2">
                   <input
                     type="text"
                     className="w-full rounded-md border border-gray-300 px-2 py-1 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Judul Video"
+                    defaultValue={editLabel}
                   />
                   <input
                     type="text"
@@ -67,7 +77,7 @@ function Materi() {
                     <div className="flex justify-end">
                       <button
                         className="rounded-md bg-gray-400 px-2 py-1 text-white"
-                        onClick={() => setActivateAdd(false)}
+                        onClick={handleBatalUpdate}
                       >
                         Batal
                       </button>
@@ -75,7 +85,7 @@ function Materi() {
                     {/* tambah */}
                     <div className="flex justify-end">
                       <button className="rounded-md bg-blue-500 px-2 py-1 text-white">
-                        Tambah
+                        {editLabel ? "Update" : "Tambah"}
                       </button>
                     </div>
                   </div>
@@ -89,9 +99,12 @@ function Materi() {
                 </div>
               )}
             </div>
-            <div className="flex max-h-[62vh] flex-col gap-2 overflow-auto rounded-md bg-gray-500 p-2 text-gray-100">
+            <div className="flex max-h-[62vh] flex-col gap-0.5 overflow-auto rounded-md bg-gray-400 text-gray-100">
               {[...new Array(10)].map((_, i) => (
-                <div className="flex gap-2" key={i}>
+                <div
+                  className="flex cursor-pointer justify-between gap-2 rounded-sm bg-gray-500 p-2 hover:bg-gray-600"
+                  key={i}
+                >
                   <ReactPlayer
                     width={120}
                     height={70}
@@ -100,7 +113,25 @@ function Materi() {
                     light={true}
                     url="https://www.youtube.com/watch?v=6_gXiBe9y9A"
                   />
-                  Judul Video {i + 1}
+                  <div className="flex-1 text-sm">
+                    <p>Judul Video asdf asdf asdf asdf {i + 1}</p>
+                    <div className="flex gap-1 py-1">
+                      {/* update and delete button */}
+                      <button
+                        className="rounded-sm bg-yellow-500 px-4 py-1 text-gray-800"
+                        onClick={() => setEditLabel(`${i}`)}
+                      >
+                        <AiOutlineEdit />
+                      </button>
+                      <button className="rounded-sm bg-red-600 px-4 py-1 text-white">
+                        <AiOutlineDelete />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-evenly">
+                    <BiUpArrow />
+                    <BiDownArrow />
+                  </div>
                 </div>
               ))}
             </div>
