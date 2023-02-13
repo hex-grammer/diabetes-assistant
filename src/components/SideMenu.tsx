@@ -1,18 +1,18 @@
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoSignOut } from "react-icons/go";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { AiOutlinePieChart } from "react-icons/ai";
-import { BsCreditCard2Back } from "react-icons/bs";
+import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { RiQuestionAnswerLine, RiTeamLine } from "react-icons/ri";
-import { CiUser } from "react-icons/ci";
+import { BsJournalBookmarkFill } from "react-icons/bs";
 import { IoSettingsOutline, IoCreateOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { AiOutlineClose } from "react-icons/ai";
 import { useGlobalContext } from "../lib/GlobalContext";
-import { BiVideoPlus } from "react-icons/bi";
+import { BiBook, BiVideoPlus } from "react-icons/bi";
 import { MdSlowMotionVideo } from "react-icons/md";
 
 type Props = {
@@ -22,19 +22,32 @@ type Props = {
 
 const SideMenu = (props: Props) => {
   const router = useRouter();
-  const selectedMenu = router.pathname.replace("/admin/", "");
+  const path = router.pathname.includes("admin")
+    ? router.pathname.replace("/admin/materi/", "")
+    : router.pathname.replace("/materi/", "");
+  const { materi } = router.query;
+  const selectedMenu = materi || path;
+
+  useEffect(() => {
+    console.log(selectedMenu);
+  }, []);
+
   // const selectedMenu = router.pathname.split('/').includes();
 
   const { setLoading } = useGlobalContext();
 
   const MENUS = [
-    { title: "Dashboard", notif: false, icon: <MdOutlineSpaceDashboard /> },
-    { title: "Materi", notif: false, icon: <MdSlowMotionVideo /> },
+    { title: "Materi", notif: false, icon: <BsJournalBookmarkFill /> },
+    {
+      title: "Abjad BISINDO",
+      notif: false,
+      icon: <TiSortAlphabeticallyOutline />,
+    },
+    { title: "Kamus BISINDO", notif: false, icon: <BiBook /> },
+    { title: "Pertanyaan Umum", notif: false, icon: <MdSlowMotionVideo /> },
+    { title: "Kalimat Perkenalan", notif: false, icon: <MdSlowMotionVideo /> },
+    { title: "Kalimat Sapaan", notif: false, icon: <MdSlowMotionVideo /> },
     { title: "Peserta", notif: false, icon: <RiTeamLine /> },
-    // { title: "Hasil Survei", notif: false, icon: <AiOutlinePieChart /> },
-    // { title: "Kelola Saldo", notif: false, icon: <BsCreditCard2Back /> },
-    // { title: "Data Diri", notif: true, icon: <CiUser /> },
-    // { title: "Pengaturan", notif:false,icon: <IoSettingsOutline /> },
   ];
 
   const handleAnimation = () => {
@@ -68,56 +81,45 @@ const SideMenu = (props: Props) => {
         </div>
       </div>
 
-      {/* BUAT SURVEI */}
-      {/* <div
-        className="mx-3 my-6 flex cursor-pointer items-center rounded-sm bg-blue-700 py-3 px-6 text-left hover:bg-blue-600"
-        onClick={(e) => {
-          e.preventDefault();
-          props.setMenuStatus("close");
-          setLoading(true);
-          router.push(`/panel/buat-survei`);
-        }}
-      >
-        <span className="w-6 text-xl">
-          <BiVideoPlus />
-        </span>
-        <span className="ml-2">Buat Survei</span>
-      </div> */}
-
       {MENUS.map((menu, i) => {
         const eachMenu = menu.title.toLowerCase().replace(" ", "-");
         return (
           <Link
             key={i}
-            href={`/admin/${eachMenu}`}
+            href={eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`}
             className={`${
               selectedMenu.includes(eachMenu) && "bg-primary-dark"
-            } mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-3 px-6 text-left hover:bg-primary-dark`}
+            } mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-2 px-4 text-left hover:bg-primary-dark`}
             onClick={(e) => {
               e.preventDefault();
               props.setMenuStatus("close");
               setLoading(true);
-              router.push(`/admin/${eachMenu}`);
+              if (router.pathname.includes("admin")) {
+                router.push(
+                  eachMenu === "materi"
+                    ? "/admin/materi"
+                    : `/admin/materi/${eachMenu}`
+                );
+              } else {
+                router.push(
+                  eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`
+                );
+              }
             }}
           >
             <span className="w-6 text-xl">{menu.icon}</span>
-            <span className="ml-2 flex">
-              {menu.title}
-              {/* {menu.notif && (
-                <div className="w-2 h-2 ml-0.5 mt-0.5 rounded-full bg-blue-400 bg-opacity-50" />
-              )} */}
-            </span>
+            <span className="ml-2 flex leading-4">{menu.title}</span>
           </Link>
         );
       })}
-      {/* <hr className="my-4 opacity-30" />
+      <hr className="my-4 opacity-30" />
       <button
-        className="mx-3 mb-2 flex items-center rounded-sm py-3 px-6 text-left hover:bg-blue-prime"
+        className="hover:bg-blue-prime mx-3 mb-2 flex items-center rounded-sm py-3 px-6 text-left"
         onClick={() => signOut({ callbackUrl: "/login" })}
       >
         <GoSignOut className="mr-2" />
         Logout
-      </button> */}
+      </button>
     </div>
   );
 };

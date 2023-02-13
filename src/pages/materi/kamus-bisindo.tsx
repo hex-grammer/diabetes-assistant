@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiSearch } from "react-icons/fi";
 import { useRouter } from "next/router";
-import AbjadCard from "../../../components/AbjadCard";
+import AbjadCard from "../../components/AbjadCard";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 

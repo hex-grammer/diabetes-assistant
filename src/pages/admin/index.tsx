@@ -40,7 +40,7 @@ import { useRouter } from "next/router";
 function Admin() {
   const router = useRouter();
   useEffect(() => {
-    router.push("/admin/dashboard");
+    router.push("/admin/materi");
   }, []);
 
   return (
