@@ -7,4 +7,7 @@ export const MyGlobalContext = createContext<GlobalContent>({
   loading: false,
   setLoading: () => {},
 });
-export const useGlobalContext = () => useContext(MyGlobalContext);
+export const useGlobalContext = () => {
+  const { loading, setLoading } = useContext(MyGlobalContext);
+  return { loading, setLoading };
+};

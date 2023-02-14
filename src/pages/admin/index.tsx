@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 function Admin() {
   const router = useRouter();
   useEffect(() => {
-    router.push("/admin/materi");
+    void router.push("/admin/materi");
   }, []);
 
   return (

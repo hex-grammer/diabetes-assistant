@@ -12,7 +12,9 @@ const Breadcrump = (props: Props) => {
   return (
     <div>
       {paths.map((path, i) => (
-        <Link href={`${router.pathname.split(path)[0] + path}`}>/{path}</Link>
+        <Link key={i} href={`${router.pathname.split(path)[0]}${path}`}>
+          /{path}
+        </Link>
       ))}
     </div>
   );

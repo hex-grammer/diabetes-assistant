@@ -14,7 +14,9 @@ function KamusBisindo() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const KATEGORI = ["kata benda", "kata kerja", "kata sifat", "nama profesi"];
-  const ABJAD = [...new Array(26)].map((_, i) => String.fromCharCode(i + 65));
+  const ABJAD = [...new Array<number>(26)].map((_, i) =>
+    String.fromCharCode(i + 65)
+  );
 
   //   UseStates
   const [modalLabel, setModalLabel] = useState("");

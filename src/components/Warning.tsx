@@ -16,11 +16,11 @@ const Warning = (props: Props) => {
   return (
     <button
       className="flex h-fit cursor-pointer flex-col items-start justify-center rounded-md bg-orange-400 bg-opacity-40 p-4 py-3 text-left shadow-lg sm:col-span-2"
-      onClick={(e) => {
+      onClick={async (e) => {
         e.preventDefault();
         if (props.link) {
           setLoading(true);
-          router.push(props.link);
+          await router.push(props.link);
         }
       }}
     >

@@ -4,7 +4,7 @@ import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 
 type Props = {
-  setMenuStatus: Function;
+  setMenuStatus: (arg: string) => void;
 };
 
 const Header = (props: Props) => {
@@ -20,7 +20,7 @@ const Header = (props: Props) => {
           alt={`Foto profil ${session?.user?.name}`}
           width={36}
           height={36}
-          loader={() => src}
+          loader={() => src as string}
           src={src}
           className="mr-2 rounded-full sm:ml-2"
         />

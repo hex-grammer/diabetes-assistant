@@ -13,7 +13,7 @@ import { MdSlowMotionVideo } from "react-icons/md";
 
 type Props = {
   menuStatus: string;
-  setMenuStatus: Function;
+  setMenuStatus: (arg: string) => void;
 };
 
 const SideMenu = (props: Props) => {
@@ -56,6 +56,24 @@ const SideMenu = (props: Props) => {
     return "animate-none right-[100%]";
   };
 
+  const onMenuClick = async (
+    e: React.MouseEvent<HTMLElement>,
+    eachMenu: string
+  ) => {
+    e.preventDefault();
+    props.setMenuStatus("close");
+    setLoading(true);
+    if (router.pathname.includes("admin")) {
+      await router.push(
+        eachMenu === "materi" ? "/admin/materi" : `/admin/materi/${eachMenu}`
+      );
+    } else {
+      await router.push(
+        eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`
+      );
+    }
+  };
+
   return (
     <div
       className={`${handleAnimation()} absolute z-50 flex h-screen w-full flex-col border-r-[1px] border-gray-500 border-opacity-50 bg-primary text-gray-100 sm:relative sm:right-0 sm:w-[22%] sm:animate-none `}
@@ -88,25 +106,10 @@ const SideMenu = (props: Props) => {
           <Link
             key={i}
             href={eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`}
-            className={`${
-              selectedMenu.includes(eachMenu) && "bg-primary-dark"
-            } mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-2 px-4 text-left hover:bg-primary-dark`}
-            onClick={(e) => {
-              e.preventDefault();
-              props.setMenuStatus("close");
-              setLoading(true);
-              if (router.pathname.includes("admin")) {
-                router.push(
-                  eachMenu === "materi"
-                    ? "/admin/materi"
-                    : `/admin/materi/${eachMenu}`
-                );
-              } else {
-                router.push(
-                  eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`
-                );
-              }
-            }}
+            className={`mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-2 px-4 text-left hover:bg-primary-dark ${
+              selectedMenu.includes(eachMenu) ? "bg-primary-dark" : ""
+            }`}
+            onClick={(e) => onMenuClick(e, eachMenu)}
           >
             <span className="w-6 text-xl">{menu.icon}</span>
             <span className="ml-2 flex leading-4">{menu.title}</span>

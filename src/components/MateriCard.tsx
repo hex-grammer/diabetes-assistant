@@ -11,7 +11,9 @@ type Props = {
 const MateriCard = (props: Props) => {
   const router = useRouter();
   const admin = router.pathname.includes("admin");
-  const blob = props.title?.toLocaleLowerCase().replace(/ /g, "-");
+  const blob = props.title
+    ? props.title.toLocaleLowerCase().replace(/ /g, "-")
+    : "";
   return (
     <Link
       href={`${admin ? "/admin" : ""}/materi/${blob}`}

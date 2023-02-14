@@ -14,7 +14,7 @@ function Materi() {
   const [file, setFile] = useState<File | undefined>();
   const [imagePreview, setImagePreview] = useState("");
 
-  let imageExtensions = ["JPG", "JPEG", "PNG", "GIF", "BMP", "WEBP"];
+  const imageExtensions = ["JPG", "JPEG", "PNG", "GIF", "BMP", "WEBP"];
 
   const handleChangeFile = (file: File) => {
     setFile(file);
@@ -36,7 +36,7 @@ function Materi() {
               <div className="flex justify-end gap-2">
                 <button
                   className="rounded-md bg-gray-400 px-2 py-1 text-white"
-                  onClick={() => router.push("/admin/materi")}
+                  onClick={async () => await router.push("/admin/materi")}
                 >
                   Cancel
                 </button>

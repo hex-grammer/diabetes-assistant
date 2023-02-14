@@ -18,7 +18,10 @@ const Alert = (props: Props) => {
       onClick={(e) => {
         e.preventDefault();
         setLoading(true);
-        router.push(props.link);
+        router
+          .push(props.link)
+          .then(() => setLoading(false))
+          .catch((err) => console.error(err));
       }}
     >
       {/* heading */}

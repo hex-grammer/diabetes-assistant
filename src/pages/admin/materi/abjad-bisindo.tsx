@@ -11,7 +11,9 @@ function Materi() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
   const [modalLabel, setModalLabel] = useState("");
-  const ABJAD = [...new Array(26)].map((_, i) => String.fromCharCode(i + 65));
+  const ABJAD = [...new Array<number>(26)].map((_, i) =>
+    String.fromCharCode(i + 65)
+  );
   return (
     <Layout>
       <>
