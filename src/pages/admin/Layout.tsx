@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
 import Header from "../../components/Header";
 import SideMenu from "../../components/SideMenu";
 import { useGlobalContext } from "../../lib/GlobalContext";
-import { PrismaClient } from "@prisma/client";
 import Head from "next/head";
 
 type Props = {

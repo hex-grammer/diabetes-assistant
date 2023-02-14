@@ -1,42 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import React, { useEffect } from "react";
 import Layout from "./Layout";
-import Alert from "../../components/Alert";
-import { PrismaClient } from "@prisma/client";
-import Warning from "../../components/Warning";
-import Success from "../../components/Success";
-import { useGlobalContext } from "../../lib/GlobalContext";
-import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import useSWR from "swr";
 import { useRouter } from "next/router";
 
-// type Props = {
-//   userData: {
-//     id?: string | null;
-//     name?: string | null;
-//     email?: string | null;
-//     emailVerified?: string | null;
-//     image?: string | null;
-//     jkel?: string | null;
-//     agama?: string | null;
-//     tgl_lahir?: string | null;
-//     whatsapp?: string | null;
-//     provinsi?: string | null;
-//     kota_kabupaten?: string | null;
-//     kecamatan?: string | null;
-//     kelurahan?: string | null;
-//     kode_domisili?: string | null;
-//     pekerjaan?: string | null;
-//     instansi?: string | null;
-//     pendidikan?: string | null;
-//     pengalaman?: string | null;
-//     ver_image?: string | null;
-//   };
-// };
-
-// function Admin(props: Props) {
 function Admin() {
   const router = useRouter();
   useEffect(() => {

@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import React, { useRef, useState } from "react";
 import Layout from "../Layout";
 import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiSearch } from "react-icons/fi";
 import { useRouter } from "next/router";

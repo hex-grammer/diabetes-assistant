@@ -1,15 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
 import Layout from "../Layout";
-import Alert from "../../../components/Alert";
-import { PrismaClient } from "@prisma/client";
-import Warning from "../../../components/Warning";
-import Success from "../../../components/Success";
-import { useGlobalContext } from "../../../lib/GlobalContext";
 import Link from "next/link";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import useSWR from "swr";
 import MateriCard from "../../../components/MateriCard";
 import { IoMdAddCircleOutline } from "react-icons/io";
 

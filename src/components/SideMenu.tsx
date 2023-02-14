@@ -1,18 +1,14 @@
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { GoSignOut } from "react-icons/go";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { AiOutlinePieChart } from "react-icons/ai";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
-import { RiQuestionAnswerLine, RiTeamLine } from "react-icons/ri";
+import { RiTeamLine } from "react-icons/ri";
 import { BsJournalBookmarkFill } from "react-icons/bs";
-import { IoSettingsOutline, IoCreateOutline } from "react-icons/io5";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { AiOutlineClose } from "react-icons/ai";
 import { useGlobalContext } from "../lib/GlobalContext";
-import { BiBook, BiVideoPlus } from "react-icons/bi";
+import { BiBook } from "react-icons/bi";
 import { MdSlowMotionVideo } from "react-icons/md";
 
 type Props = {
