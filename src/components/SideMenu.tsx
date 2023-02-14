@@ -64,12 +64,17 @@ const SideMenu = (props: Props) => {
     <div
       className={`${handleAnimation()} absolute z-50 flex h-screen w-full flex-col border-r-[1px] border-gray-500 border-opacity-50 bg-primary text-gray-100 sm:relative sm:right-0 sm:w-[22%] sm:animate-none `}
     >
-      <div className="flex items-center justify-between border-none border-gray-500 bg-primary-dark px-6 sm:mb-4 sm:border-b-[1px]">
+      <div className="mb-4 flex items-center justify-between border-none border-gray-500 bg-primary-dark px-6 sm:border-b-[1px]">
         <Link
           href={"/"}
           className="font-fredoka flex  min-h-[10vh] items-center text-2xl text-primary sm:min-h-[8vh]"
         >
-          <div className="text-xxl font-bold text-red-500">BISINDO</div>
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="logo" className="h-8 w-8" />
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              BISINDO
+            </h1>
+          </div>
         </Link>
         <div className="sm:hidden">
           <button

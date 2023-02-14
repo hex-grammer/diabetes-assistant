@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 type Props = {
@@ -8,10 +9,12 @@ type Props = {
 };
 
 const MateriCard = (props: Props) => {
+  const router = useRouter();
+  const admin = router.pathname.includes("admin");
   const blob = props.title?.toLocaleLowerCase().replace(/ /g, "-");
   return (
     <Link
-      href={`/admin/materi/${blob}`}
+      href={`${admin ? "/admin" : ""}/materi/${blob}`}
       className="group h-fit overflow-hidden rounded-md bg-gray-100 hover:shadow-md"
     >
       <div className="overflow-hidden">
