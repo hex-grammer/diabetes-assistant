@@ -36,7 +36,7 @@ function Materi() {
               <div className="flex justify-end gap-2">
                 <button
                   className="rounded-md bg-gray-400 px-2 py-1 text-white"
-                  onClick={async () => await router.push("/admin/materi")}
+                  onClick={() => void router.push("/admin/materi")}
                 >
                   Cancel
                 </button>

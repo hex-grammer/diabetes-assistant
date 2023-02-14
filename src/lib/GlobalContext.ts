@@ -3,11 +3,12 @@ export type GlobalContent = {
   loading: boolean;
   setLoading: (c: boolean) => void;
 };
+
 export const MyGlobalContext = createContext<GlobalContent>({
   loading: false,
-  setLoading: () => {},
+  setLoading: () => {
+    console.log("setLoading called with no effect");
+  },
 });
-export const useGlobalContext = () => {
-  const { loading, setLoading } = useContext(MyGlobalContext);
-  return { loading, setLoading };
-};
+
+export const useGlobalContext = () => useContext(MyGlobalContext);

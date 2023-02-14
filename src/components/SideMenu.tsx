@@ -109,7 +109,7 @@ const SideMenu = (props: Props) => {
             className={`mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-2 px-4 text-left hover:bg-primary-dark ${
               selectedMenu.includes(eachMenu) ? "bg-primary-dark" : ""
             }`}
-            onClick={(e) => onMenuClick(e, eachMenu)}
+            onClick={(e) => void onMenuClick(e, eachMenu)}
           >
             <span className="w-6 text-xl">{menu.icon}</span>
             <span className="ml-2 flex leading-4">{menu.title}</span>
@@ -119,7 +119,7 @@ const SideMenu = (props: Props) => {
       <hr className="my-4 opacity-30" />
       <button
         className="hover:bg-blue-prime mx-3 mb-2 flex items-center rounded-sm py-3 px-6 text-left"
-        onClick={() => signOut({ callbackUrl: "/login" })}
+        onClick={() => void signOut({ callbackUrl: "/login" })}
       >
         <GoSignOut className="mr-2" />
         Logout

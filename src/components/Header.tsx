@@ -17,7 +17,8 @@ const Header = (props: Props) => {
       {/* profil */}
       <div className="flex items-center sm:flex-row-reverse ">
         <Image
-          alt={`Foto profil ${session?.user?.name}`}
+          // alt={`Foto profil ${session?.user?.name}`}
+          alt={`Foto profil pengguna`}
           width={36}
           height={36}
           loader={() => src as string}
