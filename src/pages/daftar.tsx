@@ -42,36 +42,36 @@ const Daftar: NextPage = () => {
     }
 
     // check if email valid
-    const response = await fetch("/api/user/getUsername", {
-      method: "POST",
-      headers: { "content-Type": "application/json" },
-      body: JSON.stringify({ email: dataDiri.email }),
-    });
+    // const response = await fetch("/api/user/getUsername", {
+    //   method: "POST",
+    //   headers: { "content-Type": "application/json" },
+    //   body: JSON.stringify({ email: dataDiri.email }),
+    // });
 
-    const data: { sudah_ada: boolean } = await response.json();
+    // const data: { sudah_ada: boolean } = await response.json();
 
-    if (data.sudah_ada) {
-      if (btnModal.current) {
-        btnModal.current.click();
-      }
-      alert("Username tidak tersedia⚠");
-      return;
-    }
+    // if (data.sudah_ada) {
+    //   if (btnModal.current) {
+    //     btnModal.current.click();
+    //   }
+    //   alert("Username tidak tersedia⚠");
+    //   return;
+    // }
 
     // create data responden & re-routing
-    const createResponse = await fetch("/api/user/create", {
-      method: "POST",
-      headers: { "content-Type": "application/json" },
-      body,
-    });
+    // const createResponse = await fetch("/api/user/create", {
+    //   method: "POST",
+    //   headers: { "content-Type": "application/json" },
+    //   body,
+    // });
 
-    const createData: { user: { id_user: string } } =
-      await createResponse.json();
+    // const createData: { user: { id_user: string } } =
+    //   await createResponse.json();
 
-    localStorage.setItem(
-      "user-login",
-      JSON.stringify({ ...dataDiri, id_user: createData.user.id_user })
-    );
+    // localStorage.setItem(
+    //   "user-login",
+    //   JSON.stringify({ ...dataDiri, id_user: createData.user.id_user })
+    // );
 
     await router.push("input-data");
   };

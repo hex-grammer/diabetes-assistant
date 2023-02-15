@@ -31,38 +31,38 @@ const Daftar: NextPage = () => {
     }
 
     // check if email valid
-    try {
-      const response = await fetch("/api/user/email", {
-        method: "POST",
-        headers: { "content-Type": "application/json" },
-        body: JSON.stringify({ email: dataDiri.email }),
-      });
-      const data = await response.json();
-      if (data?.sudah_ada) {
-        alert("email tidak tersedia⚠");
-        return;
-      }
-    } catch (error) {
-      console.error(error);
-      return;
-    }
+    // try {
+    //   const response = await fetch("/api/user/email", {
+    //     method: "POST",
+    //     headers: { "content-Type": "application/json" },
+    //     body: JSON.stringify({ email: dataDiri.email }),
+    //   });
+    //   const data = await response.json();
+    //   if (data?.sudah_ada) {
+    //     alert("email tidak tersedia⚠");
+    //     return;
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   return;
+    // }
 
     // create data responden & re-routing
-    try {
-      const createResponse = await fetch("/api/user/create", {
-        method: "POST",
-        headers: { "content-Type": "application/json" },
-        body,
-      });
-      const createData = await createResponse.json();
-      localStorage.setItem(
-        "user-login",
-        JSON.stringify({ ...dataDiri, id_user: createData?.user?.id_user })
-      );
-      await router.push("input-data");
-    } catch (error) {
-      console.error(error);
-    }
+    // try {
+    //   const createResponse = await fetch("/api/user/create", {
+    //     method: "POST",
+    //     headers: { "content-Type": "application/json" },
+    //     body,
+    //   });
+    //   const createData = await createResponse.json();
+    //   localStorage.setItem(
+    //     "user-login",
+    //     JSON.stringify({ ...dataDiri, id_user: createData?.user?.id_user })
+    //   );
+    //   await router.push("input-data");
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   const Loading = () => (
