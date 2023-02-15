@@ -21,7 +21,8 @@ const Daftar: NextPage = () => {
     setDataDiri({ ...dataDiri, [name]: value });
   };
 
-  const onSubmit = async () => {
+  // const onSubmit = async () => {
+  const onSubmit = () => {
     const body = JSON.stringify(dataDiri);
 
     // check if data empty
