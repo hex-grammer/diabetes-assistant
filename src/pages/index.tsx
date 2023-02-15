@@ -21,12 +21,12 @@ const Home: NextPage = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/materi">
+            <Link href="/daftar">
               <div className="font-medium tracking-tight text-white">
                 Daftar
               </div>
             </Link>
-            <Link href="/admin">
+            <Link href="/login">
               <div className="rounded-full border-2 border-gray-200 p-1 px-4 font-medium tracking-tight text-white">
                 Login
               </div>

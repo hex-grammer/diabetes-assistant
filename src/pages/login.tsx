@@ -6,13 +6,13 @@ import { useState } from "react";
 const Daftar: NextPage = () => {
   type DataDiri = {
     nama: string;
-    username: string;
+    email: string;
     password: string;
   };
   const router = useRouter();
   const [dataDiri, setDataDiri] = useState<DataDiri>({
     nama: "",
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -30,16 +30,16 @@ const Daftar: NextPage = () => {
       return;
     }
 
-    // check if username valid
+    // check if email valid
     try {
-      const response = await fetch("/api/user/getUsername", {
+      const response = await fetch("/api/user/email", {
         method: "POST",
         headers: { "content-Type": "application/json" },
-        body: JSON.stringify({ username: dataDiri.username }),
+        body: JSON.stringify({ email: dataDiri.email }),
       });
       const data = await response.json();
-      if (data.sudah_ada) {
-        alert("Username tidak tersedia⚠");
+      if (data?.sudah_ada) {
+        alert("email tidak tersedia⚠");
         return;
       }
     } catch (error) {
@@ -57,9 +57,9 @@ const Daftar: NextPage = () => {
       const createData = await createResponse.json();
       localStorage.setItem(
         "user-login",
-        JSON.stringify({ ...dataDiri, id_user: createData.user.id_user })
+        JSON.stringify({ ...dataDiri, id_user: createData?.user?.id_user })
       );
-      router.push("input-data");
+      await router.push("input-data");
     } catch (error) {
       console.error(error);
     }
@@ -105,19 +105,19 @@ const Daftar: NextPage = () => {
           Masuk ke Akun Anda
         </div>
         <div className="mb-2 w-64 flex-1 justify-around">
-          {/* username */}
+          {/* email */}
           <label
-            htmlFor="username"
+            htmlFor="email"
             className="block text-sm font-medium leading-5 text-gray-700"
           >
-            Username
+            Email
           </label>
           <input
-            name="username"
+            name="email"
             onChange={handleChange}
             type="text"
             className="m-0 my-1 mb-2 w-full rounded border border-solid border-gray-300 bg-white px-3 py-1.5 font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
-            id="username"
+            id="email"
           />
           {/* password */}
           <label
@@ -135,11 +135,12 @@ const Daftar: NextPage = () => {
           />
         </div>
         <button
-          onClick={() => void onSubmit()}
+          // onClick={() => void onSubmit()}
+          onClick={() => void router.push("/materi")}
           type="submit"
           className="mb-4 w-64 rounded bg-blue-600 px-6 py-2.5 text-xs font-medium leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg"
         >
-          MULAI
+          MASUK
         </button>
       </div>
       <div className="p-3 text-center text-gray-400">
