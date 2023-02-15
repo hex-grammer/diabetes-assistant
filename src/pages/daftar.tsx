@@ -3,24 +3,29 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
+type DataDiri = {
+  nama: string;
+  email: string;
+  password: string;
+  umur: number;
+};
+
 const Daftar: NextPage = () => {
-  type DataDiri = {
-    nama: string;
-    email: string;
-    password: string;
-  };
   const router = useRouter();
   const btnModal = useRef<HTMLButtonElement>(null);
   const [dataDiri, setDataDiri] = useState<DataDiri>({
     nama: "",
     email: "",
     password: "",
+    umur: 0,
   });
 
-  const handleChange = (e: any) => {
-    let { name, value } = e.target;
-    value = name === "umur" ? parseInt(value) : value;
-    setDataDiri({ ...dataDiri, [name]: value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDataDiri((prevDataDiri) => ({
+      ...prevDataDiri,
+      [name]: name === "umur" ? parseInt(value, 10) : value,
+    }));
   };
 
   const onSubmit = async () => {
@@ -32,42 +37,44 @@ const Daftar: NextPage = () => {
       return;
     }
 
-    null !== btnModal.current && btnModal.current.click();
+    if (btnModal.current) {
+      btnModal.current.click();
+    }
+
     // check if email valid
-    const usernameValid = await fetch("/api/user/getUsername", {
+    const response = await fetch("/api/user/getUsername", {
       method: "POST",
       headers: { "content-Type": "application/json" },
       body: JSON.stringify({ email: dataDiri.email }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.sudah_ada) {
-          null !== btnModal.current && btnModal.current.click();
-          alert("Username tidak tersedia⚠");
-          return false;
-        }
-        return !data.sudah_ada;
-      });
+    });
+
+    const data = await response.json();
+
+    if (data.sudah_ada) {
+      if (btnModal.current) {
+        btnModal.current.click();
+      }
+      alert("Username tidak tersedia⚠");
+      return;
+    }
 
     // create data responden & re-routing
-    if (usernameValid) {
-      await fetch("/api/user/create", {
-        method: "POST",
-        headers: { "content-Type": "application/json" },
-        body,
-      })
-        .then((res) => {
-          null !== btnModal.current && btnModal.current.click();
-          return res.json();
-        })
-        .then((data) => {
-          localStorage.setItem(
-            "user-login",
-            JSON.stringify({ ...dataDiri, id_user: data.user.id_user })
-          );
-          router.push("input-data");
-        });
-    }
+    const createResponse = await fetch("/api/user/create", {
+      method: "POST",
+      headers: { "content-Type": "application/json" },
+      body,
+    });
+
+    const createData = await createResponse.json();
+
+    localStorage.setItem(
+      "user-login",
+      JSON.stringify({ ...dataDiri, id_user: createData.user.id_user })
+    );
+
+    router.push("input-data");
+
+    return;
   };
 
   const Loading = () => (
@@ -106,9 +113,8 @@ const Daftar: NextPage = () => {
       </Head>
       <Loading />
       <div className="flex w-80 flex-col items-center justify-between rounded-lg bg-white bg-opacity-95 shadow-md">
-        {/* <img src={'/img/skincare.jpg'} className='rounded-t-lg' /> */}
         <div className="mb-2 py-2 text-center text-2xl font-bold text-blue-700">
-          Buat Akun Baru
+          Daftar Akun Baru
         </div>
         <div className="mb-2 w-64 flex-1 justify-around">
           {/* nama lengkap */}
@@ -179,7 +185,7 @@ const Daftar: NextPage = () => {
       <div className="p-3 text-center text-gray-400">
         Sudah punya akun?{" "}
         <span
-          onClick={() => router.push("login")}
+          onClick={() => void router.push("login")}
           className="cursor-pointer font-semibold text-blue-600 underline"
         >
           Login disini
