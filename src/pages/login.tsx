@@ -31,38 +31,38 @@ const Daftar: NextPage = () => {
     }
 
     // check if username valid
-    const usernameValid = await fetch("/api/user/getUsername", {
-      method: "POST",
-      headers: { "content-Type": "application/json" },
-      body: JSON.stringify({ username: dataDiri.username }),
-    })
-      .then((res) => res.json())
-      .then((data: { sudah_ada: boolean }) => {
-        if (data.sudah_ada) {
-          alert("Username tidak tersedia⚠");
-          return false;
-        }
-        return !data.sudah_ada;
+    try {
+      const response = await fetch("/api/user/getUsername", {
+        method: "POST",
+        headers: { "content-Type": "application/json" },
+        body: JSON.stringify({ username: dataDiri.username }),
       });
+      const data = await response.json();
+      if (data.sudah_ada) {
+        alert("Username tidak tersedia⚠");
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      return;
+    }
 
     // create data responden & re-routing
-    if (usernameValid) {
-      await fetch("/api/user/create", {
+    try {
+      const createResponse = await fetch("/api/user/create", {
         method: "POST",
         headers: { "content-Type": "application/json" },
         body,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          localStorage.setItem(
-            "user-login",
-            JSON.stringify({ ...dataDiri, id_user: data.user.id_user })
-          );
-          router.push("input-data");
-        });
+      });
+      const createData = await createResponse.json();
+      localStorage.setItem(
+        "user-login",
+        JSON.stringify({ ...dataDiri, id_user: createData.user.id_user })
+      );
+      router.push("input-data");
+    } catch (error) {
+      console.error(error);
     }
-
-    return;
   };
 
   const Loading = () => (
@@ -135,7 +135,7 @@ const Daftar: NextPage = () => {
           />
         </div>
         <button
-          onClick={onSubmit}
+          onClick={() => void onSubmit()}
           type="submit"
           className="mb-4 w-64 rounded bg-blue-600 px-6 py-2.5 text-xs font-medium leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg"
         >

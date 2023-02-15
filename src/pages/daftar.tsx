@@ -29,7 +29,7 @@ const Daftar: NextPage = () => {
   };
 
   const onSubmit = async () => {
-    const body = JSON.stringify(dataDiri);
+    const body: string = JSON.stringify(dataDiri);
 
     // check if data empty
     if (Object.values(dataDiri).includes("")) {
@@ -48,7 +48,7 @@ const Daftar: NextPage = () => {
       body: JSON.stringify({ email: dataDiri.email }),
     });
 
-    const data = await response.json();
+    const data: any = await response.json();
 
     if (data.sudah_ada) {
       if (btnModal.current) {
@@ -65,14 +65,14 @@ const Daftar: NextPage = () => {
       body,
     });
 
-    const createData = await createResponse.json();
+    const createData: any = await createResponse.json();
 
     localStorage.setItem(
       "user-login",
       JSON.stringify({ ...dataDiri, id_user: createData.user.id_user })
     );
 
-    router.push("input-data");
+    await router.push("input-data");
 
     return;
   };
@@ -175,7 +175,7 @@ const Daftar: NextPage = () => {
           />
         </div>
         <button
-          onClick={onSubmit}
+          onClick={() => void onSubmit()}
           type="submit"
           className="mb-4 w-64 rounded bg-blue-600 px-6 py-2.5 text-xs font-medium leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg"
         >
