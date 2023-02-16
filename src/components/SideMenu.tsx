@@ -13,6 +13,11 @@ import { MdSlowMotionVideo } from "react-icons/md";
 
 type Props = {
   menuStatus: string;
+  menuLists: {
+    title: string;
+    notif: boolean;
+    icon: JSX.Element;
+  }[];
   setMenuStatus: (arg: string) => void;
 };
 
@@ -32,20 +37,6 @@ const SideMenu = (props: Props) => {
 
   const { setLoading } = useGlobalContext();
 
-  const MENUS = [
-    { title: "Materi", notif: false, icon: <BsJournalBookmarkFill /> },
-    {
-      title: "Abjad BISINDO",
-      notif: false,
-      icon: <TiSortAlphabeticallyOutline />,
-    },
-    { title: "Kamus BISINDO", notif: false, icon: <BiBook /> },
-    { title: "Pertanyaan Umum", notif: false, icon: <MdSlowMotionVideo /> },
-    { title: "Kalimat Perkenalan", notif: false, icon: <MdSlowMotionVideo /> },
-    { title: "Kalimat Sapaan", notif: false, icon: <MdSlowMotionVideo /> },
-    { title: "Peserta", notif: false, icon: <RiTeamLine /> },
-  ];
-
   const handleAnimation = () => {
     if (props.menuStatus === "open") {
       return "animate-slideIn right-0";
@@ -63,7 +54,9 @@ const SideMenu = (props: Props) => {
     e.preventDefault();
     props.setMenuStatus("close");
     setLoading(true);
-    if (router.pathname.includes("admin")) {
+    if (eachMenu === "peserta") {
+      await router.push("/admin/peserta");
+    } else if (router.pathname.includes("admin")) {
       await router.push(
         eachMenu === "materi" ? "/admin/materi" : `/admin/materi/${eachMenu}`
       );
@@ -100,12 +93,12 @@ const SideMenu = (props: Props) => {
         </div>
       </div>
 
-      {MENUS.map((menu, i) => {
+      {props.menuLists.map((menu, i) => {
         const eachMenu = menu.title.toLowerCase().replace(" ", "-");
         return (
-          <Link
+          <div
             key={i}
-            href={eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`}
+            // href={eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`}
             className={`mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-2 px-4 text-left hover:bg-primary-dark ${
               selectedMenu.includes(eachMenu) ? "bg-primary-dark" : ""
             }`}
@@ -113,7 +106,7 @@ const SideMenu = (props: Props) => {
           >
             <span className="w-6 text-xl">{menu.icon}</span>
             <span className="ml-2 flex leading-4">{menu.title}</span>
-          </Link>
+          </div>
         );
       })}
       <hr className="my-4 opacity-30" />

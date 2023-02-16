@@ -4,8 +4,16 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MateriCard from "../../../components/MateriCard";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { getSession } from "next-auth/react";
+import { PrismaClient, User } from "@prisma/client";
+import { Session } from "next-auth";
 
-function Materi() {
+interface MateriProps {
+  session: Session;
+  userData: User | null;
+}
+
+function Materi({ session, userData }: MateriProps) {
   const MATERI = [
     {
       id: 1,
@@ -62,3 +70,31 @@ function Materi() {
 }
 
 export default Materi;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  const prisma = new PrismaClient();
+
+  let userData = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email || "",
+    },
+  });
+  userData = await JSON.parse(JSON.stringify(userData));
+
+  return {
+    props: {
+      session,
+      userData,
+    },
+  };
+}

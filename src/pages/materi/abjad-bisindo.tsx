@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AbjadCard from "../../components/AbjadCard";
 import { useRouter } from "next/router";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import { getSession } from "next-auth/react";
 
 function Materi() {
   const router = useRouter();
@@ -52,12 +53,6 @@ function Materi() {
               image={`https://loremflickr.com/250/150/${abjad}`}
             />
           ))}
-          {/* <Link
-            href={`/admin/materi/tambah-materi`}
-            className="flex items-center justify-center rounded-md bg-gray-100 text-[4rem] text-gray-500 transition-all delay-75 hover:text-[5rem] hover:text-blue-500 hover:shadow-md"
-          >
-            <IoMdAddCircleOutline />
-          </Link> */}
         </div>
         <ToastContainer position="top-right" />
       </>
@@ -66,3 +61,20 @@ function Materi() {
 }
 
 export default Materi;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}

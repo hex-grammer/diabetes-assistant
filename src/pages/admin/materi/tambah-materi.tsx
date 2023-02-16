@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { FcAddImage } from "react-icons/fc";
 import { useRouter } from "next/router";
+import { getSession } from "next-auth/react";
 
 function Materi() {
   const router = useRouter();
@@ -183,3 +184,20 @@ function Materi() {
 }
 
 export default Materi;
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  console.log(session?.user);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}

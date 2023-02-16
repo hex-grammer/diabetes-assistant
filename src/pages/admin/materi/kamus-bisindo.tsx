@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import AbjadCard from "../../../components/AbjadCard";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { getSession } from "next-auth/react";
 
 function KamusBisindo() {
   const router = useRouter();
@@ -187,3 +188,20 @@ function KamusBisindo() {
 }
 
 export default KamusBisindo;
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  console.log(session?.user);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}

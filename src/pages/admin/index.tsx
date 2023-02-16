@@ -3,8 +3,16 @@ import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { PrismaClient, User } from "@prisma/client";
 
-function Admin() {
+interface AdminProps {
+  session: Session;
+  userData: User | null;
+}
+
+function Admin({ session, userData }: AdminProps) {
   const router = useRouter();
   useEffect(() => {
     void router.push("/admin/materi");
@@ -26,30 +34,29 @@ function Admin() {
 
 export default Admin;
 
-// export async function getServerSideProps(context:any) {
-//   const session = await getSession(context);
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: "",
-//         permanent: false,
-//       },
-//     };
-//   }
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "",
+        permanent: false,
+      },
+    };
+  }
 
-//   const prisma = new PrismaClient();
+  const prisma = new PrismaClient();
 
-//   let userData = await prisma.user.findUnique({
-//     where: {
-//       email: session?.user?.email || "",
-//     },
-//   });
-//   userData = await JSON.parse(JSON.stringify(userData));
+  let userData = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email || "",
+    },
+  });
+  userData = await JSON.parse(JSON.stringify(userData));
 
-//   return {
-//     props: {
-//       session,
-//       userData,
-//     },
-//   };
-// }
+  return {
+    redirect: {
+      destination: "/admin/materi",
+    },
+  };
+}

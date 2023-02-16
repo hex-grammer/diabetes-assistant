@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { signIn } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -102,56 +103,20 @@ const Daftar: NextPage = () => {
       </Head>
       <Loading />
       <div className="flex w-80 flex-col items-center justify-between rounded-lg bg-white bg-opacity-95 shadow-md">
-        <div className="mb-2 py-2 text-center text-2xl font-bold text-blue-700">
-          Masuk ke Akun Anda
+        <div className="mb-2 py-2 text-center text-xl font-bold text-gray-700">
+          Silahkan login
         </div>
-        <div className="mb-2 w-64 flex-1 justify-around">
-          {/* email */}
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium leading-5 text-gray-700"
-          >
-            Email
-          </label>
-          <input
-            name="email"
-            onChange={handleChange}
-            type="text"
-            className="m-0 my-1 mb-2 w-full rounded border border-solid border-gray-300 bg-white px-3 py-1.5 font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
-            id="email"
-          />
-          {/* password */}
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium leading-5 text-gray-700"
-          >
-            Password
-          </label>
-          <input
-            name="password"
-            onChange={handleChange}
-            type="password"
-            className="m-0 my-1 mb-2 w-full rounded border border-solid border-gray-300 bg-white px-3 py-1.5 font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
-            id="password"
-          />
-        </div>
+        {/* masuk dengan akun google  */}
         <button
-          // onClick={() => void onSubmit()}
-          onClick={() => void router.push("/materi")}
-          type="submit"
-          className="mb-4 w-64 rounded bg-blue-600 px-6 py-2.5 text-xs font-medium leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg"
+          onClick={() =>
+            void signIn("google", {
+              callbackUrl: "/materi",
+            })
+          }
+          className="mb-4 w-64 rounded bg-red-600 px-6 py-2.5 font-medium leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-none"
         >
-          MASUK
+          Masuk dengan Google
         </button>
-      </div>
-      <div className="p-3 text-center text-gray-400">
-        Belum punya akun?{" "}
-        <span
-          onClick={() => void router.push("daftar")}
-          className="cursor-pointer font-semibold text-blue-600 underline"
-        >
-          Daftar disini
-        </span>
       </div>
     </div>
   );

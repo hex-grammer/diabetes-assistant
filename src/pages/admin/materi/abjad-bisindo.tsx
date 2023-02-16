@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AbjadCard from "../../../components/AbjadCard";
 import { useRouter } from "next/router";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import { getSession } from "next-auth/react";
 
 function Materi() {
   const router = useRouter();
@@ -66,3 +67,20 @@ function Materi() {
 }
 
 export default Materi;
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  console.log(session?.user);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}

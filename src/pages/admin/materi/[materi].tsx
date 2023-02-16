@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { getSession } from "next-auth/react";
 const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ssr: false,
 });
@@ -136,3 +137,23 @@ function Materi() {
 }
 
 export default Materi;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  // only give access to user with admin account type
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}

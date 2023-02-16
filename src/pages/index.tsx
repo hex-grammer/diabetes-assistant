@@ -1,4 +1,5 @@
 import { type NextPage } from "next";
+import { signIn } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import MateriCard from "../components/MateriCard";
@@ -20,17 +21,15 @@ const Home: NextPage = () => {
               BISINDO
             </h1>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/daftar">
-              <div className="font-medium tracking-tight text-white">
-                Daftar
-              </div>
-            </Link>
-            <Link href="/login">
-              <div className="rounded-full border-2 border-gray-200 p-1 px-4 font-medium tracking-tight text-white">
-                Login
-              </div>
-            </Link>
+          <div
+            onClick={() =>
+              void signIn("google", {
+                callbackUrl: "/materi",
+              })
+            }
+            className="cursor-pointer rounded-full border-2 border-gray-200 p-1 px-4 font-medium tracking-tight text-white hover:bg-gray-200 hover:font-bold hover:text-blue-700"
+          >
+            Mulai Belajar
           </div>
         </div>
         {/* landing page main text */}

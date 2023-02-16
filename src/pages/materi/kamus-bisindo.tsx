@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import AbjadCard from "../../components/AbjadCard";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { getSession } from "next-auth/react";
 
 function KamusBisindo() {
   const router = useRouter();
@@ -112,64 +113,6 @@ function KamusBisindo() {
               </div>
             </div>
           </div>
-          {/* Tambah Kata */}
-          {/* input judul video and link youtube */}
-          {activateAdd || editLabel ? (
-            <div className="flex flex-col gap-2 rounded-md bg-gray-500 p-2 duration-200 sm:col-span-2 sm:row-span-2">
-              <input
-                type="text"
-                className="w-full rounded-md border border-gray-300 px-2 py-1 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Kata"
-                defaultValue={editLabel}
-              />
-              <input
-                type="text"
-                className="w-full rounded-md border border-gray-300 px-2 py-1 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Kategori"
-              />
-              {/* Upload gif */}
-              <div className="flex flex-1 items-center justify-center gap-2 rounded-md border border-gray-300 bg-white p-2">
-                <label
-                  htmlFor="file"
-                  className="flex h-full w-full cursor-pointer items-center justify-center gap-1 text-gray-500"
-                >
-                  Upload GIF
-                  <span className="text-blue-500">Browse</span>
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  className="hidden"
-                  accept="image/gif"
-                  onChange={(e) => console.log(e.target.files)}
-                />
-              </div>
-              <div className="flex w-full gap-2">
-                {/* batal */}
-                <div className="flex justify-end">
-                  <button
-                    className="rounded-md bg-gray-400 px-2 py-1 text-white"
-                    onClick={handleBatalUpdate}
-                  >
-                    Batal
-                  </button>
-                </div>
-                {/* tambah */}
-                <div className="flex justify-end">
-                  <button className="rounded-md bg-blue-500 px-2 py-1 text-white">
-                    {editLabel ? "Update" : "Tambah"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div
-              onClick={() => setActivateAdd(true)}
-              className="flex h-full items-center justify-center rounded-md bg-gray-50 py-3 text-[3rem] text-gray-500 transition-all delay-75 hover:text-[4rem] hover:text-blue-500 hover:shadow-md"
-            >
-              <IoMdAddCircleOutline />
-            </div>
-          )}
           {/* contents */}
           {filteredContent.map((abjad) => (
             <AbjadCard
@@ -187,3 +130,20 @@ function KamusBisindo() {
 }
 
 export default KamusBisindo;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}

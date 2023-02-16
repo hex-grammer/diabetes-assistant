@@ -3,6 +3,11 @@ import Header from "../../components/Header";
 import SideMenu from "../../components/SideMenu";
 import { useGlobalContext } from "../../lib/GlobalContext";
 import Head from "next/head";
+import { BsJournalBookmarkFill } from "react-icons/bs";
+import { TiSortAlphabeticallyOutline } from "react-icons/ti";
+import { BiBook } from "react-icons/bi";
+import { MdSlowMotionVideo } from "react-icons/md";
+import { RiTeamLine } from "react-icons/ri";
 
 type Props = {
   children?: JSX.Element;
@@ -30,7 +35,35 @@ function Layout(props: Props) {
       <Head>
         <title>Belajar BISINDO</title>
       </Head>
-      <SideMenu menuStatus={menuStatus} setMenuStatus={setMenuStatus} />
+      <SideMenu
+        menuStatus={menuStatus}
+        setMenuStatus={setMenuStatus}
+        menuLists={[
+          { title: "Materi", notif: false, icon: <BsJournalBookmarkFill /> },
+          {
+            title: "Abjad BISINDO",
+            notif: false,
+            icon: <TiSortAlphabeticallyOutline />,
+          },
+          { title: "Kamus BISINDO", notif: false, icon: <BiBook /> },
+          {
+            title: "Pertanyaan Umum",
+            notif: false,
+            icon: <MdSlowMotionVideo />,
+          },
+          {
+            title: "Kalimat Perkenalan",
+            notif: false,
+            icon: <MdSlowMotionVideo />,
+          },
+          {
+            title: "Kalimat Sapaan",
+            notif: false,
+            icon: <MdSlowMotionVideo />,
+          },
+          // { title: "Peserta", notif: false, icon: <RiTeamLine /> },
+        ]}
+      />
       <div className="flex w-full flex-col">
         <Header setMenuStatus={setMenuStatus} />
         {/* BODY/CONTENT */}
