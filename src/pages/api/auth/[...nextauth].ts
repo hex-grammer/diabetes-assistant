@@ -15,7 +15,7 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    signIn({ user, account, profile, email, credentials }) {
       return true;
     },
     redirect({ url, baseUrl }) {

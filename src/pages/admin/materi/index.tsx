@@ -85,12 +85,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const prisma = new PrismaClient();
 
-  let userData: User | null = await prisma.user.findUnique({
+  let userData: Record<string, any> | null = await prisma.user.findUnique({
     where: {
       email: session?.user?.email || "",
     },
   });
-  userData = userData ? await JSON.parse(JSON.stringify(userData)) : null;
+  userData = userData ? JSON.parse(JSON.stringify(userData)) : null;
 
   return {
     props: {
