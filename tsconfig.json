@@ -17,5 +17,9 @@
     "noUncheckedIndexedAccess": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "types": ["node", "next", "next-auth"],
+  "paths": {
+    "next-auth/client": ["node_modules/next-auth/client"]
+  }
 }
