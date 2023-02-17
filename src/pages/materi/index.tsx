@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import MateriCard from "../../components/MateriCard";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
 
 function Materi() {
   const MATERI = [
@@ -58,7 +59,7 @@ function Materi() {
 
 export default Materi;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   console.log(session?.user);
   if (!session) {

@@ -9,6 +9,7 @@ import AbjadCard from "../../../components/AbjadCard";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
 
 function KamusBisindo() {
   const router = useRouter();
@@ -188,7 +189,7 @@ function KamusBisindo() {
 }
 
 export default KamusBisindo;
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   console.log(session?.user);
   if (!session) {

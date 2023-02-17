@@ -7,6 +7,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { getSession } from "next-auth/react";
 import { PrismaClient, User } from "@prisma/client";
 import { Session } from "next-auth";
+import { GetServerSidePropsContext } from "next";
 
 interface MateriProps {
   session: Session;
@@ -71,7 +72,7 @@ function Materi({ session, userData }: MateriProps) {
 
 export default Materi;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   if (!session) {
     return {
@@ -84,12 +85,12 @@ export async function getServerSideProps(context: any) {
 
   const prisma = new PrismaClient();
 
-  let userData = await prisma.user.findUnique({
+  let userData: User | null = await prisma.user.findUnique({
     where: {
       email: session?.user?.email || "",
     },
   });
-  userData = await JSON.parse(JSON.stringify(userData));
+  userData = userData ? await JSON.parse(JSON.stringify(userData)) : null;
 
   return {
     props: {

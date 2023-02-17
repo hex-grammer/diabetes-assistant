@@ -28,7 +28,7 @@ const Daftar: NextPage = () => {
     }));
   };
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     const body: string = JSON.stringify(dataDiri);
 
     // check if data empty

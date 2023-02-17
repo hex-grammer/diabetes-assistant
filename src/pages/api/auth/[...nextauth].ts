@@ -9,8 +9,8 @@ export default NextAuth({
   // Configure one or more authentication providers
   providers: [
     GoogleProvider({
-      clientId: `${process.env.GOOGLE_ID}`,
-      clientSecret: `${process.env.GOOGLE_SECRET}`,
+      clientId: `${String(process.env.GOOGLE_ID)}`,
+      clientSecret: `${String(process.env.GOOGLE_SECRET)}`,
     }),
     // ...add more providers here
   ],
@@ -18,18 +18,18 @@ export default NextAuth({
     async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
-    async redirect({ url, baseUrl }) {
+    redirect({ url, baseUrl }) {
       // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-    async session({ session, user, token }) {
+    session({ session, user, token }) {
       // session.user = user;
       return session;
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
+    jwt({ token, user, account, profile, isNewUser }) {
       if (user) {
         token.uid = user.id;
       }

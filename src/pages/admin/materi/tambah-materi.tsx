@@ -8,6 +8,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { FcAddImage } from "react-icons/fc";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
 
 function Materi() {
   const router = useRouter();
@@ -184,7 +185,7 @@ function Materi() {
 }
 
 export default Materi;
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   console.log(session?.user);
   if (!session) {

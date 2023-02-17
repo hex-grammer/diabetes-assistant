@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
 const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ssr: false,
 });
@@ -79,7 +80,7 @@ function Materi() {
 
 export default Materi;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   if (!session) {
     return {
