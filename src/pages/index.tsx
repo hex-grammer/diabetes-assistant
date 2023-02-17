@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import MateriCard from "../components/MateriCard";
@@ -23,8 +23,11 @@ const Home: NextPage = () => {
           </div>
           <div
             onClick={() =>
-              void signIn("google", {
-                callbackUrl: "/materi",
+              // void signIn("google", {
+              //   callbackUrl: "/materi",
+              // })
+              void signOut({
+                callbackUrl: "/login",
               })
             }
             className="cursor-pointer rounded-full border-2 border-gray-200 p-1 px-4 font-medium tracking-tight text-white hover:bg-gray-200 hover:font-bold hover:text-blue-700"

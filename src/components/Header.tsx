@@ -14,7 +14,8 @@ const Header = (props: Props) => {
     <div className="flex min-h-[10vh] items-center justify-between bg-primary py-2 px-6 text-white shadow-md sm:min-h-[8vh] sm:justify-end">
       {/* profil */}
       <div className="flex items-center sm:flex-row-reverse ">
-        <Image
+        {/* image but use <img/> */}
+        <img
           alt={`Foto profil ${String(session?.user?.name)}`}
           width={36}
           height={36}
