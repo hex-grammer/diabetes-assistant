@@ -1,9 +1,10 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "../../../server/db";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
   // Configure one or more authentication providers
@@ -39,4 +40,6 @@ export default NextAuth({
   session: {
     strategy: "jwt",
   },
-});
+};
+
+export default NextAuth(authOptions);
