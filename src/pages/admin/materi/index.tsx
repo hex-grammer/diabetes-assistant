@@ -6,15 +6,9 @@ import MateriCard from "../../../components/MateriCard";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { getSession } from "next-auth/react";
 import { PrismaClient, User } from "@prisma/client";
-import { Session } from "next-auth";
 import { GetServerSidePropsContext } from "next";
 
-interface MateriProps {
-  session: Session;
-  userData: User | null;
-}
-
-function Materi({ session, userData }: MateriProps) {
+function Materi() {
   const MATERI = [
     {
       id: 1,
@@ -82,20 +76,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   }
-
-  const prisma = new PrismaClient();
-
-  let userData: Record<string, any> | null = await prisma.user.findUnique({
-    where: {
-      email: session?.user?.email || "",
-    },
-  });
-  userData = userData ? JSON.parse(JSON.stringify(userData)) : null;
-
   return {
     props: {
       session,
-      userData,
     },
   };
 }

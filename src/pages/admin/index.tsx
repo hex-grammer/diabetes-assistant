@@ -4,16 +4,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
-import { Session } from "next-auth";
 import { PrismaClient, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 
-interface AdminProps {
-  session: Session;
-  userData: User | null;
-}
-
-function Admin({ session, userData }: AdminProps) {
+function Admin() {
   const router = useRouter();
   useEffect(() => {
     void router.push("/admin/materi");
@@ -45,16 +39,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   }
-
-  const prisma = new PrismaClient();
-
-  let userData: Record<string, any> | null = await prisma.user.findUnique({
-    where: {
-      email: session?.user?.email || "",
-    },
-  });
-  userData = userData ? JSON.parse(JSON.stringify(userData)) : null;
-
   return {
     redirect: {
       destination: "/admin/materi",
