@@ -1,14 +1,21 @@
-import { getSession, GetSessionOptions } from "next-auth/client";
+import { type GetServerSidePropsContext } from "next";
+import { unstable_getServerSession } from "next-auth";
+
 import { authOptions } from "../pages/api/auth/[...nextauth]";
-import { IncomingMessage, ServerResponse } from "http";
+
+/**
+ * Wrapper for unstable_getServerSession, used in trpc createContext and the
+ * restricted API route
+ *
+ * Don't worry too much about the "unstable", it's safe to use but the syntax
+ * may change in future versions
+ *
+ * @see https://next-auth.js.org/configuration/nextjs
+ */
 
 export const getServerAuthSession = async (ctx: {
-  req: IncomingMessage & { cookies: Partial<{ [key: string]: string }> };
-  res: ServerResponse<IncomingMessage>;
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
 }) => {
-  return await getSession({
-    req: ctx.req,
-    res: ctx.res,
-    options: authOptions,
-  } as GetSessionOptions);
+  return await unstable_getServerSession(ctx.req, ctx.res, authOptions);
 };
