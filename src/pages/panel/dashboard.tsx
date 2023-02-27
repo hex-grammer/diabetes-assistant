@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import Layout from "../Layout";
-import Link from "next/link";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AbjadCard from "../../components/AbjadCard";
 import { useRouter } from "next/router";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { getSession } from "next-auth/react";
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 
-function Materi() {
+function Dashboard() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
   const [modalLabel, setModalLabel] = useState("");
-  const ABJAD = [...new Array<number>(26)].map((_, i) =>
-    String.fromCharCode(i + 65)
-  );
   return (
     <Layout>
       <>
@@ -40,20 +36,10 @@ function Materi() {
             </div>
           )}
           <div className="col-span-full mb-2">
-            <h1 className="text-center text-2xl font-bold">ABJAD BISINDO</h1>
-            <div>
-              <Link href={`/admin/materi`}>/materi/</Link>
-              <span className="text-blue-600">abjad-bisindo</span>
-            </div>
+            <h1 className="text-center text-2xl font-bold uppercase">
+              {paths}
+            </h1>
           </div>
-          {ABJAD.map((abjad) => (
-            <AbjadCard
-              key={abjad}
-              title={abjad}
-              showModal={() => setModalLabel(abjad)}
-              image={`https://loremflickr.com/250/150/${abjad}`}
-            />
-          ))}
         </div>
         <ToastContainer position="top-right" />
       </>
@@ -61,7 +47,7 @@ function Materi() {
   );
 }
 
-export default Materi;
+export default Dashboard;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);

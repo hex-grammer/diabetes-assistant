@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import SideMenu from "../components/SideMenu";
 import { useGlobalContext } from "../lib/GlobalContext";
 import Head from "next/head";
-import { BsJournalBookmarkFill } from "react-icons/bs";
-import { TiSortAlphabeticallyOutline } from "react-icons/ti";
-import { BiBook } from "react-icons/bi";
-import { MdSlowMotionVideo } from "react-icons/md";
+import { GiBrain } from "react-icons/gi";
+import { TiMediaFastForwardOutline } from "react-icons/ti";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { HiScale } from "react-icons/hi2";
+import { RiFileUserLine } from "react-icons/ri";
 
 type Props = {
   children?: JSX.Element;
@@ -23,52 +24,45 @@ const Loading = () => {
 
 function Layout(props: Props) {
   const [menuStatus, setMenuStatus] = useState("no");
-  const { loading, setLoading } = useGlobalContext();
+  const { loading } = useGlobalContext();
 
+  // log loading useEffect
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    console.log("loading: ", loading);
+  }, [loading]);
 
   return (
     <div className="font-poppins flex h-screen overflow-hidden">
       <Head>
-        <title>Belajar BISINDO</title>
+        <title>Diabetes Assistant</title>
       </Head>
       <SideMenu
         menuStatus={menuStatus}
         setMenuStatus={setMenuStatus}
         menuLists={[
-          { title: "Materi", notif: false, icon: <BsJournalBookmarkFill /> },
+          { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
           {
-            title: "Abjad BISINDO",
-            notif: false,
-            icon: <TiSortAlphabeticallyOutline />,
+            title: "Forward Chaining",
+            icon: <TiMediaFastForwardOutline />,
           },
-          { title: "Kamus BISINDO", notif: false, icon: <BiBook /> },
+          { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
-            title: "Pertanyaan Umum",
-            notif: false,
-            icon: <MdSlowMotionVideo />,
+            title: "Perbandingan Metode",
+            icon: <HiScale />,
           },
           {
-            title: "Kalimat Perkenalan",
-            notif: false,
-            icon: <MdSlowMotionVideo />,
+            title: "Data Diri",
+            icon: <RiFileUserLine />,
           },
-          {
-            title: "Kalimat Sapaan",
-            notif: false,
-            icon: <MdSlowMotionVideo />,
-          },
-          // { title: "Peserta", notif: false, icon: <RiTeamLine /> },
+          // { title: "Peserta",  icon: <RiTeamLine /> },
         ]}
       />
       <div className="flex w-full flex-col">
         <Header setMenuStatus={setMenuStatus} />
         {/* BODY/CONTENT */}
-        <div className="relative h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover text-gray-700 ">
+        <div className="relative h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover bg-right text-gray-700">
           {/* floating div to cover the background */}
-          <div className="absolute h-full w-full bg-gray-200 bg-opacity-50" />
+          <div className="absolute h-full w-full bg-gray-200 bg-opacity-75" />
           {loading ? <Loading /> : props?.children}
         </div>
       </div>

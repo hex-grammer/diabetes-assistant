@@ -1,21 +1,15 @@
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import React, { useEffect } from "react";
 import { GoSignOut } from "react-icons/go";
-import { TiSortAlphabeticallyOutline } from "react-icons/ti";
-import { RiTeamLine } from "react-icons/ri";
-import { BsJournalBookmarkFill } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { AiOutlineClose } from "react-icons/ai";
 import { useGlobalContext } from "../lib/GlobalContext";
-import { BiBook } from "react-icons/bi";
-import { MdSlowMotionVideo } from "react-icons/md";
+import Image from "next/image";
 
 type Props = {
   menuStatus: string;
   menuLists: {
     title: string;
-    notif: boolean;
     icon: JSX.Element;
   }[];
   setMenuStatus: (arg: string) => void;
@@ -24,16 +18,10 @@ type Props = {
 const SideMenu = (props: Props) => {
   const router = useRouter();
   const path = router.pathname.includes("admin")
-    ? router.pathname.replace("/admin/materi/", "")
-    : router.pathname.replace("/materi/", "");
+    ? router.pathname.replace("/admin/panel/", "")
+    : router.pathname.replace("/panel/", "");
   const { materi } = router.query;
   const selectedMenu = materi || path;
-
-  useEffect(() => {
-    console.log(selectedMenu);
-  }, []);
-
-  // const selectedMenu = router.pathname.split('/').includes();
 
   const { setLoading } = useGlobalContext();
 
@@ -54,16 +42,12 @@ const SideMenu = (props: Props) => {
     e.preventDefault();
     props.setMenuStatus("close");
     setLoading(true);
-    if (eachMenu === "peserta") {
-      await router.push("/admin/peserta");
-    } else if (router.pathname.includes("admin")) {
+    if (router.pathname.includes("admin")) {
       await router.push(
         eachMenu === "materi" ? "/admin/materi" : `/admin/materi/${eachMenu}`
       );
     } else {
-      await router.push(
-        eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`
-      );
+      await router.push(`/panel/${eachMenu}`);
     }
   };
 
@@ -77,9 +61,9 @@ const SideMenu = (props: Props) => {
           className="font-fredoka flex  min-h-[10vh] items-center text-2xl text-primary sm:min-h-[8vh]"
         >
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="logo" className="h-8 w-8" />
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              BISINDO
+            <Image height={32} width={32} src="/logo.png" alt="logo" />
+            <h1 className="text-xl font-bold tracking-tight text-white">
+              DiAsist
             </h1>
           </div>
         </Link>
