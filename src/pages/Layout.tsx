@@ -66,7 +66,9 @@ function Layout(props: Props) {
       <div className="flex w-full flex-col">
         <Header setMenuStatus={setMenuStatus} />
         {/* BODY/CONTENT */}
-        <div className="h-full w-full overflow-y-auto bg-gray-200 text-gray-700 ">
+        <div className="relative h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover text-gray-700 ">
+          {/* floating div to cover the background */}
+          <div className="absolute h-full w-full bg-gray-200 bg-opacity-50" />
           {loading ? <Loading /> : props?.children}
         </div>
       </div>

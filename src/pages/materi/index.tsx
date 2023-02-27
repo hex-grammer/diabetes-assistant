@@ -29,11 +29,6 @@ function Materi() {
       title: "Kalimat Sapaan",
       image: "https://loremflickr.com/250/150/hand?random=4",
     },
-    {
-      id: 5,
-      title: "Pertanyaan Umum",
-      image: "https://loremflickr.com/250/150/hand?random=5",
-    },
   ];
 
   return (
