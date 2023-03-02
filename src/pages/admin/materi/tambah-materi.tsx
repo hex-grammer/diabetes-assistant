@@ -8,7 +8,8 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { FcAddImage } from "react-icons/fc";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
+import Image from "next/image";
 
 function Materi() {
   const router = useRouter();
@@ -59,9 +60,11 @@ function Materi() {
                 // if imagePreview is not empty
                 imagePreview ? (
                   <>
-                    <img
+                    <Image
+                      height={100}
+                      width={250}
                       src={imagePreview}
-                      alt={file?.name}
+                      alt={file?.name || "thumbnail"}
                       className="absolute top-0 left-0 w-full rounded-md bg-contain sm:h-full"
                     />
                     {/* replace image */}
