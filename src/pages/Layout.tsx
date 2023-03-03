@@ -42,10 +42,6 @@ function Layout(props: Props) {
         menuLists={[
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
           {
-            title: "Data Diri",
-            icon: <RiFileUserLine />,
-          },
-          {
             title: "Forward Chaining",
             icon: <TiMediaFastForwardOutline />,
           },
@@ -54,6 +50,10 @@ function Layout(props: Props) {
             title: "Perbandingan Metode",
             icon: <HiScale />,
           },
+          // {
+          //   title: "Data Diri",
+          //   icon: <RiFileUserLine />,
+          // },
           // { title: "Peserta",  icon: <RiTeamLine /> },
         ]}
       />
@@ -62,7 +62,7 @@ function Layout(props: Props) {
         {/* BODY/CONTENT */}
         <div className="relative h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover bg-right text-gray-700">
           {/* floating div to cover the background */}
-          <div className="absolute h-full w-full bg-gray-100 bg-opacity-90" />
+          <div className="absolute w-full bg-gray-100 bg-opacity-40 sm:h-full" />
           {loading ? <Loading /> : props?.children}
         </div>
       </div>
