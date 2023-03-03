@@ -12,7 +12,7 @@ function Dashboard() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
   // usestate Kebutuhan Kalori Harian (KKH)
-  const [kkh, setKkh] = useState(0);
+  const [kkh, setKKH] = useState(0);
 
   return (
     <Layout>
@@ -25,7 +25,7 @@ function Dashboard() {
             <h2 className="mb-2 text-center text-xl font-bold uppercase">
               Data Diri
             </h2>
-            <DataDiri setKKH={setKkh} />
+            <DataDiri setKKH={setKKH} />
           </div>
           <div className="mb-2 h-fit rounded-md bg-gray-50 p-4 pb-8 shadow-md sm:col-span-2">
             <h2 className="mb-2 text-center text-xl font-bold uppercase">
@@ -48,9 +48,9 @@ function Dashboard() {
               </span>
             </div>
           </div>
-          <div className="mb-2 rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2">
+          <div className="mb-2 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2">
             <h2 className="mb-2 text-center text-xl font-bold uppercase">
-              Rekomendasi Menu Makanan
+              Tabel Hasil Perhitungan KKH
             </h2>
           </div>
         </div>
