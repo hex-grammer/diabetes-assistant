@@ -7,7 +7,6 @@ import { GiBrain } from "react-icons/gi";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { HiScale } from "react-icons/hi2";
-import { RiFileUserLine } from "react-icons/ri";
 
 type Props = {
   children?: JSX.Element;

@@ -22,7 +22,7 @@ function Dashboard() {
             <h1 className="text-2xl font-bold uppercase">{paths}</h1>
           </div>
           <div className="mb-2 rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2">
-            <h2 className="mb-2 mb-2 text-center text-xl font-bold uppercase">
+            <h2 className="mb-2 text-center text-xl font-bold uppercase">
               Data Diri
             </h2>
             <DataDiri setKKH={setKkh} />
