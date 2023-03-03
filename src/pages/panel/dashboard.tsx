@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,7 +11,6 @@ import DataDiri from "./data-diri";
 function Dashboard() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
-  // usestate Kebutuhan Kalori Harian (KKH)
   const [kkh, setKKH] = useState(0);
 
   return (
@@ -50,7 +49,7 @@ function Dashboard() {
           </div>
           <div className="mb-2 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2">
             <h2 className="mb-2 text-center text-xl font-bold uppercase">
-              Tabel Hasil Perhitungan KKH
+              Tabel KKH
             </h2>
           </div>
         </div>

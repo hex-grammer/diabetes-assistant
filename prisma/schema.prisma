@@ -65,7 +65,7 @@ model kkh {
     pekerjaan     String
     aktivitas     String
     jenis_kelamin String
-    email         String @unique
+    email         String
     kkh           Int
 
     created_at DateTime @default(now())

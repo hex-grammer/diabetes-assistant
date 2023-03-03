@@ -3,8 +3,10 @@ import { useSession } from "next-auth/react";
 import { PEKERJAAN } from "../../lib/pekerjaan";
 import axios from "axios";
 import { toast } from "react-toastify";
+import type { kkh } from "@prisma/client";
 
 interface FormData {
+  id_kkh?: number;
   berat_badan: number;
   tinggi_badan: number;
   umur: number;
@@ -29,21 +31,58 @@ function DataDiri({ setKKH }: DataDiriProps) {
     aktivitas: "",
     jenis_kelamin: "",
   });
+  const [defaultFormData, setDefaultFormData] = useState<FormData>({
+    berat_badan: 20,
+    tinggi_badan: 100,
+    umur: 15,
+    pekerjaan: "",
+    aktivitas: "",
+    jenis_kelamin: "",
+  });
 
   // set submit true jika formData berubah dan tidak kosong
   useEffect(() => {
     if (
-      formData.berat_badan &&
-      formData.tinggi_badan &&
-      formData.umur &&
-      formData.pekerjaan &&
-      formData.jenis_kelamin
+      JSON.stringify(formData) === JSON.stringify(defaultFormData) ||
+      formData.pekerjaan === "" ||
+      formData.jenis_kelamin === ""
     ) {
-      setSubmit(true);
-    } else {
       setSubmit(false);
+    } else {
+      setSubmit(true);
     }
   }, [formData]);
+
+  // axios request to set kkh in /api/kkh/getLast in useEffect
+  useEffect(() => {
+    try {
+      void axios
+        .get("/api/kkh/getLast", { params: { dataLength: 10 } })
+        .then((res: { data: kkh[] }) => {
+          setKKH(res.data[0]?.kkh || 0);
+          setFormData(
+            res.data[0] || {
+              berat_badan: 20,
+              tinggi_badan: 100,
+              umur: 15,
+              pekerjaan: "",
+              aktivitas: "",
+              jenis_kelamin: "",
+            }
+          );
+          setDefaultFormData(
+            res.data[0] || {
+              berat_badan: 20,
+              tinggi_badan: 100,
+              umur: 15,
+              pekerjaan: "",
+              aktivitas: "",
+              jenis_kelamin: "",
+            }
+          );
+        });
+    } catch (error) {}
+  }, []);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -96,11 +135,17 @@ function DataDiri({ setKKH }: DataDiriProps) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // if form data === default form data
+    if (JSON.stringify(formData) === JSON.stringify(defaultFormData)) {
+      toast.error("Data tidak berubah!");
+      return;
+    }
+
     setKKH(hitungKKH());
 
     // axios request data to /api/kkh
     try {
-      await axios.post("/api/kkh", {
+      await axios.post("/api/kkh/create", {
         ...formData,
         berat_badan: Number(formData.berat_badan),
         tinggi_badan: Number(formData.tinggi_badan),

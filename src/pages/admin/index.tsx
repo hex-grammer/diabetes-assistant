@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
 import { PrismaClient, User } from "@prisma/client";
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 
 function Admin() {
   const router = useRouter();

@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../server/db";
+import { prisma } from "../../../server/db";
 
 type KkhData = {
+  id_kkh?: number;
   berat_badan: number;
   tinggi_badan: number;
   umur: number;
@@ -10,6 +11,7 @@ type KkhData = {
   jenis_kelamin: string;
   email: string;
   kkh: number;
+  created_at?: Date;
 };
 
 export default async function handler(
@@ -18,8 +20,10 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     const kkhData: KkhData = req.body as KkhData;
+    // remove the id from the data
+    const { id_kkh, created_at, ...otherData } = kkhData;
     try {
-      const newKkh = (await prisma.kkh.create({ data: kkhData })) as KkhData;
+      const newKkh = (await prisma.kkh.create({ data: otherData })) as KkhData;
       res.status(201).json(newKkh);
     } catch (error) {
       console.log(error);
