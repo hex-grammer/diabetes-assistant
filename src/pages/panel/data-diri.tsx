@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { PEKERJAAN } from "../../lib/pekerjaan";
 
 interface FormData {
   beratBadan: number;
@@ -47,8 +48,8 @@ function DataDiri({ setKKH }: DataDiriProps) {
   };
 
   // fungsi untuk menghitung KKH
-  const hitungKKH = () => {
-    const { beratBadan, tinggiBadan, umur, aktivitas, jenisKelamin } = formData;
+  const hitungKKH = (data: FormData) => {
+    const { beratBadan, tinggiBadan, umur, aktivitas, jenisKelamin } = data;
     let kkh = 0;
     if (jenisKelamin === "laki-laki") {
       kkh = 66 + 13.7 * beratBadan + 5 * tinggiBadan - 6.8 * umur;
@@ -69,10 +70,15 @@ function DataDiri({ setKKH }: DataDiriProps) {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formData);
-    // set KKH
-    setKKH(hitungKKH());
-    toast.success("Data berhasil disimpan!");
+    setKKH(
+      hitungKKH({
+        ...formData,
+        aktivitas: PEKERJAAN[
+          PEKERJAAN.map((p) => p.nama_pekerjaan).indexOf(formData.aktivitas)
+        ]?.kategori as string,
+      })
+    );
+    // toast.success("Data berhasil disimpan!");
   };
 
   return (
@@ -140,7 +146,7 @@ function DataDiri({ setKKH }: DataDiriProps) {
           className="mb-1 block font-bold text-gray-700"
           htmlFor="aktivitas"
         >
-          Jenis Aktivitas
+          Pekerjaan
         </label>
         <select
           className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
@@ -150,10 +156,15 @@ function DataDiri({ setKKH }: DataDiriProps) {
           onChange={(e) => void handleInputChange(e)}
           required
         >
-          <option value="">Pilih Aktivitas</option>
-          <option value="ringan">Ringan</option>
-          <option value="sedang">Sedang</option>
-          <option value="berat">Berat</option>
+          <option value="">Pilih Pekerjaan</option>
+          {PEKERJAAN.map((pekerjaan) => (
+            <option
+              key={pekerjaan.nama_pekerjaan}
+              value={pekerjaan.nama_pekerjaan}
+            >
+              {pekerjaan.nama_pekerjaan}
+            </option>
+          ))}
         </select>
       </div>
       {/* Jenis Kelamin */}
