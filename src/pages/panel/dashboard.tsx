@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Layout from "../Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -99,7 +99,7 @@ function Dashboard() {
                       {i + 1}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
-                      {`${kkh.created_at}`.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3-$2-$1')}
+                      {kkh.created_at.toString().replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3-$2-$1')}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
                       {kkh.berat_badan}kg
