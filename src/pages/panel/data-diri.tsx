@@ -18,11 +18,13 @@ interface FormData {
 }
 interface DataDiriProps {
   setKKH: React.Dispatch<React.SetStateAction<number>>;
+  setTabelKKH: React.Dispatch<React.SetStateAction<kkh[]|null>>;
 }
 
-function DataDiri({ setKKH }: DataDiriProps) {
+function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
   const [submit, setSubmit] = useState(false);
   const { data: session } = useSession();
+  const [updateTable, setUpdateTable] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     berat_badan: 20,
     tinggi_badan: 100,
@@ -57,9 +59,10 @@ function DataDiri({ setKKH }: DataDiriProps) {
   useEffect(() => {
     try {
       void axios
-        .get("/api/kkh/getLast", { params: { dataLength: 10 } })
+        .get("/api/kkh/getLast", { params: { dataLength: 3 } })
         .then((res: { data: kkh[] }) => {
           setKKH(res.data[0]?.kkh || 0);
+          setTabelKKH(res.data)
           setFormData(
             res.data[0] || {
               berat_badan: 20,
@@ -82,7 +85,7 @@ function DataDiri({ setKKH }: DataDiriProps) {
           );
         });
     } catch (error) {}
-  }, []);
+  }, [updateTable]);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -153,6 +156,7 @@ function DataDiri({ setKKH }: DataDiriProps) {
         email: session?.user?.email,
         kkh: hitungKKH(),
       });
+      setUpdateTable(t=>!t)
       toast.success("Data berhasil disimpan!");
     } catch (error) {
       toast.error("Data gagal disimpan!");
