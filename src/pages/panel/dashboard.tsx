@@ -19,24 +19,24 @@ function Dashboard() {
     <Layout>
       <>
         <div className="relative grid h-fit w-full grid-cols-1 gap-4 p-6 sm:grid-cols-6">
-          <div className="col-span-full mb-2 rounded-md bg-gray-50 p-4 shadow-md">
+          <div className="col-span-full rounded-md bg-gray-50 p-4 shadow-md">
             <h1 className="text-2xl font-bold uppercase">{paths}</h1>
           </div>
-          <div className="mb-2 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:row-span-3">
-            <h2 className="mb-2 text-center text-xl font-bold uppercase">
+          <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:row-span-3">
+            <h2 className="text-center text-xl font-bold uppercase mb-2">
               Data Diri
             </h2>
             <DataDiri setTabelKKH={setTabelKKH} setKKH={setKKH} />
           </div>
-          <div className="mb-2 h-fit rounded-md bg-gray-50 p-4 pb-8 shadow-md sm:col-span-4 sm:col-start-3 ">
-            <h2 className="mb-2 text-center text-xl font-bold uppercase">
+          <div className="h-fit rounded-md bg-gray-50 p-4 pb-8 shadow-md sm:col-span-2 sm:col-start-3">
+            <h2 className="text-center text-xl font-bold uppercase mb-2">
               Kebutuhan Kalori Harian
             </h2>
-            <div className="flex h-1/4 items-end justify-center py-4">
-              <span className="text-5xl font-bold text-green-600">
+            <div className="flex items-end justify-center py-2">
+              <span className="text-4xl font-bold text-green-600">
                 {kkh ? kkh.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : 0}
               </span>
-              <span className="ml-1 text-xl font-semibold text-gray-700">
+              <span className="ml-1 text-lg font-medium text-gray-600">
                 kkal/hari
               </span>
             </div>
@@ -47,8 +47,18 @@ function Dashboard() {
               </span>
             </div>
           </div>
-          <div className=" sm:col-start-3 mb-2 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-4">
-            <h2 className="mb-2 text-center text-xl font-bold uppercase">
+          <div className="h-fit rounded-md bg-gray-50 p-4 pb-8 shadow-md sm:col-span-2 sm:col-start-5">
+            <h2 className="text-center text-xl font-bold uppercase mb-2">
+              Rekomendasi Menu Harian
+            </h2>
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-center text-sm text-gray-700 sm:px-4">
+                Makanan yang direkomendasikan berdasarkan kebutuhan kalori anda adalah:
+              </span>
+            </div>
+          </div>
+          <div className=" sm:col-start-3 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-4">
+            <h2 className="text-center text-xl font-bold uppercase mb-2">
               Riwayat KKH
             </h2>
             <table className="min-w-full divide-y divide-gray-200">
