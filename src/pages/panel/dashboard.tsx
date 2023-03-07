@@ -80,6 +80,12 @@ function Dashboard() {
                     scope="col"
                     className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                   >
+                    KKH
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
                     Berat Badan
                   </th>
                   <th
@@ -94,12 +100,6 @@ function Dashboard() {
                   >
                     Umur
                   </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                  >
-                    KKH
-                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -112,16 +112,16 @@ function Dashboard() {
                       {kkh.created_at.toString().replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3-$2-$1')}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
-                      {kkh.berat_badan}kg
+                      {kkh.kkh.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
-                      {kkh.tinggi_badan}cm
+                      {kkh.berat_badan} kg
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
+                      {kkh.tinggi_badan} cm
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
                       {kkh.umur} Tahun
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
-                      {kkh.kkh.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                     </td>
                   </tr>
                 ))}
