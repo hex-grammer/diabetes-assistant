@@ -56,3 +56,17 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model kkh {
+    id_kkh        Int    @id @default(autoincrement())
+    berat_badan   Float
+    tinggi_badan  Float
+    umur          Int
+    pekerjaan     String
+    aktivitas     String
+    jenis_kelamin String
+    email         String
+    kkh           Int
+
+    created_at DateTime @default(now())
+}

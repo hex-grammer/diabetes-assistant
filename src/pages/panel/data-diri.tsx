@@ -1,59 +1,128 @@
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { PEKERJAAN } from "../../lib/pekerjaan";
+import axios from "axios";
 import { toast } from "react-toastify";
+import type { kkh } from "@prisma/client";
 
 interface FormData {
-  beratBadan: number;
-  tinggiBadan: number;
+  id_kkh?: number;
+  berat_badan: number;
+  tinggi_badan: number;
   umur: number;
+  pekerjaan: string;
   aktivitas: string;
-  jenisKelamin: string;
+  jenis_kelamin: string;
+  kkh?: number;
+  email?: string;
 }
 interface DataDiriProps {
   setKKH: React.Dispatch<React.SetStateAction<number>>;
+  setTabelKKH: React.Dispatch<React.SetStateAction<kkh[]|null>>;
 }
 
-function DataDiri({ setKKH }: DataDiriProps) {
+function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
   const [submit, setSubmit] = useState(false);
+  const { data: session } = useSession();
+  const [updateTable, setUpdateTable] = useState(false)
   const [formData, setFormData] = useState<FormData>({
-    beratBadan: 20,
-    tinggiBadan: 100,
+    berat_badan: 20,
+    tinggi_badan: 100,
     umur: 15,
+    pekerjaan: "",
     aktivitas: "",
-    jenisKelamin: "",
+    jenis_kelamin: "",
+  });
+  const [defaultFormData, setDefaultFormData] = useState<FormData>({
+    berat_badan: 20,
+    tinggi_badan: 100,
+    umur: 15,
+    pekerjaan: "",
+    aktivitas: "",
+    jenis_kelamin: "",
   });
 
   // set submit true jika formData berubah dan tidak kosong
   useEffect(() => {
     if (
-      formData.beratBadan &&
-      formData.tinggiBadan &&
-      formData.umur &&
-      formData.aktivitas &&
-      formData.jenisKelamin
+      JSON.stringify(formData) === JSON.stringify(defaultFormData) ||
+      formData.pekerjaan === "" ||
+      formData.jenis_kelamin === ""
     ) {
-      setSubmit(true);
-    } else {
       setSubmit(false);
+    } else {
+      setSubmit(true);
     }
   }, [formData]);
+
+  // axios request to set kkh in /api/kkh/getLast in useEffect
+  useEffect(() => {
+    try {
+      void axios
+        .get("/api/kkh/getLast", { params: { dataLength: 3 } })
+        .then((res: { data: kkh[] }) => {
+          setKKH(res.data[0]?.kkh || 0);
+          setTabelKKH(res.data)
+          setFormData(
+            res.data[0] || {
+              berat_badan: 20,
+              tinggi_badan: 100,
+              umur: 15,
+              pekerjaan: "",
+              aktivitas: "",
+              jenis_kelamin: "",
+            }
+          );
+          setDefaultFormData(
+            res.data[0] || {
+              berat_badan: 20,
+              tinggi_badan: 100,
+              umur: 15,
+              pekerjaan: "",
+              aktivitas: "",
+              jenis_kelamin: "",
+            }
+          );
+        });
+    } catch (error) {}
+  }, [updateTable]);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
+    // jika target name adalah pekerjaan, maka ubah aktivitas sesuai dengan pekerjaan
+    if (event.target.name === "pekerjaan") {
+      const pekerjaanToKategori = PEKERJAAN[
+        PEKERJAAN.map((p) => p.nama_pekerjaan).indexOf(event.target.value)
+      ]?.kategori as string;
+
+      setFormData({
+        ...formData,
+        aktivitas: pekerjaanToKategori,
+        [event.target.name]: event.target.value,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [event.target.name]: event.target.value,
+      });
+    }
   };
 
   // fungsi untuk menghitung KKH
   const hitungKKH = () => {
-    const { beratBadan, tinggiBadan, umur, aktivitas, jenisKelamin } = formData;
+    const {
+      berat_badan: berat_badan,
+      tinggi_badan: tinggi_badan,
+      umur,
+      aktivitas,
+      jenis_kelamin: jenis_kelamin,
+    } = formData;
     let kkh = 0;
-    if (jenisKelamin === "laki-laki") {
-      kkh = 66 + 13.7 * beratBadan + 5 * tinggiBadan - 6.8 * umur;
+    if (jenis_kelamin === "laki-laki") {
+      kkh = 66 + 13.7 * berat_badan + 5 * tinggi_badan - 6.8 * umur;
     } else {
-      kkh = 655 + 9.6 * beratBadan + 1.8 * tinggiBadan - 4.7 * umur;
+      kkh = 655 + 9.6 * berat_badan + 1.8 * tinggi_badan - 4.7 * umur;
     }
     if (aktivitas === "ringan") {
       kkh *= 1.375;
@@ -67,30 +136,54 @@ function DataDiri({ setKKH }: DataDiriProps) {
     return Math.round(kkh);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formData);
-    // set KKH
+    // if form data === default form data
+    if (JSON.stringify(formData) === JSON.stringify(defaultFormData)) {
+      toast.error("Data tidak berubah!");
+      return;
+    }
+
     setKKH(hitungKKH());
-    toast.success("Data berhasil disimpan!");
+
+    // axios request data to /api/kkh
+    try {
+      await axios.post("/api/kkh/create", {
+        ...formData,
+        berat_badan: Number(formData.berat_badan),
+        tinggi_badan: Number(formData.tinggi_badan),
+        umur: Number(formData.umur),
+        email: session?.user?.email,
+        kkh: hitungKKH(),
+      });
+      setUpdateTable(t=>!t)
+      toast.success("Data berhasil disimpan!");
+    } catch (error) {
+      toast.error("Data gagal disimpan!");
+    }
+    // console.log({
+    //   ...formData,
+    //   email: session?.user?.email,
+    //   kkh: hitungKKH(),
+    // });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={(e) => void handleSubmit(e)}>
       {/* Berat Badan */}
       <div className="mb-4">
         <label
           className="mb-1 block font-bold text-gray-700"
-          htmlFor="beratBadan"
+          htmlFor="berat_badan"
         >
           Berat Badan (kg)
         </label>
         <input
           className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="beratBadan"
+          id="berat_badan"
           type="number"
-          name="beratBadan"
-          value={formData.beratBadan}
+          name="berat_badan"
+          value={formData.berat_badan}
           onChange={handleInputChange}
           required
           min={20}
@@ -100,16 +193,16 @@ function DataDiri({ setKKH }: DataDiriProps) {
       <div className="mb-4">
         <label
           className="mb-1 block font-bold text-gray-700"
-          htmlFor="tinggiBadan"
+          htmlFor="tinggi_badan"
         >
           Tinggi Badan (cm)
         </label>
         <input
           className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="tinggiBadan"
+          id="tinggi_badan"
           type="number"
-          name="tinggiBadan"
-          value={formData.tinggiBadan}
+          name="tinggi_badan"
+          value={formData.tinggi_badan}
           onChange={handleInputChange}
           required
           min={100}
@@ -138,29 +231,34 @@ function DataDiri({ setKKH }: DataDiriProps) {
       <div className="mb-4">
         <label
           className="mb-1 block font-bold text-gray-700"
-          htmlFor="aktivitas"
+          htmlFor="pekerjaan"
         >
-          Jenis Aktivitas
+          Pekerjaan
         </label>
         <select
           className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="aktivitas"
-          name="aktivitas"
-          value={formData.aktivitas}
+          id="pekerjaan"
+          name="pekerjaan"
+          value={formData.pekerjaan}
           onChange={(e) => void handleInputChange(e)}
           required
         >
-          <option value="">Pilih Aktivitas</option>
-          <option value="ringan">Ringan</option>
-          <option value="sedang">Sedang</option>
-          <option value="berat">Berat</option>
+          <option value="">Pilih Pekerjaan</option>
+          {PEKERJAAN.map((pekerjaan) => (
+            <option
+              key={pekerjaan.nama_pekerjaan}
+              value={pekerjaan.nama_pekerjaan}
+            >
+              {pekerjaan.nama_pekerjaan}
+            </option>
+          ))}
         </select>
       </div>
       {/* Jenis Kelamin */}
       <div className="mb-4">
         <label
           className="mb-1 block font-bold text-gray-700"
-          htmlFor="jenisKelamin"
+          htmlFor="jenis_kelamin"
         >
           Jenis Kelamin
         </label>
@@ -169,9 +267,9 @@ function DataDiri({ setKKH }: DataDiriProps) {
             <input
               type="radio"
               id="lakiLaki"
-              name="jenisKelamin"
+              name="jenis_kelamin"
               value="laki-laki"
-              checked={formData.jenisKelamin === "laki-laki"}
+              checked={formData.jenis_kelamin === "laki-laki"}
               onChange={handleInputChange}
               required
             />
@@ -183,9 +281,9 @@ function DataDiri({ setKKH }: DataDiriProps) {
             <input
               type="radio"
               id="perempuan"
-              name="jenisKelamin"
+              name="jenis_kelamin"
               value="perempuan"
-              checked={formData.jenisKelamin === "perempuan"}
+              checked={formData.jenis_kelamin === "perempuan"}
               onChange={handleInputChange}
               required
             />

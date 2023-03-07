@@ -1,4 +1,4 @@
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
@@ -15,7 +15,7 @@ const Header = (props: Props) => {
       {/* profil */}
       <div className="flex items-center sm:flex-row-reverse ">
         {/* image but use <img/> */}
-        <img
+        <Image
           alt={`Foto profil ${String(session?.user?.name)}`}
           width={36}
           height={36}

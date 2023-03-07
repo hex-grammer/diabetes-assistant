@@ -25,11 +25,6 @@ function Layout(props: Props) {
   const [menuStatus, setMenuStatus] = useState("no");
   const { loading } = useGlobalContext();
 
-  // log loading useEffect
-  useEffect(() => {
-    console.log("loading: ", loading);
-  }, [loading]);
-
   return (
     <div className="font-poppins flex h-screen overflow-hidden">
       <Head>
