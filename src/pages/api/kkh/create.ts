@@ -11,6 +11,7 @@ type KkhData = {
   jenis_kelamin: string;
   email: string;
   kkh: number;
+  imt: number;
   created_at?: Date;
 };
 
