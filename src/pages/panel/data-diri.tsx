@@ -14,17 +14,25 @@ interface FormData {
   aktivitas: string;
   jenis_kelamin: string;
   kkh?: number;
+  imt?: number;
   email?: string;
 }
 interface DataDiriProps {
   setKKH: React.Dispatch<React.SetStateAction<number>>;
-  setTabelKKH: React.Dispatch<React.SetStateAction<kkh[]|null>>;
+  setTabelKKH: React.Dispatch<React.SetStateAction<kkh[] | null>>;
+  setRekomendasiMenu: React.Dispatch<React.SetStateAction<string[] | null>>;
+  setKategoriIMT: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
+function DataDiri({
+  setKKH,
+  setTabelKKH,
+  setRekomendasiMenu,
+  setKategoriIMT,
+}: DataDiriProps) {
   const [submit, setSubmit] = useState(false);
   const { data: session } = useSession();
-  const [updateTable, setUpdateTable] = useState(false)
+  const [updateTable, setUpdateTable] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     berat_badan: 20,
     tinggi_badan: 100,
@@ -41,6 +49,33 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
     aktivitas: "",
     jenis_kelamin: "",
   });
+
+  const MAKANAN = {
+    M001: "Beras Merah",
+    M002: "Buah Apel",
+    M003: "Buah Belimbing",
+    M004: "Buah Kiwi",
+    M005: "Buah Nanas",
+    M006: "Buah Pepaya",
+    M007: "Bubur Kacang Hijau",
+    M008: "Ikan Salmon Panggang",
+    M009: "Ikan Tuna Panggang",
+    M010: "Jagung",
+    M011: "Kacang Merah",
+    M012: "Kacang Tanah",
+    M013: "Mentimun",
+    M014: "Sayur Bayam",
+    M015: "Sayur Brokoli",
+    M016: "Sayur Kubis/Kol",
+    M017: "Sayur Sawi Putih",
+    M018: "Susu Bear Brand",
+    M019: "Tahu",
+    M020: "Telur Rebus",
+    M021: "Tempe",
+    M022: "Tomat",
+    M023: "Wortel",
+    M024: "Sayur Sawi Hijau",
+  };
 
   // set submit true jika formData berubah dan tidak kosong
   useEffect(() => {
@@ -62,7 +97,8 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
         .get("/api/kkh/getLast", { params: { dataLength: 3 } })
         .then((res: { data: kkh[] }) => {
           setKKH(res.data[0]?.kkh || 0);
-          setTabelKKH(res.data)
+          setKategoriIMT(hitungKategoriIMT() || "");
+          setTabelKKH(res.data);
           setFormData(
             res.data[0] || {
               berat_badan: 20,
@@ -71,6 +107,7 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
               pekerjaan: "",
               aktivitas: "",
               jenis_kelamin: "",
+              imt: 0,
             }
           );
           setDefaultFormData(
@@ -81,6 +118,7 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
               pekerjaan: "",
               aktivitas: "",
               jenis_kelamin: "",
+              imt: 0,
             }
           );
         });
@@ -136,6 +174,83 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
     return Math.round(kkh);
   };
 
+  // fungsi untuk menghitung IMT
+  const hitungIMT = () => {
+    const { berat_badan: berat_badan, tinggi_badan: tinggi_badan } = formData;
+    const imt = berat_badan / ((tinggi_badan / 100) * (tinggi_badan / 100));
+    // limit decimal to 2
+    return Math.round((imt + Number.EPSILON) * 100) / 100;
+  };
+
+  // fungsi untuk menghitung Kategori IMT
+  const hitungKategoriIMT = () => {
+    const imt = hitungIMT();
+    if (imt < 17) {
+      setRekomendasiMenu([
+        MAKANAN.M001,
+        MAKANAN.M002,
+        MAKANAN.M004,
+        MAKANAN.M006,
+        MAKANAN.M008,
+        MAKANAN.M009,
+        MAKANAN.M014,
+        MAKANAN.M016,
+        MAKANAN.M017,
+        MAKANAN.M018,
+        MAKANAN.M019,
+        MAKANAN.M020,
+        MAKANAN.M023,
+      ]);
+      return "Sangat Kurus";
+    } else if (imt >= 18.5 && imt <= 24.9) {
+      setRekomendasiMenu([
+        MAKANAN.M001,
+        MAKANAN.M002,
+        MAKANAN.M006,
+        MAKANAN.M008,
+        MAKANAN.M009,
+        MAKANAN.M010,
+        MAKANAN.M013,
+        MAKANAN.M019,
+        MAKANAN.M021,
+        MAKANAN.M022,
+        MAKANAN.M023,
+        MAKANAN.M024,
+      ]);
+      return "Kurus";
+    } else if (imt >= 18.5 && imt <= 24.9) {
+      setRekomendasiMenu([
+        MAKANAN.M001,
+        MAKANAN.M006,
+        MAKANAN.M007,
+        MAKANAN.M008,
+        MAKANAN.M009,
+        MAKANAN.M010,
+        MAKANAN.M011,
+        MAKANAN.M014,
+        MAKANAN.M018,
+      ]);
+      return "Normal";
+    } else if (imt >= 25 && imt <= 29.9) {
+      setRekomendasiMenu([
+        MAKANAN.M001,
+        MAKANAN.M006,
+        MAKANAN.M009,
+        MAKANAN.M010,
+        MAKANAN.M014,
+      ]);
+      return "Gemuk";
+    } else if (imt >= 30) {
+      setRekomendasiMenu([
+        MAKANAN.M001,
+        MAKANAN.M008,
+        MAKANAN.M014,
+        MAKANAN.M015,
+      ]);
+      return "Obesitas";
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // if form data === default form data
@@ -145,6 +260,7 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
     }
 
     setKKH(hitungKKH());
+    setKategoriIMT(hitungKategoriIMT() || "");
 
     // axios request data to /api/kkh
     try {
@@ -155,17 +271,13 @@ function DataDiri({ setKKH, setTabelKKH }: DataDiriProps) {
         umur: Number(formData.umur),
         email: session?.user?.email,
         kkh: hitungKKH(),
+        imt: hitungIMT(),
       });
-      setUpdateTable(t=>!t)
+      setUpdateTable((t) => !t);
       toast.success("Data berhasil disimpan!");
     } catch (error) {
       toast.error("Data gagal disimpan!");
     }
-    // console.log({
-    //   ...formData,
-    //   email: session?.user?.email,
-    //   kkh: hitungKKH(),
-    // });
   };
 
   return (

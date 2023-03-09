@@ -58,7 +58,7 @@ model VerificationToken {
 }
 
 model kkh {
-    id_kkh        Int    @id @default(autoincrement())
+    id_kkh        Int      @id @default(autoincrement())
     berat_badan   Float
     tinggi_badan  Float
     umur          Int
@@ -67,32 +67,6 @@ model kkh {
     jenis_kelamin String
     email         String
     kkh           Int
-
-    created_at DateTime @default(now())
+    imt           Float
+    created_at    DateTime @default(now())
 }
-
-model makanan {
-  id_makanan   Int      @id @default(autoincrement())
-  kode_makanan String   @unique
-  nama_makanan String
-  aturan       aturan?  @relation("AturanMakanan", fields: [aturan_id], references: [id_aturan], map: "makanan_aturan_fkey")
-  aturan_id    Int
-}
-
-model berat_badan {
-  id_berat    Int          @id @default(autoincrement())
-  kode_berat  String       @unique
-  max         Float
-  min         Float
-  aturan      aturan[]    
-}
-
-model aturan {
-  id_aturan         Int          @id @default(autoincrement())
-  makanan           makanan[]    @relation("AturanMakanan")
-  berat_badan       berat_badan  @relation(fields: [berat_badan_id], references: [id_berat])
-  berat_badan_id    Int
-}
-
-
-

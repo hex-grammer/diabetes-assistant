@@ -2,69 +2,50 @@ import React, { useState } from "react";
 import Layout from "../Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AbjadCard from "../../components/AbjadCard";
 import { useRouter } from "next/router";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import { getSession } from "next-auth/react";
 import type { GetServerSidePropsContext } from "next";
 
 function Makanan() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
-  const [modalLabel, setModalLabel] = useState("");
+  // useState for makanan
+  const [makanan, setMakanan] = useState([]);
+
   return (
     <Layout>
       <>
         <div className="relative grid h-fit w-full grid-cols-1 gap-2 p-6 sm:grid-cols-6">
-          {/* modal */}
-          {modalLabel !== "" && (
-            <div
-              className="fixed top-[10vh] left-0 z-20 hidden h-[92vh] w-full items-center justify-center bg-gray-500 bg-opacity-75 backdrop-blur-sm sm:left-[18%] sm:top-[8vh] sm:flex sm:w-[82%]"
-              onClick={() => setModalLabel("")}
-            >
-              <div className="relative">
-                <AiOutlineCloseCircle
-                  className="absolute right-0 top-0 z-10 cursor-pointer rounded-tr-md bg-gray-300 bg-opacity-40 p-0.5 text-2xl text-gray-800"
-                  onClick={() => setModalLabel("")}
-                />
-                <AbjadCard
-                  title={modalLabel}
-                  showModal={() => setModalLabel(modalLabel)}
-                  image={`https://loremflickr.com/320/180/${modalLabel}`}
-                />
-              </div>
-            </div>
-          )}
-          <div className="col-span-full mb-2">
+          <div className="col-span-full block rounded-md bg-gray-50 p-4 text-center shadow-md sm:hidden">
             <h1 className="text-center text-2xl font-bold uppercase">
               {paths}
             </h1>
           </div>
-          <div className=" sm:col-start-3 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-4">
-              <h1 className="mb-4 text-2xl font-bold">Tabel Makanan</h1>
-              <table className="w-full table-auto border">
-                <thead>
-                  <tr>
-                    <th className="border px-4 py-2">ID Makanan</th>
-                    <th className="border px-4 py-2">Kode Makanan</th>
-                    <th className="border px-4 py-2">Nama Makanan</th>
+          <div className=" h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-4 sm:col-start-3">
+            <h1 className="mb-4 text-center text-2xl font-bold">
+              Tabel Makanan
+            </h1>
+            <table className="w-full table-auto border">
+              <thead>
+                <tr>
+                  <th className="border p-2">No</th>
+                  <th className="border px-4 py-2 text-left">Kode Makanan</th>
+                  <th className="border px-4 py-2 text-left">Nama Makanan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* display makanan */}
+                {/* {makanan.map((m, i) => (
+                  <tr key={m.id}>
+                    <td className="border p-2 text-center">{i + 1}</td>
+                    <td className="border px-4 py-2">{m.kode}</td>
+                    <td className="border px-4 py-2">{m.nama}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border px-4 py-2">1</td>
-                    <td className="border px-4 py-2">MK001</td>
-                    <td className="border px-4 py-2">Nasi Goreng</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">2</td>
-                    <td className="border px-4 py-2">MK002</td>
-                    <td className="border px-4 py-2">Mie Ayam</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                ))} */}
+              </tbody>
+            </table>
           </div>
+        </div>
         <ToastContainer position="top-right" />
       </>
     </Layout>
