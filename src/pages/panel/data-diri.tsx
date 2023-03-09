@@ -202,7 +202,7 @@ function DataDiri({
         MAKANAN.M023,
       ]);
       return "Sangat Kurus";
-    } else if (imt >= 18.5 && imt <= 24.9) {
+    } else if (imt >= 17 && imt <= 18.5) {
       setRekomendasiMenu([
         MAKANAN.M001,
         MAKANAN.M002,
@@ -218,7 +218,7 @@ function DataDiri({
         MAKANAN.M024,
       ]);
       return "Kurus";
-    } else if (imt >= 18.5 && imt <= 24.9) {
+    } else if (imt >= 18.5 && imt <= 25) {
       setRekomendasiMenu([
         MAKANAN.M001,
         MAKANAN.M006,
@@ -231,7 +231,7 @@ function DataDiri({
         MAKANAN.M018,
       ]);
       return "Normal";
-    } else if (imt >= 25 && imt <= 29.9) {
+    } else if (imt >= 25 && imt <= 27) {
       setRekomendasiMenu([
         MAKANAN.M001,
         MAKANAN.M006,
@@ -240,7 +240,7 @@ function DataDiri({
         MAKANAN.M014,
       ]);
       return "Gemuk";
-    } else if (imt >= 30) {
+    } else if (imt >= 27) {
       setRekomendasiMenu([
         MAKANAN.M001,
         MAKANAN.M008,
