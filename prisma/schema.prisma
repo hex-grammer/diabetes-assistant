@@ -58,7 +58,7 @@ model VerificationToken {
 }
 
 model kkh {
-    id_kkh        Int    @id @default(autoincrement())
+    id_kkh        Int      @id @default(autoincrement())
     berat_badan   Float
     tinggi_badan  Float
     umur          Int
@@ -67,6 +67,6 @@ model kkh {
     jenis_kelamin String
     email         String
     kkh           Int
-
-    created_at DateTime @default(now())
+    imt           Float
+    created_at    DateTime @default(now())
 }

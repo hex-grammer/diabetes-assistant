@@ -3,9 +3,10 @@ import Header from "../components/Header";
 import SideMenu from "../components/SideMenu";
 import { useGlobalContext } from "../lib/GlobalContext";
 import Head from "next/head";
-import { GiBrain } from "react-icons/gi";
+import { GiBrain, GiWeightScale } from "react-icons/gi";
+import { SlCalculator } from "react-icons/sl";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
 import { HiScale } from "react-icons/hi2";
 
 type Props = {
@@ -35,6 +36,14 @@ function Layout(props: Props) {
         setMenuStatus={setMenuStatus}
         menuLists={[
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
+          {
+            title: "Makanan",
+            icon: <MdOutlineFoodBank />,
+          },
+          {
+            title: "Berat Badan",
+            icon: <GiWeightScale />,
+          },
           {
             title: "Forward Chaining",
             icon: <TiMediaFastForwardOutline />,
