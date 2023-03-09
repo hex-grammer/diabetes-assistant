@@ -36,10 +36,10 @@ function Layout(props: Props) {
         setMenuStatus={setMenuStatus}
         menuLists={[
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
-          {
-            title: "Makanan",
-            icon: <MdOutlineFoodBank />,
-          },
+          // {
+          //   title: "Makanan",
+          //   icon: <MdOutlineFoodBank />,
+          // },
           {
             title: "Berat Badan",
             icon: <GiWeightScale />,

@@ -37,11 +37,11 @@ function Dashboard() {
             />
           </div>
           {/* KKH */}
-          <div className="h-fit rounded-md bg-gray-50 p-4 pb-8 shadow-md sm:col-span-2 sm:col-start-3">
-            <h2 className="mb-2 text-center text-xl font-bold uppercase">
+          <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-3">
+            <h2 className="mb-2 text-xl font-bold uppercase">
               Kebutuhan Kalori Harian
             </h2>
-            <div className="flex items-end justify-center py-2">
+            <div className="flex items-end py-2">
               <span className="text-4xl font-bold text-green-600">
                 {kkh ? kkh.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : 0}
               </span>
@@ -49,8 +49,8 @@ function Dashboard() {
                 kkal/hari
               </span>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <span className="text-center text-sm text-gray-700 sm:px-4">
+            <div className="flex flex-col justify-center">
+              <span className="text-sm text-gray-700">
                 Kebutuhan kalori harian (KKH) adalah jumlah kalori yang
                 dibutuhkan untuk menjaga kesehatan dan beraktivitas sehari-hari.
               </span>

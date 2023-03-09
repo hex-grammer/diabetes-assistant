@@ -4,6 +4,7 @@ import { PEKERJAAN } from "../../lib/pekerjaan";
 import axios from "axios";
 import { toast } from "react-toastify";
 import type { kkh } from "@prisma/client";
+import { object } from "zod";
 
 interface FormData {
   id_kkh?: number;
@@ -18,10 +19,10 @@ interface FormData {
   email?: string;
 }
 interface DataDiriProps {
-  setKKH: React.Dispatch<React.SetStateAction<number>>;
-  setTabelKKH: React.Dispatch<React.SetStateAction<kkh[] | null>>;
-  setRekomendasiMenu: React.Dispatch<React.SetStateAction<string[] | null>>;
-  setKategoriIMT: React.Dispatch<React.SetStateAction<string>>;
+  setKKH?: React.Dispatch<React.SetStateAction<number>>;
+  setTabelKKH?: React.Dispatch<React.SetStateAction<kkh[] | null>>;
+  setRekomendasiMenu?: React.Dispatch<React.SetStateAction<string[] | null>>;
+  setKategoriIMT?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function DataDiri({
@@ -94,11 +95,11 @@ function DataDiri({
   useEffect(() => {
     try {
       void axios
-        .get("/api/kkh/getLast", { params: { dataLength: 3 } })
+        .get("/api/kkh/getLast", { params: { dataLength: 4 } })
         .then((res: { data: kkh[] }) => {
-          setKKH(res.data[0]?.kkh || 0);
-          setKategoriIMT(hitungKategoriIMT() || "");
-          setTabelKKH(res.data);
+          setKKH && setKKH(res.data[0]?.kkh || 0);
+          setKategoriIMT && setKategoriIMT(hitungKategoriIMT() || "");
+          setTabelKKH && setTabelKKH(res.data);
           setFormData(
             res.data[0] || {
               berat_badan: 20,
@@ -186,67 +187,72 @@ function DataDiri({
   const hitungKategoriIMT = () => {
     const imt = hitungIMT();
     if (imt < 17) {
-      setRekomendasiMenu([
-        MAKANAN.M001,
-        MAKANAN.M002,
-        MAKANAN.M004,
-        MAKANAN.M006,
-        MAKANAN.M008,
-        MAKANAN.M009,
-        MAKANAN.M014,
-        MAKANAN.M016,
-        MAKANAN.M017,
-        MAKANAN.M018,
-        MAKANAN.M019,
-        MAKANAN.M020,
-        MAKANAN.M023,
-      ]);
+      setRekomendasiMenu &&
+        setRekomendasiMenu([
+          MAKANAN.M001,
+          MAKANAN.M002,
+          MAKANAN.M004,
+          MAKANAN.M006,
+          MAKANAN.M008,
+          MAKANAN.M009,
+          MAKANAN.M014,
+          MAKANAN.M016,
+          MAKANAN.M017,
+          MAKANAN.M018,
+          MAKANAN.M019,
+          MAKANAN.M020,
+          MAKANAN.M023,
+        ]);
       return "Sangat Kurus";
     } else if (imt >= 17 && imt <= 18.5) {
-      setRekomendasiMenu([
-        MAKANAN.M001,
-        MAKANAN.M002,
-        MAKANAN.M006,
-        MAKANAN.M008,
-        MAKANAN.M009,
-        MAKANAN.M010,
-        MAKANAN.M013,
-        MAKANAN.M019,
-        MAKANAN.M021,
-        MAKANAN.M022,
-        MAKANAN.M023,
-        MAKANAN.M024,
-      ]);
+      setRekomendasiMenu &&
+        setRekomendasiMenu([
+          MAKANAN.M001,
+          MAKANAN.M002,
+          MAKANAN.M006,
+          MAKANAN.M008,
+          MAKANAN.M009,
+          MAKANAN.M010,
+          MAKANAN.M013,
+          MAKANAN.M019,
+          MAKANAN.M021,
+          MAKANAN.M022,
+          MAKANAN.M023,
+          MAKANAN.M024,
+        ]);
       return "Kurus";
     } else if (imt >= 18.5 && imt <= 25) {
-      setRekomendasiMenu([
-        MAKANAN.M001,
-        MAKANAN.M006,
-        MAKANAN.M007,
-        MAKANAN.M008,
-        MAKANAN.M009,
-        MAKANAN.M010,
-        MAKANAN.M011,
-        MAKANAN.M014,
-        MAKANAN.M018,
-      ]);
+      setRekomendasiMenu &&
+        setRekomendasiMenu([
+          MAKANAN.M001,
+          MAKANAN.M006,
+          MAKANAN.M007,
+          MAKANAN.M008,
+          MAKANAN.M009,
+          MAKANAN.M010,
+          MAKANAN.M011,
+          MAKANAN.M014,
+          MAKANAN.M018,
+        ]);
       return "Normal";
     } else if (imt >= 25 && imt <= 27) {
-      setRekomendasiMenu([
-        MAKANAN.M001,
-        MAKANAN.M006,
-        MAKANAN.M009,
-        MAKANAN.M010,
-        MAKANAN.M014,
-      ]);
+      setRekomendasiMenu &&
+        setRekomendasiMenu([
+          MAKANAN.M001,
+          MAKANAN.M006,
+          MAKANAN.M009,
+          MAKANAN.M010,
+          MAKANAN.M014,
+        ]);
       return "Gemuk";
     } else if (imt >= 27) {
-      setRekomendasiMenu([
-        MAKANAN.M001,
-        MAKANAN.M008,
-        MAKANAN.M014,
-        MAKANAN.M015,
-      ]);
+      setRekomendasiMenu &&
+        setRekomendasiMenu([
+          MAKANAN.M001,
+          MAKANAN.M008,
+          MAKANAN.M014,
+          MAKANAN.M015,
+        ]);
       return "Obesitas";
     }
   };
@@ -259,8 +265,8 @@ function DataDiri({
       return;
     }
 
-    setKKH(hitungKKH());
-    setKategoriIMT(hitungKategoriIMT() || "");
+    setKKH && setKKH(hitungKKH());
+    setKategoriIMT && setKategoriIMT(hitungKategoriIMT() || "");
 
     // axios request data to /api/kkh
     try {
