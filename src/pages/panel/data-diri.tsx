@@ -286,6 +286,36 @@ function DataDiri({
     }
   };
 
+  const hitungKaloriHarian = (formData: FormData): string => {
+    const { umur, berat_badan, kkh, aktivitas } = formData;
+
+    const faktorUmur = umur <= 25 ? 1 : umur >= 70 ? 0.6 : (70 - umur) / 45;
+    const faktorBmi =
+      kkh || 0 <= 16.5 ? 1 : kkh || 0 >= 27 ? 0.6 : (27 - (kkh || 0)) / 10.5;
+    const faktorAktivitas =
+      aktivitas === "Sangat Ringan"
+        ? 1.2
+        : aktivitas === "Ringan"
+        ? 1.375
+        : aktivitas === "Sedang"
+        ? 1.55
+        : aktivitas === "Berat"
+        ? 1.725
+        : aktivitas === "Sangat Berat"
+        ? 1.9
+        : 0;
+
+    const totalKalori =
+      Math.round(10 * faktorUmur * faktorBmi * faktorAktivitas * berat_badan) /
+      10;
+
+    if (totalKalori < 1200) {
+      return `Kebutuhan kalori Anda terlalu rendah (${totalKalori} kkal per hari). Silahkan hubungi dokter untuk penanganan lebih lanjut.)`;
+    } else {
+      return `Kebutuhan kalori Anda adalah ${totalKalori} kkal per hari.`;
+    }
+  };
+
   return (
     <form onSubmit={(e) => void handleSubmit(e)}>
       {/* Berat Badan */}
