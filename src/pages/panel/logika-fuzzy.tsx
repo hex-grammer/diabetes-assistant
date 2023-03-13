@@ -30,72 +30,186 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
 function LogikaFuzzy() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
-  const [rekomendasiMenu, setRekomendasiMenu] = useState<string[]>([]);
   const [beratBadan, setBeratBadan] = useState(0);
   const [tinggiBadan, setTinggiBadan] = useState(0);
+  const [umur, setUmur] = useState(0);
   const [imt, setImt] = useState(0);
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [domLoaded, setDomLoaded] = useState(false);
 
   // CONSTANT VARIABLES
   const tabelAturan = [
-    {
-      makanan: "Muda",
-      kategori: [true, true, true, true],
-    },
-  ];
-  const KATEGORI = [
-    {
-      kategori: "Sangat Kurus",
-      minIMT: 0,
-      maxIMT: 17,
-    },
-    {
-      kategori: "Kurus",
-      minIMT: 17,
-      maxIMT: 18.5,
-    },
-    {
-      kategori: "Normal",
-      minIMT: 18.5,
-      maxIMT: 25,
-    },
-    {
-      kategori: "Gemuk",
-      minIMT: 25,
-      maxIMT: 27,
-    },
-    {
-      kategori: "Obesitas",
-      minIMT: 27,
-      maxIMT: "∞",
-    },
+    ["Mudah", "Sangat kurus", "Istirahat", "Laki-laki", "Sedikit"],
+    ["Mudah", "Sangat kurus", "Istirahat", "Perempuan", "Sedikit"],
+    ["Mudah", "Sangat kurus", "Ringan", "Laki-laki", "Sedikit"],
+    ["Mudah", "Sangat kurus", "Ringan", "Perempuan", "Sedikit"],
+    ["Mudah", "Sangat kurus", "Sedang", "Laki-laki", "null"],
+    ["Mudah", "Sangat kurus", "Sedang", "Perempuan", null],
+    ["Mudah", "Sangat kurus", "Berat", "Laki-laki", null],
+    ["Mudah", "Sangat kurus", "Berat", "Perempuan", null],
+    ["Mudah", "Sangat kurus", "Sangat berat", "Laki-laki", null],
+    ["Mudah", "Sangat kurus", "Sangat berat", "Perempuan", null],
+    ["Mudah", "Kurus", "Istirahat", "Laki-laki", null],
+    ["Mudah", "Kurus", "Istirahat", "Perempuan", null],
+    ["Mudah", "Kurus", "Ringan", "Laki-laki", null],
+    ["Mudah", "Kurus", "Ringan", "Perempuan", null],
+    ["Mudah", "Kurus", "Sedang", "Laki-laki", null],
+    ["Mudah", "Kurus", "Sedang", "Perempuan", null],
+    ["Mudah", "Kurus", "Berat", "Laki-laki", null],
+    ["Mudah", "Kurus", "Berat", "Perempuan", null],
+    ["Mudah", "Kurus", "Sangat berat", "Laki-laki", null],
+    ["Mudah", "Kurus", "Sangat berat", "Perempuan", null],
+    ["Mudah", "Normal", "Istirahat", "Laki-laki", null],
+    ["Mudah", "Normal", "Istirahat", "Perempuan", null],
+    ["Mudah", "Normal", "Ringan", "Laki-laki", null],
+    ["Mudah", "Normal", "Ringan", "Perempuan", null],
+    ["Mudah", "Normal", "Sedang", "Laki-laki", null],
+    ["Mudah", "Normal", "Sedang", "Perempuan", null],
+    ["Mudah", "Normal", "Berat", "Laki-laki", null],
+    ["Mudah", "Normal", "Berat", "Perempuan", null],
   ];
 
-  // fungsi untuk menghitung Kategori IMT
-  const hitungKategoriIMT = (IMT: number) => {
-    if (IMT < 17) {
-      return "Sangat Kurus";
-    } else if (IMT >= 17 && IMT <= 18.5) {
-      return "Kurus";
-    } else if (IMT >= 18.5 && IMT <= 25) {
-      return "Normal";
-    } else if (IMT >= 25 && IMT <= 27) {
-      return "Gemuk";
-    } else if (IMT >= 27) {
-      return "Obesitas";
+  // Fungsi perhitungan himpunan fuzzy umur
+  const FuzzyUmur = () => {
+    let muda = 0;
+    let parobaya = 0;
+    let tua = 0;
+    let sangatTua = 0;
+
+    // Menghitung nilai keanggotaan himpunan fuzzy
+    if (umur <= 25) {
+      muda = 1;
+    } else if (umur > 25 && umur < 40) {
+      muda = (40 - umur) / (40 - 25);
+      parobaya = (umur - 25) / (40 - 25);
+    } else if (umur >= 40 && umur <= 60) {
+      parobaya = (60 - umur) / (60 - 40);
+      tua = (umur - 40) / (60 - 40);
+    } else if (umur > 60 && umur < 70) {
+      tua = (70 - umur) / (70 - 60);
+      sangatTua = (umur - 60) / (70 - 60);
+    } else if (umur >= 70) {
+      tua = 1;
     }
+
+    // Menampilkan proses perhitungan himpunan fuzzy umur
+    return (
+      <>
+        <div className="font-mono text-blue-700">
+          <div>Umur = {umur}</div>
+          <div>| Muda&nbsp;| Parobaya&nbsp;| Tua&nbsp;&nbsp;| Sangat Tua |</div>
+          <div>
+            | {muda.toFixed(2)}&nbsp;| &nbsp;&nbsp;{parobaya.toFixed(2)}
+            &nbsp;&nbsp;&nbsp;| {tua.toFixed(2)}&nbsp;| &nbsp;&nbsp;&nbsp;
+            {sangatTua.toFixed(2)}&nbsp;&nbsp;&nbsp; |
+          </div>
+        </div>
+      </>
+    );
   };
 
-  // fungsi tampilkan rekomendasi menu berdasarkan tabelAturan dan kategori
-  const tampilkanRekomendasiMenu = (kategori: string) => {
-    const rekomendasiMenu: string[] = [];
-    tabelAturan.forEach((aturan) => {
-      if (aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)]) {
-        rekomendasiMenu.push(aturan.makanan);
+  const FuzzyBeratBadan = () => {
+    let sangatKurus = 0;
+    let kurus = 0;
+    let normal = 0;
+    let gemuk = 0;
+    let sangatGemuk = 0;
+
+    // Menghitung nilai keanggotaan himpunan fuzzy
+    if (imt <= 16.5) {
+      sangatKurus = 1;
+    } else if (imt > 16.5 && imt < 17) {
+      sangatKurus = (17 - imt) / (17 - 16.5);
+      kurus = (imt - 16.5) / (17 - 16.5);
+    } else if (imt > 17 && imt < 18) {
+      kurus = 1;
+    } else if (imt >= 18 && imt <= 18.5) {
+      kurus = (18.5 - imt) / (18.5 - 18);
+      normal = (imt - 18) / (18.5 - 18);
+    } else if (imt > 18.5 && imt < 24.5) {
+      normal = 1;
+    } else if (imt >= 24.5 && imt <= 25) {
+      normal = (25 - imt) / (25 - 24.5);
+      gemuk = (imt - 24.5) / (25 - 24.5);
+    } else if (imt >= 25 && imt <= 26.5) {
+      gemuk = 1;
+    } else if (imt >= 26.5 && imt <= 27) {
+      gemuk = (27 - imt) / (27 - 26.5);
+      sangatGemuk = (imt - 26.5) / (27 - 26.5);
+    } else if (imt > 27) {
+      sangatGemuk = 1;
+    }
+
+    // Menampilkan proses perhitungan himpunan fuzzy berat badan
+    return (
+      <>
+        <div className="font-mono text-blue-700">
+          <div>IMT = {imt}</div>
+          <div>| Sangat Kurus | Kurus | Normal | Gemuk | Sangat Gemuk |</div>
+          <div>
+            | {sangatKurus.toFixed(2)}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |{" "}
+            {kurus.toFixed(2)}&nbsp; | {normal.toFixed(2)}&nbsp;&nbsp; |{" "}
+            {gemuk.toFixed(2)}&nbsp; | {sangatGemuk.toFixed(2)}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const FuzzyAktivitas = () => {
+    const aktivitas = 7.5;
+    let istirahat = 0;
+    let ringan = 0;
+    let sedang = 0;
+    let berat = 0;
+    let sangatBerat = 0;
+
+    // Menghitung nilai keanggotaan himpunan fuzzy
+    if (aktivitas <= 2) {
+      istirahat = 1;
+    } else if (aktivitas > 2 && aktivitas < 4) {
+      istirahat = (4 - aktivitas) / 2;
+    } else if (aktivitas > 2 && aktivitas < 4) {
+      istirahat = (4 - aktivitas) / 2;
+      if (aktivitas >= 3) {
+        ringan = (aktivitas - 3) / 3;
       }
-    });
-    return rekomendasiMenu;
+    } else if (aktivitas >= 4 && aktivitas <= 6) {
+      sedang = (aktivitas - 4) / (6 - 4);
+      if (aktivitas >= 4) {
+        ringan = (5 - aktivitas) / (5 - 4);
+      }
+    } else if (aktivitas > 6 && aktivitas < 8) {
+      sedang = (aktivitas - 6) / (8 - 6);
+      if (aktivitas >= 7) {
+        berat = (aktivitas - 7) / 7;
+      }
+    } else if (aktivitas >= 8 && aktivitas <= 10) {
+      sangatBerat = (aktivitas - 8) / (10 - 8);
+      // Mengatasi nilai keanggotaan yang lebih besar dari 1 pada titik overlap
+      if (aktivitas < 9) {
+        berat = (9 - aktivitas) / (9 - 8);
+      }
+    }
+
+    // Menampilkan proses perhitungan himpunan fuzzy aktivitas
+    return (
+      <>
+        <div className="font-mono text-blue-700">
+          <div>Aktivitas = {aktivitas}</div>
+          <div>| Istirahat | Ringan | Sedang | Berat | Sangat Berat |</div>
+          <div>
+            | {istirahat.toFixed(2)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;
+            {ringan.toFixed(2)}
+            &nbsp;&nbsp;| &nbsp;{sedang.toFixed(2)}&nbsp;&nbsp;| &nbsp;
+            {berat.toFixed(2)}&nbsp;| &nbsp;&nbsp;
+            {sangatBerat.toFixed(2)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+          </div>
+        </div>
+      </>
+    );
   };
 
   // axios request to set kkh in /api/kkh/getLast in useEffect
@@ -107,6 +221,7 @@ function LogikaFuzzy() {
         .then((res: { data: kkh[] }) => {
           setBeratBadan(res.data[0]?.berat_badan || 0);
           setTinggiBadan(res.data[0]?.tinggi_badan || 1);
+          setUmur(res.data[0]?.umur || 0);
           setTabelKKH(res.data);
           setImt(res.data[0]?.imt || 0);
         });
@@ -129,22 +244,11 @@ function LogikaFuzzy() {
                 </h2>
                 <div className="text-sm">
                   <div className="mb-1">
-                    Berikut adalah proses perhitungan Index Massa Tubuh (IMT)
-                    anda:
+                    Berikut adalah proses perhitungan himpunan fuzzy umur
                   </div>
                   <span className="font-mono text-blue-700">
-                    <div>Berat badan(BB) &nbsp;= {beratBadan} kg</div>
-                    <div>
-                      Tinggi badan(TB) = {tinggiBadan} cm ≈{" "}
-                      {tinggiBadan && tinggiBadan / 100} m
-                    </div>
-                    <div>IMT = BB/(TB x TB)</div>
-                    <div>
-                      &nbsp;&nbsp;&nbsp;&nbsp;= {beratBadan} / (
-                      {tinggiBadan && tinggiBadan / 100} x{" "}
-                      {tinggiBadan && tinggiBadan / 100}) = {imt}
-                    </div>
-                    <div>&nbsp;&nbsp;&nbsp;&nbsp;= {imt}</div>
+                    {/* penjelasan perhitungan himpunan fuzzy umur */}
+                    <FuzzyUmur />
                   </span>
                 </div>
               </div>
@@ -155,23 +259,10 @@ function LogikaFuzzy() {
                 </h2>
                 <div className="text-sm">
                   <div className="mb-1">
-                    Berikut adalah proses perhitungan Index Massa Tubuh (IMT)
-                    anda:
+                    Berikut adalah proses perhitungan himpunan fuzzy berat badan
+                    berdasarkan Index Massa Tubuh (IMT) anda:
                   </div>
-                  <span className="font-mono text-blue-700">
-                    <div>Berat badan(BB) &nbsp;= {beratBadan} kg</div>
-                    <div>
-                      Tinggi badan(TB) = {tinggiBadan} cm ≈{" "}
-                      {tinggiBadan && tinggiBadan / 100} m
-                    </div>
-                    <div>IMT = BB/(TB x TB)</div>
-                    <div>
-                      &nbsp;&nbsp;&nbsp;&nbsp;= {beratBadan} / (
-                      {tinggiBadan && tinggiBadan / 100} x{" "}
-                      {tinggiBadan && tinggiBadan / 100}) = {imt}
-                    </div>
-                    <div>&nbsp;&nbsp;&nbsp;&nbsp;= {imt}</div>
-                  </span>
+                  <FuzzyBeratBadan />
                 </div>
               </div>
               {/* HIMPUNAN FUZZY AKTIVITAS */}
@@ -184,24 +275,11 @@ function LogikaFuzzy() {
                     Berikut adalah proses perhitungan Index Massa Tubuh (IMT)
                     anda:
                   </div>
-                  <span className="font-mono text-blue-700">
-                    <div>Berat badan(BB) &nbsp;= {beratBadan} kg</div>
-                    <div>
-                      Tinggi badan(TB) = {tinggiBadan} cm ≈{" "}
-                      {tinggiBadan && tinggiBadan / 100} m
-                    </div>
-                    <div>IMT = BB/(TB x TB)</div>
-                    <div>
-                      &nbsp;&nbsp;&nbsp;&nbsp;= {beratBadan} / (
-                      {tinggiBadan && tinggiBadan / 100} x{" "}
-                      {tinggiBadan && tinggiBadan / 100}) = {imt}
-                    </div>
-                    <div>&nbsp;&nbsp;&nbsp;&nbsp;= {imt}</div>
-                  </span>
+                  <FuzzyAktivitas />
                 </div>
               </div>
               {/* Tabel Aturan-Makanan */}
-              <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-4 sm:row-start-1">
+              <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-6 sm:row-start-1">
                 <h2 className="mb-2 text-center text-xl font-bold uppercase">
                   4. Tabel Aturan-Makanan
                 </h2>
@@ -221,15 +299,12 @@ function LogikaFuzzy() {
                       <tbody className="divide-y divide-gray-200 overflow-auto bg-gray-50">
                         {tabelAturan?.map((aturan, i) => (
                           <tr key={i}>
-                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
-                              {aturan.makanan}
-                            </td>
-                            {aturan.kategori.map((kat, i) => (
+                            {aturan.map((kat, i) => (
                               <td
                                 key={i}
-                                className="whitespace-nowrap p-2 text-center text-sm text-gray-500"
+                                className="whitespace-nowrap p-2 text-sm text-gray-500"
                               >
-                                {kat ? "✔" : "❌"}
+                                {kat}
                               </td>
                             ))}
                           </tr>
@@ -239,63 +314,11 @@ function LogikaFuzzy() {
                   </table>
                 </div>
               </div>
-              {/* Tabel Kategori IMT */}
-              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
-                <h2 className="mb-1 font-bold uppercase">4. Defuzzifikasi</h2>
-                <div className="flex flex-col justify-between gap-2 sm:flex-row">
-                  {/* keterangan */}
-                  <div className="flex gap-2 text-sm sm:w-2/5">
-                    Tabel berikut menunjukkan kategori IMT yang terbagi menjadi
-                    5 kategori berdasarkan range nilai IMT.
-                  </div>
-                  {/* tabel MIN_IMT, MAX_IMT, KATEGORI */}
-                  <div className="flex flex-1 justify-center overflow-x-auto rounded-md bg-white">
-                    <table className="divide-y divide-gray-200">
-                      <div className="sm:max-h-[70vh]">
-                        {/* TabelHeader */}
-                        {/* <TabelHeader HEADERS={["Min_IMT", "Max_IMT", "Kategori"]} /> */}
-                        <tbody className="divide-y divide-gray-200 overflow-auto">
-                          {KATEGORI?.map((kat, i) => (
-                            <tr key={i}>
-                              <td className="whitespace-nowrap p-2 py-1 text-center text-sm text-gray-500">
-                                {kat.minIMT}
-                              </td>
-                              <td className="whitespace-nowrap p-2 py-1 text-center text-sm text-gray-500">
-                                ~
-                              </td>
-                              <td className="whitespace-nowrap p-2 py-1 text-center text-sm text-gray-500">
-                                {kat.maxIMT}
-                              </td>
-                              <td className="whitespace-nowrap p-2 py-1 text-center text-sm text-gray-500">
-                                =
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-1 text-sm text-gray-500">
-                                "{kat.kategori}"
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </div>
-                    </table>
-                  </div>
-                </div>
-              </div>
               {/* DEFUZZIFIKASI */}
               <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
                 <h2 className="mb-1 font-bold uppercase">5. Defuzzifikasi</h2>
                 <div className="">
-                  <span className="text-sm text-gray-700">
-                    Rekomendasi menu berdasarkan nilai IMT anda ({imt}≈
-                    {hitungKategoriIMT(imt)}) adalah:{" "}
-                    {tampilkanRekomendasiMenu(
-                      hitungKategoriIMT(imt) || "Gemuk"
-                    ).map((menu, i) => (
-                      <span key={i} className="font-semibold text-orange-600">
-                        {menu}
-                        {i + 1 !== rekomendasiMenu.length ? ", " : ""}
-                      </span>
-                    ))}
-                  </span>
+                  <span className="text-sm text-gray-700"></span>
                 </div>
               </div>
             </>

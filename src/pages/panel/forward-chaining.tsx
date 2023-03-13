@@ -279,7 +279,7 @@ function ForwardChaining() {
                 </h2>
                 <div className="w-full overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
-                    <div className="bgre min-w-full sm:max-h-[70vh]">
+                    <div className="min-w-full">
                       {/* TabelHeader */}
                       <TabelHeader
                         HEADERS={[

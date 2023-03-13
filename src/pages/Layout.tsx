@@ -41,7 +41,7 @@ function Layout(props: Props) {
           //   icon: <MdOutlineFoodBank />,
           // },
           {
-            title: "Calculator",
+            title: "Kalkulator",
             icon: <GiWeightScale />,
           },
           {
@@ -49,10 +49,10 @@ function Layout(props: Props) {
             icon: <TiMediaFastForwardOutline />,
           },
           { title: "Logika Fuzzy", icon: <GiBrain /> },
-          {
-            title: "Perbandingan Metode",
-            icon: <HiScale />,
-          },
+          // {
+          //   title: "Perbandingan Metode",
+          //   icon: <HiScale />,
+          // },
           // {
           //   title: "Data Diri",
           //   icon: <RiFileUserLine />,
