@@ -9,6 +9,7 @@ import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
 import { HiScale } from "react-icons/hi2";
 import { RiFileUserLine } from "react-icons/ri";
+import { useRouter } from "next/router";
 
 type Props = {
   children?: JSX.Element;
@@ -26,6 +27,15 @@ const Loading = () => {
 function Layout(props: Props) {
   const [menuStatus, setMenuStatus] = useState("no");
   const { loading } = useGlobalContext();
+  // get url path
+  const router = useRouter();
+  const { pathname } = router;
+  const path = pathname.split("/")[2];
+
+  useEffect(() => {
+    // reload on url change
+    // router.reload();
+  }, [path]);
 
   return (
     <div className="font-poppins flex h-screen overflow-hidden">

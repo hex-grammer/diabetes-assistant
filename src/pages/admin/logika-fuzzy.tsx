@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
-import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import axios from "axios";
 import { PEKERJAAN } from "../../lib/pekerjaan";
@@ -336,6 +335,22 @@ function LogikaFuzzy() {
       </>
     );
   };
+
+  // if login
+  useEffect(() => {
+    const getAssyncSession = async () => {
+      const session = await getSession();
+      const login = localStorage.getItem("login");
+
+      if (login !== "true" && !session) {
+        void router.push("/login");
+      }
+    };
+
+    getAssyncSession().catch((err) => {
+      console.log(err);
+    });
+  }, []);
 
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {

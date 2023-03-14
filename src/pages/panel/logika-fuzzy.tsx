@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
-import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import axios from "axios";
 import { PEKERJAAN } from "../../lib/pekerjaan";

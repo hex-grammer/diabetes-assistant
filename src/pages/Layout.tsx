@@ -15,10 +15,14 @@ type Props = {
 
 const Loading = () => {
   return (
-    <>
-      <div className="flex h-20 animate-pulse items-center justify-center rounded-md bg-gray-400 bg-opacity-40 py-4 px-2 text-center text-gray-400 shadow-lg sm:col-span-3" />
-      <div className="flex h-12 animate-pulse items-center justify-center rounded-md bg-gray-400 bg-opacity-40 py-4 px-2 text-center text-gray-400 shadow-lg sm:h-20" />
-    </>
+    <div className="flex w-full gap-2 p-8">
+      <div className="flex h-20 w-full animate-pulse items-center justify-center rounded-md bg-gray-200 py-4 px-2 text-center text-gray-400 shadow-lg sm:col-span-3 sm:w-3/4">
+        Loading...
+      </div>
+      <div className="flex h-20 w-full animate-pulse items-center justify-center rounded-md bg-gray-200 py-4 px-2 text-center text-gray-400 shadow-lg sm:col-span-3 sm:w-1/4">
+        Loading...
+      </div>
+    </div>
   );
 };
 
@@ -63,7 +67,7 @@ function Layout(props: Props) {
       <div className="flex w-full flex-col">
         <Header setMenuStatus={setMenuStatus} />
         {/* BODY/CONTENT */}
-        <div className="relative h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover bg-right text-gray-700">
+        <div className="relative grid h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover bg-right text-gray-700">
           {/* floating div to cover the background */}
           {/* <div className="absolute w-full bg-gray-100 bg-opacity-40 sm:h-full" /> */}
           {loading ? <Loading /> : props?.children}

@@ -41,11 +41,10 @@ const SideMenu = (props: Props) => {
   ) => {
     e.preventDefault();
     props.setMenuStatus("close");
-    setLoading(true);
-    if (router.pathname.includes("admin")) {
-      await router.push(
-        eachMenu === "materi" ? "/admin/materi" : `/admin/materi/${eachMenu}`
-      );
+    if (router.pathname.includes("logika-fuzzy")) {
+      window.location.href = `/admin/${eachMenu}`;
+    } else if (router.pathname.includes("admin")) {
+      await router.push(`/admin/${eachMenu}`);
     } else {
       await router.push(`/panel/${eachMenu}`);
     }

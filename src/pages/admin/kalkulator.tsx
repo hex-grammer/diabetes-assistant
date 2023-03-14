@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,6 +16,22 @@ function Kalkulator() {
   const [imb, setIMB] = useState(0);
   const [bbi, setBBIdeal] = useState(0);
   const [amb, setAMB] = useState(0);
+
+  // if login
+  useEffect(() => {
+    const getAssyncSession = async () => {
+      const session = await getSession();
+      const login = localStorage.getItem("login");
+
+      if (login !== "true" && !session) {
+        void router.push("/login");
+      }
+    };
+
+    getAssyncSession().catch((err) => {
+      console.log(err);
+    });
+  }, []);
 
   return (
     <Layout>

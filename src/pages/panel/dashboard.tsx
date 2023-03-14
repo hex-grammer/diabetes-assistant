@@ -8,10 +8,10 @@ import "react-toastify/dist/ReactToastify.css";
 import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import DataDiri from "./data-diri";
+import { useGlobalContext } from "../../lib/GlobalContext";
 
 function Dashboard() {
   const router = useRouter();
-  const { data: session } = useSession();
   const paths = router.pathname.split("/").slice(2);
   const [kkh, setKKH] = useState(0);
   const [kategoriIMT, setKategoriIMT] = useState("");

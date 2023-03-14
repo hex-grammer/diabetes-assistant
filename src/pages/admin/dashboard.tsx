@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import { getSession, useSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
+import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import DataDiri from "./data-diri";
+import { useGlobalContext } from "../../lib/GlobalContext";
 
 function Dashboard() {
   const router = useRouter();
@@ -15,12 +18,27 @@ function Dashboard() {
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [rekomendasiMenu, setRekomendasiMenu] = useState<string[] | null>([]);
 
+  useEffect(() => {
+    const getAssyncSession = async () => {
+      const session = await getSession();
+      const login = localStorage.getItem("login");
+
+      if (login !== "true" && !session) {
+        void router.push("/login");
+      }
+    };
+
+    getAssyncSession().catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
   return (
     <Layout>
       <>
         <div className="relative grid h-fit w-full grid-cols-1 gap-4 p-6 sm:grid-cols-6">
           <div className="col-span-full block rounded-md bg-gray-50 p-4 text-center shadow-md sm:hidden">
-            <h1 className="text-2xl font-bold uppercase">{paths}</h1>
+            <h1 className="text-2xl font-bold uppercase">{paths} </h1>
           </div>
           {/* DATA DIRI */}
           <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:row-span-3">
@@ -174,3 +192,21 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+// export async function getServerSideProps(context: GetServerSidePropsContext) {
+//   const session = await getSession(context);
+//   console.log(session?.user)
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: "/login",
+//         permanent: false,
+//       },
+//     };
+//   }
+//   return {
+//     props: {
+//       session,
+//     },
+//   };
+// }
