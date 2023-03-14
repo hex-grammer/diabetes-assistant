@@ -41,11 +41,17 @@ const SideMenu = (props: Props) => {
   ) => {
     e.preventDefault();
     props.setMenuStatus("close");
-    if (router.pathname.includes("logika-fuzzy")) {
-      window.location.href = `/admin/${eachMenu}`;
-    } else if (router.pathname.includes("admin")) {
+    if (router.pathname.includes("admin")) {
+      if (router.pathname.includes("logika-fuzzy")) {
+        window.location.href = `/admin/${eachMenu}`;
+        return;
+      }
       await router.push(`/admin/${eachMenu}`);
     } else {
+      if (router.pathname.includes("logika-fuzzy")) {
+        window.location.href = `/panel/${eachMenu}`;
+        return;
+      }
       await router.push(`/panel/${eachMenu}`);
     }
   };

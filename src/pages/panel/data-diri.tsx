@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { PEKERJAAN } from "../../lib/pekerjaan";
 import axios from "axios";
 import { toast } from "react-toastify";
-import type { kkh } from "@prisma/client";
+import type { User, kkh } from "@prisma/client";
 import { object } from "zod";
 
 interface FormData {
@@ -16,7 +16,7 @@ interface FormData {
   jenis_kelamin: string;
   kkh?: number;
   imt?: number;
-  email?: string;
+  email?: string | null;
 }
 interface DataDiriProps {
   setKKH?: React.Dispatch<React.SetStateAction<number>>;
@@ -101,9 +101,17 @@ function DataDiri({
 
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {
+    // get user from local storage
+    const user = JSON.parse(localStorage.getItem("user") || "{}") as User;
     try {
       void axios
-        .get("/api/kkh/getLast", { params: { dataLength: 4 } })
+        .get("/api/kkh/getLast", {
+          params: {
+            dataLength: 4,
+            email: session?.user?.email,
+            username: user.username,
+          },
+        })
         .then((res: { data: kkh[] }) => {
           setKKH && setKKH(res.data[0]?.kkh || 0);
           setIMT && setIMT(res.data[0]?.imt || 0);
@@ -309,9 +317,12 @@ function DataDiri({
     }
 
     setKKH && setKKH(hitungKKH());
-    setKategoriIMT && setKategoriIMT(hitungKategoriIMT() || "");
+    setIMT && setIMT(hitungIMT());
     setBBIdeal && setBBIdeal(hitungBBIdeal());
     setAMB && setAMB(hitungAMB());
+
+    // get user from local storage
+    const user = JSON.parse(localStorage.getItem("user") || "{}") as User;
 
     if (!updateData) return;
 
@@ -323,6 +334,7 @@ function DataDiri({
         tinggi_badan: Number(formData.tinggi_badan),
         umur: Number(formData.umur),
         email: session?.user?.email,
+        username: user.username,
         kkh: hitungKKH(),
         imt: hitungIMT(),
       });

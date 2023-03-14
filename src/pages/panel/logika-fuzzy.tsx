@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../Layout";
+import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
-import type { kkh } from "@prisma/client";
+import type { User, kkh } from "@prisma/client";
 import axios from "axios";
 import { PEKERJAAN } from "../../lib/pekerjaan";
 
@@ -33,6 +33,7 @@ function LogikaFuzzy() {
 
   const [umur, setUmur] = useState(0);
   const [imt, setImt] = useState(0);
+  const { data: session } = useSession();
   const [fuzzyUmur, setFuzzyUmur] = useState({ label: "", nilai: 0 });
   const [fuzzyBeratBadan, setFuzzyBeratBadan] = useState({
     label: "",
@@ -352,12 +353,20 @@ function LogikaFuzzy() {
     });
   }, []);
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}") as User;
+
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {
     setDomLoaded(true);
     try {
       void axios
-        .get("/api/kkh/getLast", { params: { dataLength: 4 } })
+        .get("/api/kkh/getLast", {
+          params: {
+            dataLength: 4,
+            email: session?.user?.email,
+            username: user.username,
+          },
+        })
         .then((res: { data: kkh[] }) => {
           setUmur(res.data[0]?.umur || 0);
           setTabelKKH(res.data);

@@ -69,7 +69,11 @@ const Daftar: NextPage = () => {
     }
 
     // jika berhasil, tampilkan pesan sukses
-    toast.success("Berhasil mendaftar");
+    toast.success("Akun anda berhasil di daftarkan, silahkan login!");
+    // tunggu 3 detik kemudian alihkan ke halaman login
+    setTimeout(() => {
+      void router.push("/login");
+    }, 3000);
   };
 
   return (
@@ -81,7 +85,7 @@ const Daftar: NextPage = () => {
       </Head>
       <ToastContainer position="top-right" />
       <div className="flex w-[90%] flex-col items-center justify-between rounded-lg bg-white bg-opacity-95 py-4 shadow-md sm:w-[25%]">
-        <div className="mb-2 py-2 text-center text-xl font-bold uppercase text-gray-700">
+        <div className="mb-2 text-center text-xl font-bold uppercase text-gray-700">
           Silahkan daftar
         </div>
 

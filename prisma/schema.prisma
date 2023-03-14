@@ -67,7 +67,8 @@ model kkh {
     pekerjaan     String
     aktivitas     String
     jenis_kelamin String
-    email         String
+    email         String?
+    username      String?
     kkh           Int
     imt           Float
     created_at    DateTime @default(now())

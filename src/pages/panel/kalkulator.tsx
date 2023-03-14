@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../Layout";
+import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
@@ -95,6 +95,7 @@ function Kalkulator() {
             </h2>
             <div className="">
               <span className="text-4xl font-bold text-green-600">{bbi}</span>
+              <span className="ml-1 text-lg font-medium text-gray-600">kg</span>
             </div>
             <div className="flex flex-col">
               <span className="text-sm text-gray-700">
@@ -109,7 +110,12 @@ function Kalkulator() {
               Angka Metabolisme Basal
             </h2>
             <div className="">
-              <span className="text-4xl font-bold text-green-600">{amb}</span>
+              <span className="text-4xl font-bold text-green-600">
+                {amb.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              </span>
+              <span className="ml-1 text-lg font-medium text-gray-600">
+                kalori
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="text-sm text-gray-700">

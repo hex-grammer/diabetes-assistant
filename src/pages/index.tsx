@@ -1,8 +1,10 @@
 import { type NextPage } from "next";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
+  const router = useRouter();
   return (
     <>
       <Head>
@@ -43,11 +45,7 @@ const Home: NextPage = () => {
             Kontrol konsumsi kalori harianmu sekarang!
           </p>
           <div
-            onClick={() =>
-              void signIn("google", {
-                callbackUrl: "/panel/dashboard",
-              })
-            }
+            onClick={() => void router.push("/daftar")}
             className="cursor-pointer rounded-full border-2 border-green-600 p-1 px-4 font-medium tracking-tight text-green-600 duration-100 hover:bg-green-600 hover:px-8 hover:font-bold hover:text-white hover:shadow-lg"
           >
             Mulai

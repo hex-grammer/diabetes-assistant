@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../Layout";
+import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
@@ -192,21 +192,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
-// export async function getServerSideProps(context: GetServerSidePropsContext) {
-//   const session = await getSession(context);
-//   console.log(session?.user)
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: "/login",
-//         permanent: false,
-//       },
-//     };
-//   }
-//   return {
-//     props: {
-//       session,
-//     },
-//   };
-// }

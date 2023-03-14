@@ -9,7 +9,8 @@ type KkhData = {
   pekerjaan: string;
   aktivitas: string;
   jenis_kelamin: string;
-  email: string;
+  email?: string;
+  username?: string;
   kkh: number;
   imt: number;
   created_at?: Date;

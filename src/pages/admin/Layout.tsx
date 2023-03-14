@@ -8,7 +8,7 @@ import { SlCalculator } from "react-icons/sl";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
 import { HiScale } from "react-icons/hi2";
-import { RiFileUserLine } from "react-icons/ri";
+import { RiFileUserLine, RiTeamLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 
 type Props = {
@@ -64,7 +64,7 @@ function Layout(props: Props) {
             title: "Pekerjaan",
             icon: <RiFileUserLine />,
           },
-          // { title: "Peserta",  icon: <RiTeamLine /> },
+          // { title: "Admin", icon: <RiTeamLine /> },
         ]}
       />
       <div className="flex w-full flex-col">

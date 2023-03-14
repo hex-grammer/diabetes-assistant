@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import SideMenu from "../components/SideMenu";
-import { useGlobalContext } from "../lib/GlobalContext";
+import Header from "../../components/Header";
+import SideMenu from "../../components/SideMenu";
+import { useGlobalContext } from "../../lib/GlobalContext";
 import Head from "next/head";
 import { GiBrain, GiWeightScale } from "react-icons/gi";
 import { SlCalculator } from "react-icons/sl";
