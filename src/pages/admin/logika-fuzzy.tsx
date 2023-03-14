@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../Layout";
+import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
@@ -336,22 +336,6 @@ function LogikaFuzzy() {
       </>
     );
   };
-
-  // if login
-  useEffect(() => {
-    const getAssyncSession = async () => {
-      const session = await getSession();
-      const login = localStorage.getItem("login");
-
-      if (login !== "true" && !session) {
-        void router.push("/login");
-      }
-    };
-
-    getAssyncSession().catch((err) => {
-      console.log(err);
-    });
-  }, []);
 
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {

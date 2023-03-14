@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import SideMenu from "../components/SideMenu";
-import { useGlobalContext } from "../lib/GlobalContext";
+import Header from "../../components/Header";
+import SideMenu from "../../components/SideMenu";
+import { useGlobalContext } from "../../lib/GlobalContext";
 import Head from "next/head";
 import { GiBrain, GiWeightScale } from "react-icons/gi";
 import { SlCalculator } from "react-icons/sl";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
 import { HiScale } from "react-icons/hi2";
+import { RiFileUserLine } from "react-icons/ri";
 
 type Props = {
   children?: JSX.Element;
@@ -36,27 +37,23 @@ function Layout(props: Props) {
         setMenuStatus={setMenuStatus}
         menuLists={[
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
-          // {
-          //   title: "Makanan",
-          //   icon: <MdOutlineFoodBank />,
-          // },
-          { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
             title: "Forward Chaining",
             icon: <TiMediaFastForwardOutline />,
           },
+          { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
             title: "Kalkulator",
             icon: <GiWeightScale />,
           },
-          // {
-          //   title: "Perbandingan Metode",
-          //   icon: <HiScale />,
-          // },
-          // {
-          //   title: "Data Diri",
-          //   icon: <RiFileUserLine />,
-          // },
+          {
+            title: "Makanan",
+            icon: <MdOutlineFoodBank />,
+          },
+          {
+            title: "Pekerjaan",
+            icon: <RiFileUserLine />,
+          },
           // { title: "Peserta",  icon: <RiTeamLine /> },
         ]}
       />

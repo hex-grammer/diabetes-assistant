@@ -1,68 +1,75 @@
-import { User } from "@prisma/client";
+import React, { useState } from "react";
 import type { NextPage } from "next";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Login: NextPage = () => {
+const Daftar: NextPage = () => {
   const router = useRouter();
-
-  // usestate untuk username dan password
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  // usestate data diri berisi object name, email, password
+  const [dataDiri, setDataDiri] = useState({
+    name: "",
+    username: "",
+    password: "",
+    konfirmasiPassword: "",
+  });
 
   // handle change input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === "username") {
-      setUsername(e.target.value);
-    } else {
-      setPassword(e.target.value);
-    }
+    setDataDiri({
+      ...dataDiri,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // handle login
-  const handleLogin = async (
+  const handleDaftar = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
 
-    // cek apakah username dan password sudah diisi
-    if (username === "" || password === "") {
-      toast.error("Username dan password harus diisi");
+    // cek apakah field telah diisi
+    if (
+      dataDiri.name === "" ||
+      dataDiri.username === "" ||
+      dataDiri.password === "" ||
+      dataDiri.konfirmasiPassword === ""
+    ) {
+      toast.error("Semua field harus diisi");
       return;
     }
 
-    // cek apakah username dan password sudah benar
-    const res = await fetch("/api/login", {
+    // cek apakah password dan konfirmasi password sama
+    if (dataDiri.password !== dataDiri.konfirmasiPassword) {
+      toast.error("Password dan konfirmasi password tidak sama");
+      return;
+    }
+
+    // buat request ke API untuk daftar
+    const res = await fetch("/api/daftar", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
+      body: JSON.stringify(dataDiri),
     });
 
-    // jika username dan password benar, alihkan ke halaman dashboard
-    if (res.status === 200) {
-      // set session browser login true
-      localStorage.setItem("login", "true");
-      // save res.user ke localstorage
-      const { user } = (await res.json()) as { user: User };
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // alihkan ke halaman panel
-      void router.push("/panel/dashboard");
-    } else {
-      // tampilkan response message
-      const { message } = (await res.json()) as { message: string };
-      toast.error(message);
+    // jika respon status 409, tampilkan pesan error
+    if (res.status === 409) {
+      toast.error("Username sudah digunakan");
+      return;
     }
+
+    // jika gagal, tampilkan pesan error
+    if (!res.ok) {
+      toast.error("Gagal mendaftar");
+      return;
+    }
+
+    // jika berhasil, tampilkan pesan sukses
+    toast.success("Berhasil mendaftar");
   };
 
   return (
@@ -74,22 +81,39 @@ const Login: NextPage = () => {
       </Head>
       <ToastContainer position="top-right" />
       <div className="flex w-[90%] flex-col items-center justify-between rounded-lg bg-white bg-opacity-95 py-4 shadow-md sm:w-[25%]">
-        <div className="py-2 text-center text-xl font-bold uppercase text-gray-700">
-          Silahkan login
+        <div className="mb-2 py-2 text-center text-xl font-bold uppercase text-gray-700">
+          Silahkan daftar
         </div>
 
-        {/* jika belum punya akun, alihkan ke daftar */}
+        {/* jika belum punya akun, alihkan ke login */}
         <div className="mb-4 text-center text-sm text-gray-500">
-          Belum punya akun?{" "}
+          Sudah punya akun?{" "}
           <Link
-            href="/daftar"
+            href="/login"
             className="text-blue-600 hover:text-blue-800 hover:underline"
           >
-            Daftar
+            Masuk
           </Link>
         </div>
 
         {/* input masuk dengan usename dan password */}
+        <div className="mb-2 flex w-72 flex-col">
+          <label
+            htmlFor="Nama Lengkap"
+            className="mb-1 text-sm font-medium text-gray-600"
+          >
+            Nama Lengkap
+          </label>
+          <input
+            type="text"
+            id="Nama Lengkap"
+            name="name"
+            className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+            onChange={(e) => {
+              handleChange(e);
+            }}
+          />
+        </div>
         <div className="mb-2 flex w-72 flex-col">
           <label
             htmlFor="username"
@@ -118,19 +142,35 @@ const Login: NextPage = () => {
             type="password"
             id="password"
             name="password"
+            className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
             onChange={(e) => {
               handleChange(e);
             }}
-            className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
           />
         </div>
-
+        <div className="mb-2 flex w-72 flex-col">
+          <label
+            htmlFor="password"
+            className="mb-1 text-sm font-medium text-gray-600"
+          >
+            Konfirmasi Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="konfirmasiPassword"
+            className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+            onChange={(e) => {
+              handleChange(e);
+            }}
+          />
+        </div>
         {/* tombol login */}
         <button
-          onClick={(e) => void handleLogin(e)}
+          onClick={(e) => void handleDaftar(e)}
           className="mt-2 mb-4 w-72 rounded bg-blue-600 px-6 py-2.5 font-medium leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-none"
         >
-          Login
+          Daftar
         </button>
 
         {/* pemisah dengan tulisan atau */}
@@ -158,4 +198,4 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default Daftar;

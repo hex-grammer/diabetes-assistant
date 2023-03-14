@@ -96,7 +96,13 @@ const SideMenu = (props: Props) => {
       <hr className="my-4 opacity-30" />
       <button
         className="hover:bg-blue-prime mx-3 mb-2 flex items-center rounded-sm py-3 px-6 text-left"
-        onClick={() => void signOut({ callbackUrl: "/login" })}
+        onClick={() => {
+          // remove local storage
+          localStorage.removeItem("login");
+          localStorage.removeItem("user");
+
+          void signOut({ callbackUrl: "/login" });
+        }}
       >
         <GoSignOut className="mr-2" />
         Logout

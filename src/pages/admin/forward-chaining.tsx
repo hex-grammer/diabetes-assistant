@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../Layout";
+import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import { getSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
+import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import axios from "axios";
-import { getSession } from "next-auth/react";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -33,6 +34,7 @@ function ForwardChaining() {
   const [beratBadan, setBeratBadan] = useState(0);
   const [tinggiBadan, setTinggiBadan] = useState(0);
   const [imt, setImt] = useState(0);
+  const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [domLoaded, setDomLoaded] = useState(false);
 
   // CONSTANT VARIABLES
@@ -134,6 +136,32 @@ function ForwardChaining() {
       kategori: [false, true, false, false, false],
     },
   ];
+  const MAKANAN = {
+    M001: "Beras Merah",
+    M002: "Buah Apel",
+    M003: "Buah Belimbing",
+    M004: "Buah Kiwi",
+    M005: "Buah Nanas",
+    M006: "Buah Pepaya",
+    M007: "Bubur Kacang Hijau",
+    M008: "Ikan Salmon Panggang",
+    M009: "Ikan Tuna Panggang",
+    M010: "Jagung",
+    M011: "Kacang Merah",
+    M012: "Kacang Tanah",
+    M013: "Mentimun",
+    M014: "Sayur Bayam",
+    M015: "Sayur Brokoli",
+    M016: "Sayur Kubis/Kol",
+    M017: "Sayur Sawi Putih",
+    M018: "Susu Bear Brand",
+    M019: "Tahu",
+    M020: "Telur Rebus",
+    M021: "Tempe",
+    M022: "Tomat",
+    M023: "Wortel",
+    M024: "Sayur Sawi Hijau",
+  };
   const KATEGORI = [
     {
       kategori: "Sangat Kurus",
@@ -162,6 +190,14 @@ function ForwardChaining() {
     },
   ];
 
+  // fungsi untuk menghitung IMT
+  const hitungIMT = () => {
+    const imt = beratBadan / ((tinggiBadan / 100) * (tinggiBadan / 100));
+    const imtRounded = Math.round((imt + Number.EPSILON) * 100) / 100;
+    setImt(imtRounded);
+    return imtRounded;
+  };
+
   // fungsi untuk menghitung Kategori IMT
   const hitungKategoriIMT = (IMT: number) => {
     if (IMT < 17) {
@@ -188,22 +224,6 @@ function ForwardChaining() {
     return rekomendasiMenu;
   };
 
-  // if login
-  useEffect(() => {
-    const getAssyncSession = async () => {
-      const session = await getSession();
-      const login = localStorage.getItem("login");
-
-      if (login !== "true" && !session) {
-        void router.push("/login");
-      }
-    };
-
-    getAssyncSession().catch((err) => {
-      console.log(err);
-    });
-  }, []);
-
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {
     setDomLoaded(true);
@@ -213,6 +233,7 @@ function ForwardChaining() {
         .then((res: { data: kkh[] }) => {
           setBeratBadan(res.data[0]?.berat_badan || 0);
           setTinggiBadan(res.data[0]?.tinggi_badan || 1);
+          setTabelKKH(res.data);
           setImt(res.data[0]?.imt || 0);
         });
     } catch (error) {}
@@ -362,3 +383,20 @@ function ForwardChaining() {
 }
 
 export default ForwardChaining;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session,
+    },
+  };
+}
