@@ -20,16 +20,24 @@ interface FormData {
 }
 interface DataDiriProps {
   setKKH?: React.Dispatch<React.SetStateAction<number>>;
+  setIMT?: React.Dispatch<React.SetStateAction<number>>;
+  setBBIdeal?: React.Dispatch<React.SetStateAction<number>>;
+  setAMB?: React.Dispatch<React.SetStateAction<number>>;
   setTabelKKH?: React.Dispatch<React.SetStateAction<kkh[] | null>>;
   setRekomendasiMenu?: React.Dispatch<React.SetStateAction<string[] | null>>;
   setKategoriIMT?: React.Dispatch<React.SetStateAction<string>>;
+  updateData?: boolean;
 }
 
 function DataDiri({
   setKKH,
+  setIMT,
+  setBBIdeal,
+  setAMB,
   setTabelKKH,
   setRekomendasiMenu,
   setKategoriIMT,
+  updateData,
 }: DataDiriProps) {
   const [submit, setSubmit] = useState(false);
   const { data: session } = useSession();
@@ -98,6 +106,7 @@ function DataDiri({
         .get("/api/kkh/getLast", { params: { dataLength: 4 } })
         .then((res: { data: kkh[] }) => {
           setKKH && setKKH(res.data[0]?.kkh || 0);
+          setIMT && setIMT(res.data[0]?.imt || 0);
           setKategoriIMT && setKategoriIMT(hitungKategoriIMT() || "");
           setTabelKKH && setTabelKKH(res.data);
           setFormData(
@@ -257,6 +266,40 @@ function DataDiri({
     }
   };
 
+  // Fungsi hitung berat badan ideal
+  const hitungBBIdeal = () => {
+    const { tinggi_badan: tinggi_badan, jenis_kelamin: jenis_kelamin } =
+      formData;
+    let bbIdeal;
+    if (jenis_kelamin === "pria") {
+      bbIdeal = tinggi_badan - 100 - 0.1 * (tinggi_badan - 100);
+    } else {
+      bbIdeal = tinggi_badan - 100 - 0.15 * (tinggi_badan - 100);
+    }
+
+    return parseInt(bbIdeal.toFixed(2));
+  };
+
+  // fungsi untuk menghitung angka metabolisme basal
+  const hitungAMB = () => {
+    const {
+      berat_badan: berat_badan,
+      tinggi_badan: tinggi_badan,
+      umur,
+      jenis_kelamin: jenis_kelamin,
+    } = formData;
+    let amb = 0;
+
+    // Hitung AMB berdasarkan rumus Harris-Benedict
+    if (jenis_kelamin === "laki-laki") {
+      amb = 88.362 + 13.397 * berat_badan + 4.799 * tinggi_badan - 5.677 * umur;
+    } else if (jenis_kelamin === "perempuan") {
+      amb = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 * umur;
+    }
+
+    return parseInt(amb.toFixed(2));
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // if form data === default form data
@@ -267,6 +310,10 @@ function DataDiri({
 
     setKKH && setKKH(hitungKKH());
     setKategoriIMT && setKategoriIMT(hitungKategoriIMT() || "");
+    setBBIdeal && setBBIdeal(hitungBBIdeal());
+    setAMB && setAMB(hitungAMB());
+
+    if (!updateData) return;
 
     // axios request data to /api/kkh
     try {
@@ -283,36 +330,6 @@ function DataDiri({
       toast.success("Data berhasil disimpan!");
     } catch (error) {
       toast.error("Data gagal disimpan!");
-    }
-  };
-
-  const hitungKaloriHarian = (formData: FormData): string => {
-    const { umur, berat_badan, kkh, aktivitas } = formData;
-
-    const faktorUmur = umur <= 25 ? 1 : umur >= 70 ? 0.6 : (70 - umur) / 45;
-    const faktorBmi =
-      kkh || 0 <= 16.5 ? 1 : kkh || 0 >= 27 ? 0.6 : (27 - (kkh || 0)) / 10.5;
-    const faktorAktivitas =
-      aktivitas === "Sangat Ringan"
-        ? 1.2
-        : aktivitas === "Ringan"
-        ? 1.375
-        : aktivitas === "Sedang"
-        ? 1.55
-        : aktivitas === "Berat"
-        ? 1.725
-        : aktivitas === "Sangat Berat"
-        ? 1.9
-        : 0;
-
-    const totalKalori =
-      Math.round(10 * faktorUmur * faktorBmi * faktorAktivitas * berat_badan) /
-      10;
-
-    if (totalKalori < 1200) {
-      return `Kebutuhan kalori Anda terlalu rendah (${totalKalori} kkal per hari). Silahkan hubungi dokter untuk penanganan lebih lanjut.)`;
-    } else {
-      return `Kebutuhan kalori Anda adalah ${totalKalori} kkal per hari.`;
     }
   };
 

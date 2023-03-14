@@ -34,6 +34,7 @@ function Dashboard() {
               setRekomendasiMenu={setRekomendasiMenu}
               setTabelKKH={setTabelKKH}
               setKKH={setKKH}
+              updateData={true}
             />
           </div>
           {/* KKH */}

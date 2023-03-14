@@ -41,14 +41,14 @@ function Layout(props: Props) {
           //   icon: <MdOutlineFoodBank />,
           // },
           {
-            title: "Kalkulator",
-            icon: <GiWeightScale />,
-          },
-          {
             title: "Forward Chaining",
             icon: <TiMediaFastForwardOutline />,
           },
           { title: "Logika Fuzzy", icon: <GiBrain /> },
+          {
+            title: "Kalkulator",
+            icon: <GiWeightScale />,
+          },
           // {
           //   title: "Perbandingan Metode",
           //   icon: <HiScale />,
