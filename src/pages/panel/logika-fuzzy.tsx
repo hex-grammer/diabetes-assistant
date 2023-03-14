@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import axios from "axios";
+import { PEKERJAAN } from "../../lib/pekerjaan";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -30,43 +31,48 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
 function LogikaFuzzy() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
-  const [beratBadan, setBeratBadan] = useState(0);
-  const [tinggiBadan, setTinggiBadan] = useState(0);
+
   const [umur, setUmur] = useState(0);
   const [imt, setImt] = useState(0);
+  const [fuzzyUmur, setFuzzyUmur] = useState({ label: "", nilai: 0 });
+  const [fuzzyBeratBadan, setFuzzyBeratBadan] = useState({
+    label: "",
+    nilai: 0,
+  });
+  const [fuzzyAktivitas, setFuzzyAktivitas] = useState({ label: "", nilai: 0 });
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [domLoaded, setDomLoaded] = useState(false);
 
   // CONSTANT VARIABLES
   const tabelAturan = [
-    ["Mudah", "Sangat kurus", "Istirahat", "Laki-laki", "Sedikit"],
-    ["Mudah", "Sangat kurus", "Istirahat", "Perempuan", "Sedikit"],
-    ["Mudah", "Sangat kurus", "Ringan", "Laki-laki", "Sedikit"],
-    ["Mudah", "Sangat kurus", "Ringan", "Perempuan", "Sedikit"],
-    ["Mudah", "Sangat kurus", "Sedang", "Laki-laki", "null"],
-    ["Mudah", "Sangat kurus", "Sedang", "Perempuan", null],
-    ["Mudah", "Sangat kurus", "Berat", "Laki-laki", null],
-    ["Mudah", "Sangat kurus", "Berat", "Perempuan", null],
-    ["Mudah", "Sangat kurus", "Sangat berat", "Laki-laki", null],
-    ["Mudah", "Sangat kurus", "Sangat berat", "Perempuan", null],
-    ["Mudah", "Kurus", "Istirahat", "Laki-laki", null],
-    ["Mudah", "Kurus", "Istirahat", "Perempuan", null],
-    ["Mudah", "Kurus", "Ringan", "Laki-laki", null],
-    ["Mudah", "Kurus", "Ringan", "Perempuan", null],
-    ["Mudah", "Kurus", "Sedang", "Laki-laki", null],
-    ["Mudah", "Kurus", "Sedang", "Perempuan", null],
-    ["Mudah", "Kurus", "Berat", "Laki-laki", null],
-    ["Mudah", "Kurus", "Berat", "Perempuan", null],
-    ["Mudah", "Kurus", "Sangat berat", "Laki-laki", null],
-    ["Mudah", "Kurus", "Sangat berat", "Perempuan", null],
-    ["Mudah", "Normal", "Istirahat", "Laki-laki", null],
-    ["Mudah", "Normal", "Istirahat", "Perempuan", null],
-    ["Mudah", "Normal", "Ringan", "Laki-laki", null],
-    ["Mudah", "Normal", "Ringan", "Perempuan", null],
-    ["Mudah", "Normal", "Sedang", "Laki-laki", null],
-    ["Mudah", "Normal", "Sedang", "Perempuan", null],
-    ["Mudah", "Normal", "Berat", "Laki-laki", null],
-    ["Mudah", "Normal", "Berat", "Perempuan", null],
+    ["Muda", "Sangat kurus", "Istirahat", "Laki-laki", "Sedikit"],
+    ["Muda", "Sangat kurus", "Istirahat", "Perempuan", "Sedikit"],
+    ["Muda", "Sangat kurus", "Ringan", "Laki-laki", "Sedikit"],
+    ["Muda", "Sangat kurus", "Ringan", "Perempuan", "Sedikit"],
+    ["Muda", "Sangat kurus", "Sedang", "Laki-laki", "Sedikit"],
+    ["Muda", "Sangat kurus", "Sedang", "Perempuan", "Sedikit"],
+    ["Muda", "Sangat kurus", "Berat", "Laki-laki", "Sedang"],
+    ["Muda", "Sangat kurus", "Berat", "Perempuan", "Sedang"],
+    ["Muda", "Sangat kurus", "Sangat berat", "Laki-laki", "Banyak"],
+    ["Muda", "Sangat kurus", "Sangat berat", "Perempuan", "Banyak"],
+    ["Muda", "Kurus", "Istirahat", "Laki-laki", "Sedikit"],
+    ["Muda", "Kurus", "Istirahat", "Perempuan", "Sedikit"],
+    ["Muda", "Kurus", "Ringan", "Laki-laki", "Sedikit"],
+    ["Muda", "Kurus", "Ringan", "Perempuan", "Sedikit"],
+    ["Muda", "Kurus", "Sedang", "Laki-laki", "Sedang"],
+    ["Muda", "Kurus", "Sedang", "Perempuan", "Sedang"],
+    ["Muda", "Kurus", "Berat", "Laki-laki", "Banyak"],
+    ["Muda", "Kurus", "Berat", "Perempuan", "Banyak"],
+    ["Muda", "Kurus", "Sangat berat", "Laki-laki", "Banyak"],
+    ["Muda", "Kurus", "Sangat berat", "Perempuan", "Banyak"],
+    ["Muda", "Normal", "Istirahat", "Laki-laki", "Sedikit"],
+    ["Muda", "Normal", "Istirahat", "Perempuan", "Sedikit"],
+    ["Muda", "Normal", "Ringan", "Laki-laki", "Sedang"],
+    ["Muda", "Normal", "Ringan", "Perempuan", "Sedang"],
+    ["Muda", "Normal", "Sedang", "Laki-laki", "Banyak"],
+    ["Muda", "Normal", "Sedang", "Perempuan", "Banyak"],
+    ["Muda", "Normal", "Berat", "Laki-laki", "Banyak"],
+    ["Muda", "Normal", "Berat", "Perempuan", "Banyak"],
   ];
 
   // Fungsi perhitungan himpunan fuzzy umur
@@ -90,6 +96,17 @@ function LogikaFuzzy() {
       sangatTua = (umur - 60) / (70 - 60);
     } else if (umur >= 70) {
       tua = 1;
+    }
+
+    // set label dan nilai himpunan fuzzy berdasarkan nilai tertinggi
+    if (muda > parobaya && muda > tua && muda > sangatTua) {
+      setFuzzyUmur({ label: "Muda", nilai: muda });
+    } else if (parobaya > muda && parobaya > tua && parobaya > sangatTua) {
+      setFuzzyUmur({ label: "Parobaya", nilai: parobaya });
+    } else if (tua > muda && tua > parobaya && tua > sangatTua) {
+      setFuzzyUmur({ label: "Tua", nilai: tua });
+    } else if (sangatTua > muda && sangatTua > parobaya && sangatTua > tua) {
+      setFuzzyUmur({ label: "Sangat Tua", nilai: sangatTua });
     }
 
     // Menampilkan proses perhitungan himpunan fuzzy umur
@@ -140,6 +157,44 @@ function LogikaFuzzy() {
       sangatGemuk = 1;
     }
 
+    // set label dan nilai himpunan fuzzy berdasarkan nilai tertinggi
+    if (
+      sangatKurus > kurus &&
+      sangatKurus > normal &&
+      sangatKurus > gemuk &&
+      sangatKurus > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Sangat Kurus", nilai: sangatKurus });
+    } else if (
+      kurus > sangatKurus &&
+      kurus > normal &&
+      kurus > gemuk &&
+      kurus > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Kurus", nilai: kurus });
+    } else if (
+      normal > sangatKurus &&
+      normal > kurus &&
+      normal > gemuk &&
+      normal > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Normal", nilai: normal });
+    } else if (
+      gemuk > sangatKurus &&
+      gemuk > kurus &&
+      gemuk > normal &&
+      gemuk > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Gemuk", nilai: gemuk });
+    } else if (
+      sangatGemuk > sangatKurus &&
+      sangatGemuk > kurus &&
+      sangatGemuk > normal &&
+      sangatGemuk > gemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Sangat Gemuk", nilai: sangatGemuk });
+    }
+
     // Menampilkan proses perhitungan himpunan fuzzy berat badan
     return (
       <>
@@ -159,7 +214,11 @@ function LogikaFuzzy() {
   };
 
   const FuzzyAktivitas = () => {
-    const aktivitas = 7.5;
+    const { kategori } =
+      PEKERJAAN.filter(
+        (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
+      )[0] || {};
+    const aktivitas = kategori === "ringan" ? 4 : kategori === "sedang" ? 6 : 8;
     let istirahat = 0;
     let ringan = 0;
     let sedang = 0;
@@ -173,32 +232,61 @@ function LogikaFuzzy() {
       istirahat = (4 - aktivitas) / 2;
     } else if (aktivitas > 2 && aktivitas < 4) {
       istirahat = (4 - aktivitas) / 2;
-      if (aktivitas >= 3) {
-        ringan = (aktivitas - 3) / 3;
-      }
+      ringan = (aktivitas - 2) / 2;
     } else if (aktivitas >= 4 && aktivitas <= 6) {
       sedang = (aktivitas - 4) / (6 - 4);
-      if (aktivitas >= 4) {
-        ringan = (5 - aktivitas) / (5 - 4);
-      }
+      ringan = (6 - aktivitas) / (6 - 4);
     } else if (aktivitas > 6 && aktivitas < 8) {
       sedang = (aktivitas - 6) / (8 - 6);
-      if (aktivitas >= 7) {
-        berat = (aktivitas - 7) / 7;
-      }
+      berat = (8 - aktivitas) / (8 - 6);
     } else if (aktivitas >= 8 && aktivitas <= 10) {
       sangatBerat = (aktivitas - 8) / (10 - 8);
-      // Mengatasi nilai keanggotaan yang lebih besar dari 1 pada titik overlap
-      if (aktivitas < 9) {
-        berat = (9 - aktivitas) / (9 - 8);
-      }
+      berat = (aktivitas - 8) / 8;
+    }
+
+    // set label dan nilai himpunan fuzzy berdasarkan nilai tertinggi
+    if (
+      istirahat > ringan &&
+      istirahat > sedang &&
+      istirahat > berat &&
+      istirahat > sangatBerat
+    ) {
+      setFuzzyAktivitas({ label: "Istirahat", nilai: istirahat });
+    } else if (
+      ringan > istirahat &&
+      ringan > sedang &&
+      ringan > berat &&
+      ringan > sangatBerat
+    ) {
+      setFuzzyAktivitas({ label: "Ringan", nilai: ringan });
+    } else if (
+      sedang > istirahat &&
+      sedang > ringan &&
+      sedang > berat &&
+      sedang > sangatBerat
+    ) {
+      setFuzzyAktivitas({ label: "Sedang", nilai: sedang });
+    } else if (
+      berat > istirahat &&
+      berat > ringan &&
+      berat > sedang &&
+      berat > sangatBerat
+    ) {
+      setFuzzyAktivitas({ label: "Berat", nilai: berat });
+    } else if (
+      sangatBerat > istirahat &&
+      sangatBerat > ringan &&
+      sangatBerat > sedang &&
+      sangatBerat > berat
+    ) {
+      setFuzzyAktivitas({ label: "Sangat Berat", nilai: sangatBerat });
     }
 
     // Menampilkan proses perhitungan himpunan fuzzy aktivitas
     return (
       <>
         <div className="font-mono text-blue-700">
-          <div>Aktivitas = {aktivitas}</div>
+          <div>Pekerjaan = {tabelKKH && tabelKKH[0]?.pekerjaan}</div>
           <div>| Istirahat | Ringan | Sedang | Berat | Sangat Berat |</div>
           <div>
             | {istirahat.toFixed(2)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;
@@ -212,6 +300,43 @@ function LogikaFuzzy() {
     );
   };
 
+  // fungsi defuzzifikasi
+  const Defuzzifikasi = () => {
+    const cal = (tabelKKH && tabelKKH[0]?.kkh) || 0;
+    const JK = (cal * 0.05).toFixed(2) as unknown as number;
+    return (
+      <>
+        <div className="font-mono text-blue-700">
+          <div>Kalori Basal &nbsp;= {cal} kalori</div>
+          <div>Jenis Kelamin = {tabelKKH && tabelKKH[0]?.jenis_kelamin}</div>
+          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
+            {cal} * 5%
+          </div>
+          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
+            {(cal * 0.05).toFixed(2)}
+          </div>
+          <div>Total Kalori &nbsp;= Kalori basal - U - JK + BB + AK</div>
+          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
+            {cal || 0} - {fuzzyUmur.nilai} - {JK} + {fuzzyBeratBadan.nilai} +{" "}
+            {fuzzyAktivitas.nilai}
+          </div>
+          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
+            {(cal || 0) -
+              fuzzyUmur.nilai -
+              JK +
+              fuzzyBeratBadan.nilai +
+              fuzzyAktivitas.nilai}{" "}
+            kalori
+          </div>
+        </div>
+      </>
+    );
+  };
+
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {
     setDomLoaded(true);
@@ -219,8 +344,6 @@ function LogikaFuzzy() {
       void axios
         .get("/api/kkh/getLast", { params: { dataLength: 4 } })
         .then((res: { data: kkh[] }) => {
-          setBeratBadan(res.data[0]?.berat_badan || 0);
-          setTinggiBadan(res.data[0]?.tinggi_badan || 1);
           setUmur(res.data[0]?.umur || 0);
           setTabelKKH(res.data);
           setImt(res.data[0]?.imt || 0);
@@ -246,10 +369,9 @@ function LogikaFuzzy() {
                   <div className="mb-1">
                     Berikut adalah proses perhitungan himpunan fuzzy umur
                   </div>
-                  <span className="font-mono text-blue-700">
-                    {/* penjelasan perhitungan himpunan fuzzy umur */}
+                  <div className="w-full overflow-x-auto whitespace-nowrap pb-2 sm:pb-0">
                     <FuzzyUmur />
-                  </span>
+                  </div>
                 </div>
               </div>
               {/* HIMPUNAN FUZZY BERAT BADAN */}
@@ -262,7 +384,9 @@ function LogikaFuzzy() {
                     Berikut adalah proses perhitungan himpunan fuzzy berat badan
                     berdasarkan Index Massa Tubuh (IMT) anda:
                   </div>
-                  <FuzzyBeratBadan />
+                  <div className="w-full overflow-x-auto whitespace-nowrap pb-2 sm:pb-0">
+                    <FuzzyBeratBadan />
+                  </div>
                 </div>
               </div>
               {/* HIMPUNAN FUZZY AKTIVITAS */}
@@ -272,17 +396,26 @@ function LogikaFuzzy() {
                 </h2>
                 <div className="text-sm">
                   <div className="mb-1">
-                    Berikut adalah proses perhitungan Index Massa Tubuh (IMT)
-                    anda:
+                    Berikut adalah proses perhitungan himpunan fuzzy aktivitas
+                    berdasarkan pekerjaan anda:
                   </div>
-                  <FuzzyAktivitas />
+                  <div className="w-full overflow-x-auto whitespace-nowrap pb-2 sm:pb-0">
+                    <FuzzyAktivitas />
+                  </div>
                 </div>
               </div>
-              {/* Tabel Aturan-Makanan */}
-              <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-6 sm:row-start-1">
+              {/* Tabel Aturan (Implikasi) */}
+              <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 px-1 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-6 sm:row-start-1">
                 <h2 className="mb-2 text-center text-xl font-bold uppercase">
-                  4. Tabel Aturan-Makanan
+                  4. Tabel Aturan (Implikasi)
                 </h2>
+                {/* link download file excel berisi data tabel aturan lengkap */}
+                {/* <a
+                  href="/api/kkh/download"
+                  className="p-2 text-blue-600 underline"
+                >
+                  Download file aturan
+                </a> */}
                 <div className="w-full overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <div className="bgre min-w-full sm:max-h-[70vh]">
@@ -318,7 +451,11 @@ function LogikaFuzzy() {
               <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
                 <h2 className="mb-1 font-bold uppercase">5. Defuzzifikasi</h2>
                 <div className="">
-                  <span className="text-sm text-gray-700"></span>
+                  <div>
+                    Berdasarkan himpunan fuzzy dan tabel aturan yang telah
+                    diperoleh, berikut adalah kebutuhan kalori harian anda:
+                  </div>
+                  <Defuzzifikasi />
                 </div>
               </div>
             </>
