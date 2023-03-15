@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
-import type { kkh } from "@prisma/client";
+import type { User, kkh } from "@prisma/client";
 import axios from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -28,15 +28,45 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
 
 function ForwardChaining() {
   const router = useRouter();
+  const { data: session } = useSession();
   const paths = router.pathname.split("/").slice(2);
   const [rekomendasiMenu, setRekomendasiMenu] = useState<string[]>([]);
   const [beratBadan, setBeratBadan] = useState(0);
   const [tinggiBadan, setTinggiBadan] = useState(0);
   const [imt, setImt] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
+  const [dataBerubah, setDataBerubah] = useState(false);
+
+  const KATEGORI = [
+    {
+      kategori: "Sangat Kurus",
+      minIMT: 0,
+      maxIMT: 17,
+    },
+    {
+      kategori: "Kurus",
+      minIMT: 17,
+      maxIMT: 18.5,
+    },
+    {
+      kategori: "Normal",
+      minIMT: 18.5,
+      maxIMT: 25,
+    },
+    {
+      kategori: "Gemuk",
+      minIMT: 25,
+      maxIMT: 27,
+    },
+    {
+      kategori: "Obesitas",
+      minIMT: 27,
+      maxIMT: "∞",
+    },
+  ];
 
   // CONSTANT VARIABLES
-  const tabelAturan = [
+  const ATURAN = [
     {
       makanan: "Beras Merah",
       kategori: [true, true, true, true, true],
@@ -134,33 +164,137 @@ function ForwardChaining() {
       kategori: [false, true, false, false, false],
     },
   ];
-  const KATEGORI = [
-    {
-      kategori: "Sangat Kurus",
-      minIMT: 0,
-      maxIMT: 17,
-    },
-    {
-      kategori: "Kurus",
-      minIMT: 17,
-      maxIMT: 18.5,
-    },
-    {
-      kategori: "Normal",
-      minIMT: 18.5,
-      maxIMT: 25,
-    },
-    {
-      kategori: "Gemuk",
-      minIMT: 25,
-      maxIMT: 27,
-    },
-    {
-      kategori: "Obesitas",
-      minIMT: 27,
-      maxIMT: "∞",
-    },
-  ];
+
+  // usestate aturan
+  const [tabelAturan, setTabelAturan] = useState(ATURAN);
+  const [newMakanan, setNewMakanan] = useState({
+    makanan: "",
+    kategori: [false, false, false, false, false],
+  });
+
+  const toggleKategori = (makananName: string, kategoriIndex: number) => {
+    setDataBerubah(true);
+    setTabelAturan((prevTabelAturan) =>
+      prevTabelAturan.map((aturan) => {
+        if (aturan.makanan === makananName) {
+          const newKategori = [...aturan.kategori];
+          newKategori[kategoriIndex] = !newKategori[kategoriIndex];
+          return {
+            ...aturan,
+            kategori: newKategori,
+          };
+        }
+        return aturan;
+      })
+    );
+  };
+
+  // const FormAturan = () => {
+  //   return (
+  //     <form onSubmit={(e) => void handleSubmit(e)}>
+  //       {/* Makanan */}
+  //       <div className="mb-4">
+  //         <label className="mb-1 block font-bold text-gray-700" htmlFor="makanan">
+  //           Makanan
+  //         </label>
+  //         <input
+  //           className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+  //           id="makanan"
+  //           type="text"
+  //           name="makanan"
+  //           value={formData.makanan}
+  //           onChange={handleInputChange}
+  //           required
+  //         />
+  //       </div>
+  //       {/* Kategori */}
+  //       <div className="mb-4">
+  //         <div className="font-bold text-gray-700 mb-1">Kategori</div>
+  //         <div className="flex items-center">
+  //           <input
+  //             className="form-checkbox h-5 w-5 text-blue-600"
+  //             id="sangat_kurus"
+  //             type="checkbox"
+  //             name="kategori"
+  //             value="sangat_kurus"
+  //             checked={formData.kategori === "sangat_kurus"}
+  //             onChange={handleInputChange}
+  //           />
+  //           <label htmlFor="sangat_kurus" className="ml-2">
+  //             Sangat Kurus
+  //           </label>
+  //         </div>
+  //         <div className="flex items-center">
+  //           <input
+  //             className="form-checkbox h-5 w-5 text-blue-600"
+  //             id="kurus"
+  //             type="checkbox"
+  //             name="kategori"
+  //             value="kurus"
+  //             checked={formData.kategori === "kurus"}
+  //             onChange={handleInputChange}
+  //           />
+  //           <label htmlFor="kurus" className="ml-2">
+  //             Kurus
+  //           </label>
+  //         </div>
+  //         <div className="flex items-center">
+  //           <input
+  //             className="form-checkbox h-5 w-5 text-blue-600"
+  //             id="sedang"
+  //             type="checkbox"
+  //             name="kategori"
+  //             value="sedang"
+  //             checked={formData.kategori === "sedang"}
+  //             onChange={handleInputChange}
+  //           />
+  //           <label htmlFor="sedang" className="ml-2">
+  //             Sedang
+  //           </label>
+  //         </div>
+  //         <div className="flex items-center">
+  //           <input
+  //             className="form-checkbox h-5 w-5 text-blue-600"
+  //             id="gemuk"
+  //             type="checkbox"
+  //             name="kategori"
+  //             value="gemuk"
+  //             checked={formData.kategori === "gemuk"}
+  //             onChange={handleInputChange}
+  //           />
+  //           <label htmlFor="gemuk" className="ml-2">
+  //             Gemuk
+  //           </label>
+  //         </div>
+  //         <div className="flex items-center">
+  //           <input
+  //             className="form-checkbox h-5 w-5 text-blue-600"
+  //             id="sangat_gemuk"
+  //             type="checkbox"
+  //             name="kategori"
+  //             value="sangat_gemuk"
+  //             checked={formData.kategori === "sangat_gemuk"}
+  //             onChange={handleInputChange}
+  //           />
+  //           <label htmlFor="sangat_gemuk" className="ml-2">
+  //             Sangat Gemuk
+  //           </label>
+  //         </div>
+  //       </div>
+  //       {/* Submit */}
+  //       <div className="flex items-center justify-between">
+  //         <button
+  //           className={`focus:shadow-outline rounded py-2 px-4 font-bold text-white focus:outline-none ${
+  //             submit
+  //               ? "bg-blue-500 opacity-100 hover:bg-blue-600"
+  //               : "cursor-not-allowed bg-gray-500"}`}>
+  //                 Submit
+  //               </button>
+  //               </div>
+  //               </form>
+  //   )
+
+  // }
 
   // fungsi untuk menghitung Kategori IMT
   const hitungKategoriIMT = (IMT: number) => {
@@ -188,6 +322,31 @@ function ForwardChaining() {
     return rekomendasiMenu;
   };
 
+  const onChangeMakanan = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMakanan((prev) => {
+      return {
+        ...prev,
+        makanan: e.target.value,
+      };
+    });
+  };
+
+  const onTambahData = () => {
+    if (newMakanan.makanan === "") return;
+    setDataBerubah(true);
+    setTabelAturan((prev) => {
+      return [newMakanan, ...tabelAturan];
+    });
+    setNewMakanan({
+      makanan: "",
+      kategori: [false, false, false, false, false],
+    });
+  };
+
+  const handleSimpan = () => {
+    setDataBerubah(false);
+  };
+
   // if login
   useEffect(() => {
     const getAssyncSession = async () => {
@@ -207,9 +366,18 @@ function ForwardChaining() {
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {
     setDomLoaded(true);
+    // get user from local storage
+    const userLocal = JSON.parse(localStorage.getItem("user") || "{}") as User;
+
     try {
       void axios
-        .get("/api/kkh/getLast", { params: { dataLength: 4 } })
+        .get("/api/kkh/getLast", {
+          params: {
+            dataLength: 4,
+            email: session?.user?.email,
+            username: userLocal.username,
+          },
+        })
         .then((res: { data: kkh[] }) => {
           setBeratBadan(res.data[0]?.berat_badan || 0);
           setTinggiBadan(res.data[0]?.tinggi_badan || 1);
@@ -257,6 +425,54 @@ function ForwardChaining() {
                   Tabel Aturan-Makanan
                 </h2>
                 <div className="w-full overflow-x-auto">
+                  {/* Action Tabel Admin */}
+                  <div className="mb-2 flex flex-col-reverse gap-2 p-2 sm:flex-row sm:items-end sm:justify-between sm:p-0">
+                    {/* tambah makanan */}
+                    <div className="flex flex-col items-start text-sm">
+                      <label
+                        className="mb-1 block whitespace-nowrap font-semibold text-gray-700"
+                        htmlFor="makanan"
+                      >
+                        Tambah Data Makanan:
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          className="focus:shadow-outline appearance-none rounded border py-1 px-2 leading-tight text-gray-700 shadow focus:outline-none"
+                          id="makanan"
+                          type="text"
+                          name="makanan"
+                          value={newMakanan.makanan}
+                          onChange={(e) => onChangeMakanan(e)}
+                          required
+                          min={20}
+                        />
+                        {/* tombol tambah */}
+                        <div className="flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
+                            type="submit"
+                            onClick={onTambahData}
+                          >
+                            Tambah
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* tombol simpan */}
+                    <div className="flex items-center justify-between">
+                      <button
+                        className={`focus:shadow-outline rounded py-1 px-2 font-bold text-white opacity-100 focus:outline-none ${
+                          dataBerubah
+                            ? "bg-blue-500 hover:bg-blue-600"
+                            : "bg-gray-300 font-semibold text-gray-700"
+                        }`}
+                        type="submit"
+                        onClick={handleSimpan}
+                      >
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
                   <table className="min-w-full divide-y divide-gray-200">
                     <div className="min-w-full">
                       {/* TabelHeader */}
@@ -281,7 +497,14 @@ function ForwardChaining() {
                                 key={i}
                                 className="whitespace-nowrap p-2 text-center text-sm text-gray-500"
                               >
-                                {kat ? "✔" : "❌"}
+                                <span
+                                  onClick={() =>
+                                    toggleKategori(aturan.makanan, i)
+                                  }
+                                  className="cursor-pointer"
+                                >
+                                  {kat ? "✔" : "❌"}
+                                </span>
                               </td>
                             ))}
                           </tr>

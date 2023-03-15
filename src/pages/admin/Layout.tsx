@@ -56,14 +56,14 @@ function Layout(props: Props) {
             title: "Kalkulator",
             icon: <GiWeightScale />,
           },
-          {
-            title: "Makanan",
-            icon: <MdOutlineFoodBank />,
-          },
-          {
-            title: "Pekerjaan",
-            icon: <RiFileUserLine />,
-          },
+          // {
+          //   title: "Makanan",
+          //   icon: <MdOutlineFoodBank />,
+          // },
+          // {
+          //   title: "Pekerjaan",
+          //   icon: <RiFileUserLine />,
+          // },
           // { title: "Admin", icon: <RiTeamLine /> },
         ]}
       />
