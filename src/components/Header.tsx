@@ -44,7 +44,7 @@ const Header = (props: Props) => {
           />
         )}
         <div className="ml-2 font-semibold text-gray-200 sm:mr-2">
-          {user?.name || String(session?.user?.name)}
+          {String(session?.user?.name) || user?.name}
         </div>
       </div>
       <button

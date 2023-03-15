@@ -65,8 +65,8 @@ function ForwardChaining() {
     },
   ];
 
-  // CONSTANT VARIABLES
-  const ATURAN = [
+  // usestate aturan
+  const [oldAturan, setOldAturan] = useState([
     {
       makanan: "Beras Merah",
       kategori: [true, true, true, true, true],
@@ -163,10 +163,8 @@ function ForwardChaining() {
       makanan: "Sayur Sawi Hijau",
       kategori: [false, true, false, false, false],
     },
-  ];
-
-  // usestate aturan
-  const [tabelAturan, setTabelAturan] = useState(ATURAN);
+  ]);
+  const [tabelAturan, setTabelAturan] = useState(oldAturan);
   const [newMakanan, setNewMakanan] = useState({
     makanan: "",
     kategori: [false, false, false, false, false],
@@ -459,19 +457,28 @@ function ForwardChaining() {
                       </div>
                     </div>
                     {/* tombol simpan */}
-                    <div className="flex items-center justify-between">
-                      <button
-                        className={`focus:shadow-outline rounded py-1 px-2 font-bold text-white opacity-100 focus:outline-none ${
-                          dataBerubah
-                            ? "bg-blue-500 hover:bg-blue-600"
-                            : "bg-gray-300 font-semibold text-gray-700"
-                        }`}
-                        type="submit"
-                        onClick={handleSimpan}
-                      >
-                        Simpan
-                      </button>
-                    </div>
+                    {dataBerubah && (
+                      <div className="flex gap-2">
+                        <div className="flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
+                            type="submit"
+                            onClick={handleSimpan}
+                          >
+                            Simpan
+                          </button>
+                        </div>
+                        <div className="fosem flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-gray-300 py-1 px-2 font-semibold text-gray-800 opacity-100 focus:outline-none`}
+                            type="submit"
+                            onClick={handleSimpan}
+                          >
+                            Batal
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <table className="min-w-full divide-y divide-gray-200">
                     <div className="min-w-full">
