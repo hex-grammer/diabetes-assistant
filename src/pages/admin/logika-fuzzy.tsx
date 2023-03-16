@@ -353,10 +353,9 @@ function LogikaFuzzy() {
     });
   }, []);
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}") as User;
-
   // axios request to set kkh in /api/kkh/getLast in useEffect
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}") as User;
     setDomLoaded(true);
     try {
       void axios
