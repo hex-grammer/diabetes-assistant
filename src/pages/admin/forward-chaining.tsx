@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import type { User, kkh } from "@prisma/client";
 import axios from "axios";
 import { getSession, useSession } from "next-auth/react";
+import { MdOutlineDeleteForever } from "react-icons/md";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -24,6 +25,12 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
       </tr>
     </thead>
   );
+};
+
+type Aturan = {
+  id?: number;
+  makanan: string;
+  kategori: boolean[];
 };
 
 function ForwardChaining() {
@@ -66,109 +73,28 @@ function ForwardChaining() {
   ];
 
   // usestate aturan
-  const [oldAturan, setOldAturan] = useState([
+  const [oldAturan, setOldAturan] = useState<Aturan[]>([
     {
-      makanan: "Beras Merah",
+      id: 0,
+      makanan: "",
       kategori: [true, true, true, true, true],
     },
-    {
-      makanan: "Buah Apel",
-      kategori: [true, true, false, false, false],
-    },
-    {
-      makanan: "Buah Belimbing",
-      kategori: [false, false, false, false, false],
-    },
-    {
-      makanan: "Buah Kiwi",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Buah Nanas",
-      kategori: [false, false, false, false, false],
-    },
-    {
-      makanan: "Buah Pepaya",
-      kategori: [true, true, true, true, false],
-    },
-    {
-      makanan: "Bubur Kacang Hijau",
-      kategori: [false, false, true, false, false],
-    },
-    {
-      makanan: "Ikan Salmon Panggang",
-      kategori: [true, true, true, false, true],
-    },
-    {
-      makanan: "Ikan Tuna Panggang",
-      kategori: [true, true, true, true, false],
-    },
-    {
-      makanan: "Jagung",
-      kategori: [false, true, true, true, false],
-    },
-    {
-      makanan: "Kacang Merah",
-      kategori: [false, false, true, false, false],
-    },
-    {
-      makanan: "Kacang Tanah",
-      kategori: [false, false, false, false, false],
-    },
-    {
-      makanan: "Mentimun",
-      kategori: [false, true, false, false, false],
-    },
-    {
-      makanan: "Sayur Bayam",
-      kategori: [true, false, true, true, true],
-    },
-    {
-      makanan: "Sayur Brokoli",
-      kategori: [false, false, false, false, true],
-    },
-    {
-      makanan: "Sayur Kubis/Kol",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Sayur Sawi Putih",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Susu Bear Brand",
-      kategori: [true, false, true, false, false],
-    },
-    {
-      makanan: "Tahu",
-      kategori: [true, true, false, false, false],
-    },
-    {
-      makanan: "Telur Rebus",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Tempe",
-      kategori: [false, true, false, false, false],
-    },
-    {
-      makanan: "Tomat",
-      kategori: [false, true, false, false, false],
-    },
-    {
-      makanan: "Wortel",
-      kategori: [true, true, false, false, false],
-    },
-    {
-      makanan: "Sayur Sawi Hijau",
-      kategori: [false, true, false, false, false],
-    },
   ]);
+
   const [tabelAturan, setTabelAturan] = useState(oldAturan);
   const [newMakanan, setNewMakanan] = useState({
     makanan: "",
     kategori: [false, false, false, false, false],
   });
+
+  useEffect(() => {
+    try {
+      void axios.get("/api/makanan/getAll").then((res: { data: Aturan[] }) => {
+        setOldAturan(res.data);
+        setTabelAturan(res.data);
+      });
+    } catch (error) {}
+  }, []);
 
   const toggleKategori = (makananName: string, kategoriIndex: number) => {
     setDataBerubah(true);
@@ -333,7 +259,7 @@ function ForwardChaining() {
     if (newMakanan.makanan === "") return;
     setDataBerubah(true);
     setTabelAturan((prev) => {
-      return [newMakanan, ...tabelAturan];
+      return [newMakanan, ...prev];
     });
     setNewMakanan({
       makanan: "",
@@ -343,6 +269,48 @@ function ForwardChaining() {
 
   const handleSimpan = () => {
     setDataBerubah(false);
+    setOldAturan(tabelAturan);
+    const newData = [
+      ...tabelAturan.filter((aturan) => {
+        const oldData = oldAturan.find((oldData) => oldData.id === aturan.id);
+        if (!oldData) {
+          return true;
+        }
+        return (
+          JSON.stringify(oldData.kategori) !== JSON.stringify(aturan.kategori)
+        );
+      }),
+    ];
+
+    axios
+      .post("/api/makanan/create", newData)
+      .then(() => {
+        toast.success("Data Berhasil Disimpan!");
+      })
+      .catch(() => {
+        toast.error("Gagal menambah data!");
+      });
+  };
+
+  const onBatal = () => {
+    setDataBerubah(false);
+    setTabelAturan(oldAturan);
+  };
+
+  const onDelete = (
+    id: number,
+    setTabelAturan: React.Dispatch<React.SetStateAction<Aturan[]>>
+  ) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+    axios
+      .delete(`/api/makanan/delete/`, { params: { id } })
+      .then(() => {
+        setTabelAturan((oldData) => oldData.filter((data) => data.id !== id));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   // if login
@@ -456,7 +424,7 @@ function ForwardChaining() {
                         </div>
                       </div>
                     </div>
-                    {/* tombol simpan */}
+                    {/* tombol simpan & batal */}
                     {dataBerubah && (
                       <div className="flex gap-2">
                         <div className="flex items-center justify-between">
@@ -472,7 +440,7 @@ function ForwardChaining() {
                           <button
                             className={`focus:shadow-outline rounded bg-gray-300 py-1 px-2 font-semibold text-gray-800 opacity-100 focus:outline-none`}
                             type="submit"
-                            onClick={handleSimpan}
+                            onClick={onBatal}
                           >
                             Batal
                           </button>
@@ -485,6 +453,7 @@ function ForwardChaining() {
                       {/* TabelHeader */}
                       <TabelHeader
                         HEADERS={[
+                          "",
                           "Makanan",
                           "Sangat Kurus",
                           "Kurus",
@@ -496,6 +465,16 @@ function ForwardChaining() {
                       <tbody className="divide-y divide-gray-200 overflow-auto bg-gray-50">
                         {tabelAturan?.map((aturan, i) => (
                           <tr key={i}>
+                            <div className="py-2">
+                              <div
+                                onClick={() =>
+                                  onDelete(aturan.id || 0, setTabelAturan)
+                                }
+                                className="flex cursor-pointer items-center justify-center rounded-sm bg-red-500 p-1 px-0.5 text-white"
+                              >
+                                <MdOutlineDeleteForever />
+                              </div>
+                            </div>
                             <td className="whitespace-nowrap p-2 text-sm text-gray-500">
                               {aturan.makanan}
                             </td>

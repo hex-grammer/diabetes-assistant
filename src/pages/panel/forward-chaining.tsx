@@ -4,9 +4,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
-import type { kkh } from "@prisma/client";
+import type { User, kkh } from "@prisma/client";
 import axios from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -28,6 +28,7 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
 
 function ForwardChaining() {
   const router = useRouter();
+  const { data: session } = useSession();
   const paths = router.pathname.split("/").slice(2);
   const [rekomendasiMenu, setRekomendasiMenu] = useState<string[]>([]);
   const [beratBadan, setBeratBadan] = useState(0);
@@ -202,14 +203,18 @@ function ForwardChaining() {
     getAssyncSession().catch((err) => {
       console.log(err);
     });
-  }, []);
-
-  // axios request to set kkh in /api/kkh/getLast in useEffect
-  useEffect(() => {
     setDomLoaded(true);
+
+    const userLocal = JSON.parse(localStorage.getItem("user") || "{}") as User;
     try {
       void axios
-        .get("/api/kkh/getLast", { params: { dataLength: 4 } })
+        .get("/api/kkh/getLast", {
+          params: {
+            dataLength: 4,
+            email: session?.user?.email,
+            username: userLocal.username,
+          },
+        })
         .then((res: { data: kkh[] }) => {
           setBeratBadan(res.data[0]?.berat_badan || 0);
           setTinggiBadan(res.data[0]?.tinggi_badan || 1);

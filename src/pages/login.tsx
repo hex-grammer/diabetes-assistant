@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import type { NextPage } from "next";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -56,8 +56,13 @@ const Login: NextPage = () => {
       const { user } = (await res.json()) as { user: User };
       localStorage.setItem("user", JSON.stringify(user));
 
+      if (user.username === "admin") {
+        void router.push("admin/dashboard");
+        return;
+      }
+
       // alihkan ke halaman panel
-      void router.push("/panel/dashboard");
+      await signOut({ callbackUrl: "/panel/dashboard" });
     } else {
       // tampilkan response message
       const { message } = (await res.json()) as { message: string };

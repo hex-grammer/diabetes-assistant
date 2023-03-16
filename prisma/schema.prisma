@@ -59,6 +59,12 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model Aturan {
+    id       Int    @id @default(autoincrement())
+    makanan  String @unique
+    kategori String
+}
+
 model kkh {
     id_kkh        Int      @id @default(autoincrement())
     berat_badan   Float

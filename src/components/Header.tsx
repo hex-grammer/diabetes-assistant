@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { AiOutlineMenu } from "react-icons/ai";
@@ -10,14 +11,21 @@ type Props = {
 };
 
 const Header = (props: Props) => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [user, setUser] = useState<User | null>(null);
 
   // useeffect to get user from localstorage
   useEffect(() => {
-    const userLocal = localStorage.getItem("user");
+    const userLocal = JSON.parse(
+      localStorage.getItem("user") as string
+    ) as User;
+
     if (userLocal) {
-      setUser(JSON.parse(userLocal) as User);
+      setUser(userLocal);
+    }
+    if (router.pathname.includes("admin") && userLocal.type !== "admin") {
+      void router.push("/panel/dashboard");
     }
   }, []);
 
@@ -44,7 +52,7 @@ const Header = (props: Props) => {
           />
         )}
         <div className="ml-2 font-semibold text-gray-200 sm:mr-2">
-          {String(session?.user?.name) || user?.name}
+          {session?.user?.name || user?.name}
         </div>
       </div>
       <button

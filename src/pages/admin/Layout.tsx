@@ -47,11 +47,11 @@ function Layout(props: Props) {
         setMenuStatus={setMenuStatus}
         menuLists={[
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
+          { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
             title: "Forward Chaining",
             icon: <TiMediaFastForwardOutline />,
           },
-          { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
             title: "Kalkulator",
             icon: <GiWeightScale />,
