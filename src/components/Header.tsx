@@ -24,6 +24,12 @@ const Header = (props: Props) => {
     if (userLocal) {
       setUser(userLocal);
     }
+
+    if (router.pathname.includes("admin") && !userLocal) {
+      void router.push("/panel/dashboard");
+      return;
+    }
+
     if (router.pathname.includes("admin") && userLocal.type !== "admin") {
       void router.push("/panel/dashboard");
     }
