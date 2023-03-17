@@ -214,11 +214,12 @@ function LogikaFuzzy() {
   };
 
   const FuzzyAktivitas = () => {
-    const { kategori } =
+    const { aktivitas } =
       PEKERJAAN.filter(
         (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
       )[0] || {};
-    const aktivitas = kategori === "ringan" ? 4 : kategori === "sedang" ? 6 : 8;
+    const labelAktivitas =
+      aktivitas === "ringan" ? 4 : aktivitas === "sedang" ? 6 : 8;
     let istirahat = 0;
     let ringan = 0;
     let sedang = 0;
@@ -226,22 +227,22 @@ function LogikaFuzzy() {
     let sangatBerat = 0;
 
     // Menghitung nilai keanggotaan himpunan fuzzy
-    if (aktivitas <= 2) {
+    if (labelAktivitas <= 2) {
       istirahat = 1;
-    } else if (aktivitas > 2 && aktivitas < 4) {
-      istirahat = (4 - aktivitas) / 2;
-    } else if (aktivitas > 2 && aktivitas < 4) {
-      istirahat = (4 - aktivitas) / 2;
-      ringan = (aktivitas - 2) / 2;
-    } else if (aktivitas >= 4 && aktivitas <= 6) {
-      sedang = (aktivitas - 4) / (6 - 4);
-      ringan = (6 - aktivitas) / (6 - 4);
-    } else if (aktivitas > 6 && aktivitas < 8) {
-      sedang = (aktivitas - 6) / (8 - 6);
-      berat = (8 - aktivitas) / (8 - 6);
-    } else if (aktivitas >= 8 && aktivitas <= 10) {
-      sangatBerat = (aktivitas - 8) / (10 - 8);
-      berat = (aktivitas - 8) / 8;
+    } else if (labelAktivitas > 2 && labelAktivitas < 4) {
+      istirahat = (4 - labelAktivitas) / 2;
+    } else if (labelAktivitas > 2 && labelAktivitas < 4) {
+      istirahat = (4 - labelAktivitas) / 2;
+      ringan = (labelAktivitas - 2) / 2;
+    } else if (labelAktivitas >= 4 && labelAktivitas <= 6) {
+      sedang = (labelAktivitas - 4) / (6 - 4);
+      ringan = (6 - labelAktivitas) / (6 - 4);
+    } else if (labelAktivitas > 6 && labelAktivitas < 8) {
+      sedang = (labelAktivitas - 6) / (8 - 6);
+      berat = (8 - labelAktivitas) / (8 - 6);
+    } else if (labelAktivitas >= 8 && labelAktivitas <= 10) {
+      sangatBerat = (labelAktivitas - 8) / (10 - 8);
+      berat = (labelAktivitas - 8) / 8;
     }
 
     // set label dan nilai himpunan fuzzy berdasarkan nilai tertinggi
