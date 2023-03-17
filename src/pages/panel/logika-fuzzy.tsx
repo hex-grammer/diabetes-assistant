@@ -7,7 +7,7 @@ import { getSession, useSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
 import type { User, kkh } from "@prisma/client";
 import axios from "axios";
-import { PEKERJAAN } from "../../lib/pekerjaan";
+import { ATURAN } from "../../lib/aturan-fuzzy";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -27,6 +27,20 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   );
 };
 
+type Atuaran = {
+  no: number;
+  umur: string;
+  berat: string;
+  aktivitas: string;
+  jenis_kelamin: string;
+  kalori_harian: string;
+};
+
+type Pekerjaan = {
+  nama_pekerjaan: string;
+  aktivitas: string;
+};
+
 function LogikaFuzzy() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
@@ -42,38 +56,15 @@ function LogikaFuzzy() {
   const [fuzzyAktivitas, setFuzzyAktivitas] = useState({ label: "", nilai: 0 });
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [domLoaded, setDomLoaded] = useState(false);
+  const [tabelPekerjaan, setTabelPekerjaan] = useState<Pekerjaan[]>([
+    {
+      nama_pekerjaan: "",
+      aktivitas: "",
+    },
+  ]);
 
   // CONSTANT VARIABLES
-  const tabelAturan = [
-    ["Muda", "Sangat kurus", "Istirahat", "Laki-laki", "Sedikit"],
-    ["Muda", "Sangat kurus", "Istirahat", "Perempuan", "Sedikit"],
-    ["Muda", "Sangat kurus", "Ringan", "Laki-laki", "Sedikit"],
-    ["Muda", "Sangat kurus", "Ringan", "Perempuan", "Sedikit"],
-    ["Muda", "Sangat kurus", "Sedang", "Laki-laki", "Sedikit"],
-    ["Muda", "Sangat kurus", "Sedang", "Perempuan", "Sedikit"],
-    ["Muda", "Sangat kurus", "Berat", "Laki-laki", "Sedang"],
-    ["Muda", "Sangat kurus", "Berat", "Perempuan", "Sedang"],
-    ["Muda", "Sangat kurus", "Sangat berat", "Laki-laki", "Banyak"],
-    ["Muda", "Sangat kurus", "Sangat berat", "Perempuan", "Banyak"],
-    ["Muda", "Kurus", "Istirahat", "Laki-laki", "Sedikit"],
-    ["Muda", "Kurus", "Istirahat", "Perempuan", "Sedikit"],
-    ["Muda", "Kurus", "Ringan", "Laki-laki", "Sedikit"],
-    ["Muda", "Kurus", "Ringan", "Perempuan", "Sedikit"],
-    ["Muda", "Kurus", "Sedang", "Laki-laki", "Sedang"],
-    ["Muda", "Kurus", "Sedang", "Perempuan", "Sedang"],
-    ["Muda", "Kurus", "Berat", "Laki-laki", "Banyak"],
-    ["Muda", "Kurus", "Berat", "Perempuan", "Banyak"],
-    ["Muda", "Kurus", "Sangat berat", "Laki-laki", "Banyak"],
-    ["Muda", "Kurus", "Sangat berat", "Perempuan", "Banyak"],
-    ["Muda", "Normal", "Istirahat", "Laki-laki", "Sedikit"],
-    ["Muda", "Normal", "Istirahat", "Perempuan", "Sedikit"],
-    ["Muda", "Normal", "Ringan", "Laki-laki", "Sedang"],
-    ["Muda", "Normal", "Ringan", "Perempuan", "Sedang"],
-    ["Muda", "Normal", "Sedang", "Laki-laki", "Banyak"],
-    ["Muda", "Normal", "Sedang", "Perempuan", "Banyak"],
-    ["Muda", "Normal", "Berat", "Laki-laki", "Banyak"],
-    ["Muda", "Normal", "Berat", "Perempuan", "Banyak"],
-  ];
+  const tabelAturan = ATURAN as Atuaran[];
 
   // Fungsi perhitungan himpunan fuzzy umur
   const FuzzyUmur = () => {
@@ -157,6 +148,12 @@ function LogikaFuzzy() {
       sangatGemuk = 1;
     }
 
+    sangatKurus = parseFloat(sangatKurus.toFixed(2));
+    kurus = parseFloat(kurus.toFixed(2));
+    normal = parseFloat(normal.toFixed(2));
+    gemuk = parseFloat(gemuk.toFixed(2));
+    sangatGemuk = parseFloat(sangatGemuk.toFixed(2));
+
     // set label dan nilai himpunan fuzzy berdasarkan nilai tertinggi
     if (
       sangatKurus > kurus &&
@@ -164,7 +161,10 @@ function LogikaFuzzy() {
       sangatKurus > gemuk &&
       sangatKurus > sangatGemuk
     ) {
-      setFuzzyBeratBadan({ label: "Sangat Kurus", nilai: sangatKurus });
+      setFuzzyBeratBadan({
+        label: "Sangat Kurus",
+        nilai: sangatKurus,
+      });
     } else if (
       kurus > sangatKurus &&
       kurus > normal &&
@@ -178,7 +178,10 @@ function LogikaFuzzy() {
       normal > gemuk &&
       normal > sangatGemuk
     ) {
-      setFuzzyBeratBadan({ label: "Normal", nilai: normal });
+      setFuzzyBeratBadan({
+        label: "Normal",
+        nilai: normal,
+      });
     } else if (
       gemuk > sangatKurus &&
       gemuk > kurus &&
@@ -192,7 +195,10 @@ function LogikaFuzzy() {
       sangatGemuk > normal &&
       sangatGemuk > gemuk
     ) {
-      setFuzzyBeratBadan({ label: "Sangat Gemuk", nilai: sangatGemuk });
+      setFuzzyBeratBadan({
+        label: "Sangat Gemuk",
+        nilai: sangatGemuk,
+      });
     }
 
     // Menampilkan proses perhitungan himpunan fuzzy berat badan
@@ -215,7 +221,7 @@ function LogikaFuzzy() {
 
   const FuzzyAktivitas = () => {
     const { aktivitas } =
-      PEKERJAAN.filter(
+      tabelPekerjaan.filter(
         (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
       )[0] || {};
     const labelAktivitas =
@@ -347,6 +353,12 @@ function LogikaFuzzy() {
       if (login !== "true" && !session) {
         void router.push("/login");
       }
+
+      await axios
+        .get("/api/pekerjaan/getAll")
+        .then((res: { data: Pekerjaan[] }) => {
+          setTabelPekerjaan(res.data);
+        });
     };
 
     getAssyncSession().catch((err) => {
@@ -446,6 +458,7 @@ function LogikaFuzzy() {
                       {/* TabelHeader */}
                       <TabelHeader
                         HEADERS={[
+                          "No",
                           "Umur",
                           "Berat",
                           "Aktivitas",
@@ -456,14 +469,24 @@ function LogikaFuzzy() {
                       <tbody className="divide-y divide-gray-200 overflow-auto bg-gray-50">
                         {tabelAturan?.map((aturan, i) => (
                           <tr key={i}>
-                            {aturan.map((kat, i) => (
-                              <td
-                                key={i}
-                                className="whitespace-nowrap p-2 text-sm text-gray-500"
-                              >
-                                {kat}
-                              </td>
-                            ))}
+                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
+                              {i + 1}
+                            </td>
+                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
+                              {aturan.umur}
+                            </td>
+                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
+                              {aturan.berat}
+                            </td>
+                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
+                              {aturan.aktivitas}
+                            </td>
+                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
+                              {aturan.jenis_kelamin}
+                            </td>
+                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
+                              {aturan.kalori_harian}
+                            </td>
                           </tr>
                         ))}
                       </tbody>

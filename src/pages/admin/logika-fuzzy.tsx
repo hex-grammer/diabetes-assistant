@@ -7,7 +7,6 @@ import { getSession, useSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
 import type { User, kkh } from "@prisma/client";
 import axios from "axios";
-import { PEKERJAAN } from "../../lib/pekerjaan";
 import { ATURAN } from "../../lib/aturan-fuzzy";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
@@ -37,6 +36,11 @@ type Atuaran = {
   kalori_harian: string;
 };
 
+type Pekerjaan = {
+  nama_pekerjaan: string;
+  aktivitas: string;
+};
+
 function LogikaFuzzy() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
@@ -52,6 +56,12 @@ function LogikaFuzzy() {
   const [fuzzyAktivitas, setFuzzyAktivitas] = useState({ label: "", nilai: 0 });
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [domLoaded, setDomLoaded] = useState(false);
+  const [tabelPekerjaan, setTabelPekerjaan] = useState<Pekerjaan[]>([
+    {
+      nama_pekerjaan: "",
+      aktivitas: "",
+    },
+  ]);
 
   // CONSTANT VARIABLES
   const tabelAturan = ATURAN as Atuaran[];
@@ -211,7 +221,7 @@ function LogikaFuzzy() {
 
   const FuzzyAktivitas = () => {
     const { aktivitas } =
-      PEKERJAAN.filter(
+      tabelPekerjaan.filter(
         (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
       )[0] || {};
     const labelAktivitas =
@@ -343,6 +353,12 @@ function LogikaFuzzy() {
       if (login !== "true" && !session) {
         void router.push("/login");
       }
+
+      await axios
+        .get("/api/pekerjaan/getAll")
+        .then((res: { data: Pekerjaan[] }) => {
+          setTabelPekerjaan(res.data);
+        });
     };
 
     getAssyncSession().catch((err) => {

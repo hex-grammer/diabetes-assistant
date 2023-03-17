@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { PEKERJAAN } from "../../lib/pekerjaan";
 import axios from "axios";
 import { toast } from "react-toastify";
 import type { User, kkh } from "@prisma/client";
-import { object } from "zod";
 
 interface FormData {
   id_kkh?: number;
@@ -18,6 +16,10 @@ interface FormData {
   imt?: number;
   email?: string | null;
 }
+type Pekerjaan = {
+  nama_pekerjaan: string;
+  aktivitas: string;
+};
 interface DataDiriProps {
   setKKH?: React.Dispatch<React.SetStateAction<number>>;
   setIMT?: React.Dispatch<React.SetStateAction<number>>;
@@ -58,6 +60,12 @@ function DataDiri({
     aktivitas: "",
     jenis_kelamin: "",
   });
+  const [tabelPekerjaan, setTabelPekerjaan] = useState<Pekerjaan[]>([
+    {
+      nama_pekerjaan: "",
+      aktivitas: "",
+    },
+  ]);
 
   const MAKANAN = {
     M001: "Beras Merah",
@@ -140,6 +148,12 @@ function DataDiri({
             }
           );
         });
+
+      void axios
+        .get("/api/pekerjaan/getAll")
+        .then((res: { data: Pekerjaan[] }) => {
+          setTabelPekerjaan(res.data);
+        });
     } catch (error) {}
   }, [updateTable]);
 
@@ -148,8 +162,8 @@ function DataDiri({
   ) => {
     // jika target name adalah pekerjaan, maka ubah aktivitas sesuai dengan pekerjaan
     if (event.target.name === "pekerjaan") {
-      const pekerjaanToKategori = PEKERJAAN[
-        PEKERJAAN.map((p) => p.nama_pekerjaan).indexOf(event.target.value)
+      const pekerjaanToKategori = tabelPekerjaan[
+        tabelPekerjaan.map((p) => p.nama_pekerjaan).indexOf(event.target.value)
       ]?.aktivitas as string;
 
       setFormData({
@@ -421,7 +435,7 @@ function DataDiri({
           required
         >
           <option value="">Pilih Pekerjaan</option>
-          {PEKERJAAN.map((pekerjaan) => (
+          {tabelPekerjaan.map((pekerjaan) => (
             <option
               key={pekerjaan.nama_pekerjaan}
               value={pekerjaan.nama_pekerjaan}
