@@ -50,6 +50,7 @@ function Kalkulator() {
               setIMT={setIMB}
               setBBIdeal={setBBIdeal}
               setAMB={setAMB}
+              kalkulator={true}
             />
           </div>
           {/* KKH */}
