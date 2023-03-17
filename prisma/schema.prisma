@@ -79,3 +79,9 @@ model kkh {
     imt           Float
     created_at    DateTime @default(now())
 }
+
+model Pekerjaan {
+    id             Int    @id @default(autoincrement())
+    nama_pekerjaan String @unique
+    aktivitas      String
+}

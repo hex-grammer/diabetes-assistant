@@ -4,7 +4,6 @@ import { PEKERJAAN } from "../../lib/pekerjaan";
 import axios from "axios";
 import { toast } from "react-toastify";
 import type { User, kkh } from "@prisma/client";
-import { object } from "zod";
 
 interface FormData {
   id_kkh?: number;
@@ -18,6 +17,7 @@ interface FormData {
   imt?: number;
   email?: string | null;
 }
+
 interface DataDiriProps {
   setKKH?: React.Dispatch<React.SetStateAction<number>>;
   setIMT?: React.Dispatch<React.SetStateAction<number>>;
@@ -156,7 +156,7 @@ function DataDiri({
     if (event.target.name === "pekerjaan") {
       const pekerjaanToKategori = PEKERJAAN[
         PEKERJAAN.map((p) => p.nama_pekerjaan).indexOf(event.target.value)
-      ]?.kategori as string;
+      ]?.aktivitas as string;
 
       setFormData({
         ...formData,

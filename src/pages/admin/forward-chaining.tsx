@@ -3,7 +3,6 @@ import Layout from "./Layout";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import "react-toastify/dist/ReactToastify.css";
 import type { User, kkh } from "@prisma/client";
 import axios from "axios";
 import { getSession, useSession } from "next-auth/react";
