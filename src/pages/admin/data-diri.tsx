@@ -27,6 +27,7 @@ interface DataDiriProps {
   setRekomendasiMenu?: React.Dispatch<React.SetStateAction<string[] | null>>;
   setKategoriIMT?: React.Dispatch<React.SetStateAction<string>>;
   updateData?: boolean;
+  kalkulator?: boolean;
 }
 
 function DataDiri({
@@ -38,6 +39,7 @@ function DataDiri({
   setRekomendasiMenu,
   setKategoriIMT,
   updateData,
+  kalkulator,
 }: DataDiriProps) {
   const [submit, setSubmit] = useState(false);
   const { data: session } = useSession();
@@ -88,6 +90,10 @@ function DataDiri({
 
   // set submit true jika formData berubah dan tidak kosong
   useEffect(() => {
+    if (kalkulator) {
+      setSubmit(true);
+      return;
+    }
     if (
       JSON.stringify(formData) === JSON.stringify(defaultFormData) ||
       formData.pekerjaan === "" ||
@@ -311,7 +317,10 @@ function DataDiri({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // if form data === default form data
-    if (JSON.stringify(formData) === JSON.stringify(defaultFormData)) {
+    if (
+      JSON.stringify(formData) === JSON.stringify(defaultFormData) &&
+      !kalkulator
+    ) {
       toast.error("Data tidak berubah!");
       return;
     }
@@ -481,7 +490,7 @@ function DataDiri({
           type="submit"
           disabled={!submit}
         >
-          Hitung KKH
+          {kalkulator ? "Hitung" : "Hitung KKH"}
         </button>
       </div>
     </form>

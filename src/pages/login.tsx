@@ -57,7 +57,7 @@ const Login: NextPage = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       if (user.username === "admin") {
-        void router.push("admin/dashboard");
+        await signOut({ callbackUrl: "/admin/dashboard" });
         return;
       }
 

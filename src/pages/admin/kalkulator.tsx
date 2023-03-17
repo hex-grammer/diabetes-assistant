@@ -50,6 +50,7 @@ function Kalkulator() {
               setIMT={setIMB}
               setBBIdeal={setBBIdeal}
               setAMB={setAMB}
+              kalkulator={true}
             />
           </div>
           {/* KKH */}
@@ -95,6 +96,7 @@ function Kalkulator() {
             </h2>
             <div className="">
               <span className="text-4xl font-bold text-green-600">{bbi}</span>
+              <span className="ml-1 text-lg font-medium text-gray-600">kg</span>
             </div>
             <div className="flex flex-col">
               <span className="text-sm text-gray-700">
@@ -110,6 +112,9 @@ function Kalkulator() {
             </h2>
             <div className="">
               <span className="text-4xl font-bold text-green-600">{amb}</span>
+              <span className="ml-1 text-lg font-medium text-gray-600">
+                kalori
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="text-sm text-gray-700">
