@@ -150,7 +150,7 @@ function DataDiri({
     if (event.target.name === "pekerjaan") {
       const pekerjaanToKategori = PEKERJAAN[
         PEKERJAAN.map((p) => p.nama_pekerjaan).indexOf(event.target.value)
-      ]?.kategori as string;
+      ]?.aktivitas as string;
 
       setFormData({
         ...formData,
