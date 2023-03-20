@@ -327,6 +327,15 @@ function DataDiri({
       amb = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 * umur;
     }
 
+    // Rumus PERKENI terhadap UMUR
+    if (umur >= 40 && umur < 60) {
+      amb -= amb * (5 / 100);
+    } else if (umur >= 60 && umur < 70) {
+      amb -= amb * (10 / 100);
+    } else if (amb >= 70) {
+      amb -= amb * (20 / 100);
+    }
+
     return parseInt(amb.toFixed(2));
   };
 
