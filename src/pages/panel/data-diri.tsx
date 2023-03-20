@@ -312,12 +312,8 @@ function DataDiri({
 
   // fungsi untuk menghitung angka metabolisme basal
   const hitungAMB = () => {
-    const {
-      berat_badan: berat_badan,
-      tinggi_badan: tinggi_badan,
-      umur,
-      jenis_kelamin: jenis_kelamin,
-    } = formData;
+    const { berat_badan, tinggi_badan, umur, jenis_kelamin, aktivitas } =
+      formData;
     let amb = 0;
 
     // Hitung AMB berdasarkan rumus Harris-Benedict
@@ -334,6 +330,19 @@ function DataDiri({
       amb -= amb * (10 / 100);
     } else if (amb >= 70) {
       amb -= amb * (20 / 100);
+    }
+
+    // Rumus PERKENI terhadap AKTIVITAS
+    if (aktivitas === "istirahat") {
+      amb += amb * (5 / 100);
+    } else if (aktivitas === "ringan") {
+      amb += amb * (10 / 100);
+    } else if (aktivitas === "sedang") {
+      amb += amb * (30 / 100);
+    } else if (aktivitas === "berat") {
+      amb += amb * (40 / 100);
+    } else if (aktivitas === "sangat berat") {
+      amb += amb * (50 / 100);
     }
 
     return parseInt(amb.toFixed(2));
