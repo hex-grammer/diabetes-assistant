@@ -340,22 +340,16 @@ function DataDiri({
     const { tinggi_badan, jenis_kelamin } = formData;
     let bbIdeal: number;
 
-    if (jenis_kelamin === "pria") {
-      bbIdeal = tinggi_badan - 100 - 0.1 * (tinggi_badan - 100);
-    } else {
-      bbIdeal = tinggi_badan - 100 - 0.15 * (tinggi_badan - 100);
-    }
-
+    bbIdeal = tinggi_badan - 100 - (tinggi_badan - 100) * (10 / 100);
     bbIdeal = parseInt(bbIdeal.toFixed(2));
 
     const formula = (
       <div className="mt-1 font-mono text-blue-700">
         <p>Tinggi Badan = {tinggi_badan} cm</p>
         <p>Jenis Kelamin = {jenis_kelamin}</p>
-        <p>BBI = Tinggi Badan - 100 - (0.1 or 0.15) * (Tinggi Badan - 100)</p>
+        <p>BBI = (Tinggi Badan-100)-((Tinggi Badan-100)*10%)</p>
         <p>
-          BBI = {tinggi_badan} - 100 - {jenis_kelamin === "pria" ? 0.1 : 0.15} *
-          ({tinggi_badan} - 100)
+          BBI = ({tinggi_badan}-100)-(({tinggi_badan}-100)*10%)
         </p>
         <p>BBI = {bbIdeal} kg</p>
       </div>
