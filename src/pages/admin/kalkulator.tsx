@@ -13,9 +13,14 @@ function Kalkulator() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
   const [kkh, setKKH] = useState(0);
+  const [rumusKKH, setRumusKKH] = useState<React.ReactNode>(<></>);
   const [imb, setIMB] = useState(0);
+  const [rumusIMT, setRumusIMT] = useState<React.ReactNode>(<></>);
   const [bbi, setBBIdeal] = useState(0);
+  const [rumusBBI, setRumusBBI] = useState<React.ReactNode>(<></>);
   const [amb, setAMB] = useState(0);
+  const [rumusAMB, setRumusAMB] = useState<React.ReactNode>(<></>);
+  const spaces = (num: number) => String.fromCharCode(160).repeat(num);
 
   // if login
   useEffect(() => {
@@ -47,9 +52,13 @@ function Kalkulator() {
             </h2>
             <DataDiri
               setKKH={setKKH}
+              setRumusKKH={setRumusKKH}
               setIMT={setIMB}
+              setRumusIMT={setRumusIMT}
               setBBIdeal={setBBIdeal}
+              setRumusBBI={setRumusBBI}
               setAMB={setAMB}
+              setRumusAMB={setRumusAMB}
               kalkulator={true}
             />
           </div>
@@ -72,6 +81,9 @@ function Kalkulator() {
                 dibutuhkan untuk menjaga kesehatan dan beraktivitas sehari-hari.
               </span>
             </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-sm text-gray-700">{rumusKKH}</span>
+            </div>
           </div>
           {/* Index Massa Tubuh (IMT) */}
           <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-5">
@@ -88,6 +100,9 @@ function Kalkulator() {
                 tidak.
               </span>
             </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-sm text-gray-700">{rumusIMT}</span>
+            </div>
           </div>
           {/* Berat Badan Ideal (BBI) */}
           <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-3">
@@ -103,6 +118,9 @@ function Kalkulator() {
                 Berat badan ideal (BBI) adalah berat badan yang sesuai dengan
                 tinggi badan dan jenis kelamin seseorang.
               </span>
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-sm text-gray-700">{rumusBBI}</span>
             </div>
           </div>
           {/* Angka Metabolisme Basal */}
@@ -121,6 +139,9 @@ function Kalkulator() {
                 Angka Metabolisme Basal (AMB) adalah jumlah kalori yang
                 dibutuhkan tubuh untuk menjaga fungsi tubuh sehari-hari.
               </span>
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-sm text-gray-700">{rumusAMB}</span>
             </div>
           </div>
         </div>

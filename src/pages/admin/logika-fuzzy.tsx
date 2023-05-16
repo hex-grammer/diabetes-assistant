@@ -311,32 +311,43 @@ function LogikaFuzzy() {
   const Defuzzifikasi = () => {
     const cal = (tabelKKH && tabelKKH[0]?.kkh) || 0;
     const JK = (cal * 0.05).toFixed(2) as unknown as number;
+    const spaces = (num: number) => String.fromCharCode(160).repeat(num);
+    const { aktivitas } =
+      tabelPekerjaan.filter(
+        (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
+      )[0] || {};
+    const persentaseAktivitas =
+      aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
+    const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
+
     return (
       <>
         <div className="font-mono text-blue-700">
           <div>Kalori Basal &nbsp;= {cal} kalori</div>
           <div>Jenis Kelamin = {tabelKKH && tabelKKH[0]?.jenis_kelamin}</div>
           <div>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
-            {cal} * 5%
+            {spaces(14)}= {cal} * 5%
           </div>
           <div>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
-            {(cal * 0.05).toFixed(2)}
+            {spaces(14)}= {(cal * 0.05).toFixed(2)}
+          </div>
+          <div>
+            Aktivitas {spaces(4)}= {aktivitas} <br />
+            {spaces(14)}= {cal} * {persentaseAktivitas}% <br />
+            {spaces(14)}= {nilaiAktivitas}
           </div>
           <div>Total Kalori &nbsp;= Kalori basal - U - JK + BB + AK</div>
           <div>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
-            {cal || 0} - {fuzzyUmur.nilai} - {JK} + {fuzzyBeratBadan.nilai} +{" "}
-            {fuzzyAktivitas.nilai}
+            {spaces(14)}= {cal || 0} - {fuzzyUmur.nilai} - {JK} +{" "}
+            {fuzzyBeratBadan.nilai} + {nilaiAktivitas}
           </div>
           <div>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;={" "}
+            {spaces(14)}={" "}
             {(cal || 0) -
               fuzzyUmur.nilai -
               JK +
               fuzzyBeratBadan.nilai +
-              fuzzyAktivitas.nilai}{" "}
+              parseInt(nilaiAktivitas)}{" "}
             kalori
           </div>
         </div>

@@ -75,7 +75,7 @@ function ForwardChaining() {
   const [oldAturan, setOldAturan] = useState<Aturan[]>([
     {
       id: 0,
-      makanan: "",
+      makanan: "Loading...",
       kategori: [true, true, true, true, true],
     },
   ]);

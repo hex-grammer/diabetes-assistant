@@ -24,9 +24,13 @@ type Pekerjaan = {
 
 interface DataDiriProps {
   setKKH?: React.Dispatch<React.SetStateAction<number>>;
+  setRumusKKH?: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   setIMT?: React.Dispatch<React.SetStateAction<number>>;
+  setRumusIMT?: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   setBBIdeal?: React.Dispatch<React.SetStateAction<number>>;
+  setRumusBBI?: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   setAMB?: React.Dispatch<React.SetStateAction<number>>;
+  setRumusAMB?: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   setTabelKKH?: React.Dispatch<React.SetStateAction<kkh[] | null>>;
   setRekomendasiMenu?: React.Dispatch<React.SetStateAction<string[] | null>>;
   setKategoriIMT?: React.Dispatch<React.SetStateAction<string>>;
@@ -36,9 +40,13 @@ interface DataDiriProps {
 
 function DataDiri({
   setKKH,
+  setRumusKKH,
+  setRumusIMT,
   setIMT,
   setBBIdeal,
+  setRumusBBI,
   setAMB,
+  setRumusAMB,
   setTabelKKH,
   setRekomendasiMenu,
   setKategoriIMT,
@@ -188,43 +196,74 @@ function DataDiri({
   };
 
   // fungsi untuk menghitung KKH
-  const hitungKKH = () => {
-    const {
-      berat_badan: berat_badan,
-      tinggi_badan: tinggi_badan,
-      umur,
-      aktivitas,
-      jenis_kelamin: jenis_kelamin,
-    } = formData;
+  const hitungKKH = (): [number, React.ReactNode] => {
+    const { berat_badan, tinggi_badan, umur, aktivitas, jenis_kelamin } =
+      formData;
     let kkh = 0;
-    if (jenis_kelamin === "laki-laki") {
-      kkh = 66 + 13.7 * berat_badan + 5 * tinggi_badan - 6.8 * umur;
-    } else {
-      kkh = 655 + 9.6 * berat_badan + 1.8 * tinggi_badan - 4.7 * umur;
+
+    const factor = jenis_kelamin === "laki-laki" ? 66 : 655;
+    const factor1 = jenis_kelamin === "laki-laki" ? 13.7 : 9.6;
+    const factor2 = jenis_kelamin === "laki-laki" ? 5 : 1.8;
+    const factor3 = jenis_kelamin === "laki-laki" ? 6.8 : 4.7;
+    kkh =
+      factor + factor1 * berat_badan + factor2 * tinggi_badan - factor3 * umur;
+
+    switch (aktivitas) {
+      case "ringan":
+        kkh *= 1.375;
+        break;
+      case "sedang":
+        kkh *= 1.55;
+        break;
+      case "berat":
+        kkh *= 1.725;
+        break;
+      case "sangat berat":
+        kkh *= 1.9;
+        break;
+      default:
+        break;
     }
-    if (aktivitas === "ringan") {
-      kkh *= 1.375;
-    } else if (aktivitas === "sedang") {
-      kkh *= 1.55;
-    } else if (aktivitas === "berat") {
-      kkh *= 1.725;
-    } else if (aktivitas === "sangat berat") {
-      kkh *= 1.9;
-    }
-    return Math.round(kkh);
+
+    kkh = Math.round(kkh);
+
+    const formula = (
+      <div className="mt-1 font-mono text-blue-700">
+        <p>Jenis Kelamin = {jenis_kelamin}</p>
+        <p>
+          kkh = {factor} + ({factor1} * berat_badan) + ({factor2} *
+          tinggi_badan) - ({factor3} * umur)
+        </p>
+        <p>kkh = {kkh} kkal/hari</p>
+      </div>
+    );
+
+    return [kkh, formula];
   };
 
   // fungsi untuk menghitung IMT
-  const hitungIMT = () => {
-    const { berat_badan: berat_badan, tinggi_badan: tinggi_badan } = formData;
+  const hitungIMT = (): [number, React.ReactNode] => {
+    const { berat_badan, tinggi_badan } = formData;
     const imt = berat_badan / ((tinggi_badan / 100) * (tinggi_badan / 100));
-    // limit decimal to 2
-    return Math.round((imt + Number.EPSILON) * 100) / 100;
+    const imtRounded = Math.round((imt + Number.EPSILON) * 100) / 100;
+
+    const formula = (
+      <div className="mt-1 font-mono text-blue-700">
+        <p>IMT = berat_badan / ((tinggi_badan / 100) * (tinggi_badan / 100))</p>
+        <p>
+          IMT = {berat_badan} / (({tinggi_badan} / 100) * ({tinggi_badan} /
+          100))
+        </p>
+        <p>IMT = {imtRounded}</p>
+      </div>
+    );
+
+    return [imtRounded, formula];
   };
 
   // fungsi untuk menghitung Kategori IMT
   const hitungKategoriIMT = () => {
-    const imt = hitungIMT();
+    const imt = hitungIMT()[0];
     if (imt < 17) {
       setRekomendasiMenu &&
         setRekomendasiMenu([
@@ -297,42 +336,51 @@ function DataDiri({
   };
 
   // Fungsi hitung berat badan ideal
-  const hitungBBIdeal = () => {
-    const { tinggi_badan: tinggi_badan, jenis_kelamin: jenis_kelamin } =
-      formData;
-    let bbIdeal;
+  const hitungBBIdeal = (): [number, React.ReactNode] => {
+    const { tinggi_badan, jenis_kelamin } = formData;
+    let bbIdeal: number;
+
     if (jenis_kelamin === "pria") {
       bbIdeal = tinggi_badan - 100 - 0.1 * (tinggi_badan - 100);
     } else {
       bbIdeal = tinggi_badan - 100 - 0.15 * (tinggi_badan - 100);
     }
 
-    return parseInt(bbIdeal.toFixed(2));
+    bbIdeal = parseInt(bbIdeal.toFixed(2));
+
+    const formula = (
+      <div className="mt-1 font-mono text-blue-700">
+        <p>Tinggi Badan = {tinggi_badan} cm</p>
+        <p>Jenis Kelamin = {jenis_kelamin}</p>
+        <p>BBI = Tinggi Badan - 100 - (0.1 or 0.15) * (Tinggi Badan - 100)</p>
+        <p>
+          BBI = {tinggi_badan} - 100 - {jenis_kelamin === "pria" ? 0.1 : 0.15} *
+          ({tinggi_badan} - 100)
+        </p>
+        <p>BBI = {bbIdeal} kg</p>
+      </div>
+    );
+
+    return [bbIdeal, formula];
   };
 
   // fungsi untuk menghitung angka metabolisme basal
-  const hitungAMB = () => {
+  const hitungAMB = (): [number, React.ReactNode] => {
     const { berat_badan, tinggi_badan, umur, jenis_kelamin, aktivitas } =
       formData;
     let amb = 0;
+    let formula;
 
-    // Hitung AMB berdasarkan rumus Harris-Benedict
-    if (jenis_kelamin === "laki-laki") {
-      amb = 88.362 + 13.397 * berat_badan + 4.799 * tinggi_badan - 5.677 * umur;
-    } else if (jenis_kelamin === "perempuan") {
-      amb = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 * umur;
-    }
-
-    // Rumus PERKENI terhadap UMUR
+    // Adjust AMB based on PERKENI guidelines for UMUR
     if (umur >= 40 && umur < 60) {
       amb -= amb * (5 / 100);
     } else if (umur >= 60 && umur < 70) {
       amb -= amb * (10 / 100);
-    } else if (amb >= 70) {
+    } else if (umur >= 70) {
       amb -= amb * (20 / 100);
     }
 
-    // Rumus PERKENI terhadap AKTIVITAS
+    // Adjust AMB based on PERKENI guidelines for AKTIVITAS
     if (aktivitas === "istirahat") {
       amb += amb * (5 / 100);
     } else if (aktivitas === "ringan") {
@@ -345,7 +393,43 @@ function DataDiri({
       amb += amb * (50 / 100);
     }
 
-    return parseInt(amb.toFixed(2));
+    if (jenis_kelamin === "laki-laki") {
+      amb = 88.362 + 13.397 * berat_badan + 4.799 * tinggi_badan - 5.677 * umur;
+      amb = parseInt(amb.toFixed(2));
+      formula = (
+        <div className="mt-1 font-mono text-blue-700">
+          <p>Hitung AMB untuk Laki-laki</p>
+          <p>
+            AMB = 88.362 + 13.397 * berat_badan + 4.799 * tinggi_badan - 5.677 *
+            umur
+          </p>
+          <p>
+            AMB = 88.362 + 13.397 * {berat_badan} + 4.799 * {tinggi_badan} -
+            5.677 * {umur}
+          </p>
+          <p>AMB = {amb} kalori</p>
+        </div>
+      );
+    } else if (jenis_kelamin === "perempuan") {
+      amb = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 * umur;
+      amb = parseInt(amb.toFixed(2));
+      formula = (
+        <div className="mt-1 font-mono text-blue-700">
+          <p>Hitung AMB untuk Perempuan</p>
+          <p>
+            AMB = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 *
+            umur
+          </p>
+          <p>
+            AMB = 447.593 + 9.247 * {berat_badan} + 3.098 * {tinggi_badan} -
+            4.33 * {umur}
+          </p>
+          <p>AMB = {amb} kalori</p>
+        </div>
+      );
+    }
+
+    return [amb, formula];
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -359,10 +443,20 @@ function DataDiri({
       return;
     }
 
-    setKKH && setKKH(hitungKKH());
-    setIMT && setIMT(hitungIMT());
-    setBBIdeal && setBBIdeal(hitungBBIdeal());
-    setAMB && setAMB(hitungAMB());
+    // update KKH
+    const [nilaiKKH, rumusKKH] = hitungKKH();
+    setKKH && typeof nilaiKKH === "number" && setKKH(nilaiKKH);
+    setRumusKKH && setRumusKKH(rumusKKH);
+    // update IMT
+    const [nilaiIMT, rumusIMT] = hitungIMT();
+    setIMT && typeof nilaiIMT === "number" && setIMT(nilaiIMT);
+    setRumusIMT && setRumusIMT(rumusIMT);
+    // update BBI
+    setBBIdeal && setBBIdeal(hitungBBIdeal()[0]);
+    setRumusBBI && setRumusBBI(hitungBBIdeal()[1]);
+    // update AMB
+    setAMB && setAMB(hitungAMB()[0]);
+    setRumusAMB && setRumusAMB(hitungAMB()[1]);
 
     // get user from local storage
     const user = JSON.parse(localStorage.getItem("user") || "{}") as User;
