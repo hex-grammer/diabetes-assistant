@@ -16,7 +16,7 @@ export default async function handler(
       const aturan = result.map((item) => ({
         id: item.id,
         makanan: item.makanan,
-        kategori: item.kategori.split(",").map((value) => value === "true"),
+        kategori: item.kategori.split(",").map((value) => parseInt(value)),
       }));
 
       res.status(200).json(aturan);

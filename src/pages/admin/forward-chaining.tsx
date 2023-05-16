@@ -29,7 +29,7 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
 type Aturan = {
   id?: number;
   makanan: string;
-  kategori: boolean[];
+  kategori: number[];
 };
 
 function ForwardChaining() {
@@ -42,6 +42,8 @@ function ForwardChaining() {
   const [imt, setImt] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
   const [dataBerubah, setDataBerubah] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(-1);
+  const [editedValue, setEditedValue] = useState("");
 
   const KATEGORI = [
     {
@@ -76,14 +78,14 @@ function ForwardChaining() {
     {
       id: 0,
       makanan: "Loading...",
-      kategori: [true, true, true, true, true],
+      kategori: [0, 0, 0, 0, 0],
     },
   ]);
 
   const [tabelAturan, setTabelAturan] = useState(oldAturan);
   const [newMakanan, setNewMakanan] = useState({
     makanan: "",
-    kategori: [false, false, false, false, false],
+    kategori: [0, 0, 0, 0, 0],
   });
 
   useEffect(() => {
@@ -95,13 +97,17 @@ function ForwardChaining() {
     } catch (error) {}
   }, []);
 
-  const toggleKategori = (makananName: string, kategoriIndex: number) => {
+  const toggleKategori = (
+    makananName: string,
+    kategoriIndex: number,
+    newValue: number
+  ) => {
     setDataBerubah(true);
     setTabelAturan((prevTabelAturan) =>
       prevTabelAturan.map((aturan) => {
         if (aturan.makanan === makananName) {
           const newKategori = [...aturan.kategori];
-          newKategori[kategoriIndex] = !newKategori[kategoriIndex];
+          newKategori[kategoriIndex] = newValue;
           return {
             ...aturan,
             kategori: newKategori,
@@ -238,10 +244,13 @@ function ForwardChaining() {
   const tampilkanRekomendasiMenu = (kategori: string) => {
     const rekomendasiMenu: string[] = [];
     tabelAturan.forEach((aturan) => {
-      if (aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)]) {
-        rekomendasiMenu.push(aturan.makanan);
+      const kat =
+        aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)];
+      if (kat) {
+        rekomendasiMenu.push(`${aturan.makanan} (${kat}gr)`);
       }
     });
+    console.log(rekomendasiMenu);
     return rekomendasiMenu;
   };
 
@@ -262,7 +271,7 @@ function ForwardChaining() {
     });
     setNewMakanan({
       makanan: "",
-      kategori: [false, false, false, false, false],
+      kategori: [0, 0, 0, 0, 0],
     });
   };
 
@@ -477,19 +486,41 @@ function ForwardChaining() {
                             <td className="whitespace-nowrap p-2 text-sm text-gray-500">
                               {aturan.makanan}
                             </td>
-                            {aturan.kategori.map((kat, i) => (
+                            {aturan.kategori.map((kat, j) => (
                               <td
-                                key={i}
+                                key={j}
                                 className="whitespace-nowrap p-2 text-center text-sm text-gray-500"
                               >
-                                <span
-                                  onClick={() =>
-                                    toggleKategori(aturan.makanan, i)
-                                  }
-                                  className="cursor-pointer"
-                                >
-                                  {kat ? "✔" : "❌"}
-                                </span>
+                                {editingIndex === parseInt(`${i}${j}`) ? (
+                                  <input
+                                    type="number"
+                                    value={editedValue}
+                                    onChange={(e) =>
+                                      setEditedValue(e.target.value)
+                                    }
+                                    onBlur={() => {
+                                      toggleKategori(
+                                        aturan.makanan,
+                                        j,
+                                        parseInt(editedValue)
+                                      );
+                                      setEditedValue("");
+                                      setEditingIndex(-1);
+                                    }}
+                                    className="cursor-pointer bg-transparent outline-none"
+                                    autoFocus
+                                  />
+                                ) : (
+                                  <div
+                                    onClick={() => {
+                                      setEditedValue(kat.toString());
+                                      setEditingIndex(parseInt(`${i}${j}`));
+                                    }}
+                                    className="cursor-pointer"
+                                  >
+                                    {kat ? `${kat}gr` : "-"}
+                                  </div>
+                                )}
                               </td>
                             ))}
                           </tr>
@@ -554,7 +585,7 @@ function ForwardChaining() {
                     ).map((menu, i) => (
                       <span key={i} className="font-semibold text-orange-600">
                         {menu}
-                        {i + 1 !== rekomendasiMenu.length ? ", " : ""}
+                        {", "}
                       </span>
                     ))}
                   </span>
