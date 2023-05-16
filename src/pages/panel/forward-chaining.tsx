@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import "react-toastify/dist/ReactToastify.css";
 import type { User, kkh } from "@prisma/client";
 import axios from "axios";
 import { getSession, useSession } from "next-auth/react";
+import { MdOutlineDeleteForever } from "react-icons/md";
 
 const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   return (
@@ -26,6 +26,12 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
   );
 };
 
+type Aturan = {
+  id?: number;
+  makanan: string;
+  kategori: number[];
+};
+
 function ForwardChaining() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -35,106 +41,10 @@ function ForwardChaining() {
   const [tinggiBadan, setTinggiBadan] = useState(0);
   const [imt, setImt] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
+  const [dataBerubah, setDataBerubah] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(-1);
+  const [editedValue, setEditedValue] = useState("");
 
-  // CONSTANT VARIABLES
-  const tabelAturan = [
-    {
-      makanan: "Beras Merah",
-      kategori: [true, true, true, true, true],
-    },
-    {
-      makanan: "Buah Apel",
-      kategori: [true, true, false, false, false],
-    },
-    {
-      makanan: "Buah Belimbing",
-      kategori: [false, false, false, false, false],
-    },
-    {
-      makanan: "Buah Kiwi",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Buah Nanas",
-      kategori: [false, false, false, false, false],
-    },
-    {
-      makanan: "Buah Pepaya",
-      kategori: [true, true, true, true, false],
-    },
-    {
-      makanan: "Bubur Kacang Hijau",
-      kategori: [false, false, true, false, false],
-    },
-    {
-      makanan: "Ikan Salmon Panggang",
-      kategori: [true, true, true, false, true],
-    },
-    {
-      makanan: "Ikan Tuna Panggang",
-      kategori: [true, true, true, true, false],
-    },
-    {
-      makanan: "Jagung",
-      kategori: [false, true, true, true, false],
-    },
-    {
-      makanan: "Kacang Merah",
-      kategori: [false, false, true, false, false],
-    },
-    {
-      makanan: "Kacang Tanah",
-      kategori: [false, false, false, false, false],
-    },
-    {
-      makanan: "Mentimun",
-      kategori: [false, true, false, false, false],
-    },
-    {
-      makanan: "Sayur Bayam",
-      kategori: [true, false, true, true, true],
-    },
-    {
-      makanan: "Sayur Brokoli",
-      kategori: [false, false, false, false, true],
-    },
-    {
-      makanan: "Sayur Kubis/Kol",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Sayur Sawi Putih",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Susu Bear Brand",
-      kategori: [true, false, true, false, false],
-    },
-    {
-      makanan: "Tahu",
-      kategori: [true, true, false, false, false],
-    },
-    {
-      makanan: "Telur Rebus",
-      kategori: [true, false, false, false, false],
-    },
-    {
-      makanan: "Tempe",
-      kategori: [false, true, false, false, false],
-    },
-    {
-      makanan: "Tomat",
-      kategori: [false, true, false, false, false],
-    },
-    {
-      makanan: "Wortel",
-      kategori: [true, true, false, false, false],
-    },
-    {
-      makanan: "Sayur Sawi Hijau",
-      kategori: [false, true, false, false, false],
-    },
-  ];
   const KATEGORI = [
     {
       kategori: "Sangat Kurus",
@@ -163,7 +73,51 @@ function ForwardChaining() {
     },
   ];
 
-  // fungsi untuk menghitung Kategori IMT
+  // usestate aturan
+  const [oldAturan, setOldAturan] = useState<Aturan[]>([
+    {
+      id: 0,
+      makanan: "Loading...",
+      kategori: [0, 0, 0, 0, 0],
+    },
+  ]);
+
+  const [tabelAturan, setTabelAturan] = useState(oldAturan);
+  const [newMakanan, setNewMakanan] = useState({
+    makanan: "",
+    kategori: [0, 0, 0, 0, 0],
+  });
+
+  useEffect(() => {
+    try {
+      void axios.get("/api/makanan/getAll").then((res: { data: Aturan[] }) => {
+        setOldAturan(res.data);
+        setTabelAturan(res.data);
+      });
+    } catch (error) {}
+  }, []);
+
+  const toggleKategori = (
+    makananName: string,
+    kategoriIndex: number,
+    newValue: number
+  ) => {
+    setDataBerubah(true);
+    setTabelAturan((prevTabelAturan) =>
+      prevTabelAturan.map((aturan) => {
+        if (aturan.makanan === makananName) {
+          const newKategori = [...aturan.kategori];
+          newKategori[kategoriIndex] = newValue;
+          return {
+            ...aturan,
+            kategori: newKategori,
+          };
+        }
+        return aturan;
+      })
+    );
+  };
+
   const hitungKategoriIMT = (IMT: number) => {
     if (IMT < 17) {
       return "Sangat Kurus";
@@ -182,11 +136,81 @@ function ForwardChaining() {
   const tampilkanRekomendasiMenu = (kategori: string) => {
     const rekomendasiMenu: string[] = [];
     tabelAturan.forEach((aturan) => {
-      if (aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)]) {
-        rekomendasiMenu.push(aturan.makanan);
+      const kat =
+        aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)];
+      if (kat) {
+        rekomendasiMenu.push(`${aturan.makanan} (${kat}gr)`);
       }
     });
+    console.log(rekomendasiMenu);
     return rekomendasiMenu;
+  };
+
+  const onChangeMakanan = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMakanan((prev) => {
+      return {
+        ...prev,
+        makanan: e.target.value,
+      };
+    });
+  };
+
+  const onTambahData = () => {
+    if (newMakanan.makanan === "") return;
+    setDataBerubah(true);
+    setTabelAturan((prev) => {
+      return [newMakanan, ...prev];
+    });
+    setNewMakanan({
+      makanan: "",
+      kategori: [0, 0, 0, 0, 0],
+    });
+  };
+
+  const handleSimpan = () => {
+    setDataBerubah(false);
+    setOldAturan(tabelAturan);
+    const newData = [
+      ...tabelAturan.filter((aturan) => {
+        const oldData = oldAturan.find((oldData) => oldData.id === aturan.id);
+        if (!oldData) {
+          return true;
+        }
+        return (
+          JSON.stringify(oldData.kategori) !== JSON.stringify(aturan.kategori)
+        );
+      }),
+    ];
+
+    axios
+      .post("/api/makanan/create", newData)
+      .then(() => {
+        toast.success("Data Berhasil Disimpan!");
+      })
+      .catch(() => {
+        toast.error("Gagal menambah data!");
+      });
+  };
+
+  const onBatal = () => {
+    setDataBerubah(false);
+    setTabelAturan(oldAturan);
+  };
+
+  const onDelete = (
+    id: number,
+    setTabelAturan: React.Dispatch<React.SetStateAction<Aturan[]>>
+  ) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+    axios
+      .delete(`/api/makanan/delete/`, { params: { id } })
+      .then(() => {
+        setTabelAturan((oldData) => oldData.filter((data) => data.id !== id));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   // if login
@@ -203,9 +227,14 @@ function ForwardChaining() {
     getAssyncSession().catch((err) => {
       console.log(err);
     });
-    setDomLoaded(true);
+  }, []);
 
+  // axios request to set kkh in /api/kkh/getLast in useEffect
+  useEffect(() => {
+    setDomLoaded(true);
+    // get user from local storage
     const userLocal = JSON.parse(localStorage.getItem("user") || "{}") as User;
+
     try {
       void axios
         .get("/api/kkh/getLast", {
@@ -262,11 +291,69 @@ function ForwardChaining() {
                   Tabel Aturan-Makanan
                 </h2>
                 <div className="w-full overflow-x-auto">
+                  {/* Action Tabel Admin */}
+                  <div className="mb-2 flex flex-col-reverse gap-2 p-2 sm:flex-row sm:items-end sm:justify-between sm:p-0">
+                    {/* tambah makanan */}
+                    <div className="flex flex-col items-start text-sm">
+                      <label
+                        className="mb-1 block whitespace-nowrap font-semibold text-gray-700"
+                        htmlFor="makanan"
+                      >
+                        Tambah Data Makanan:
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          className="focus:shadow-outline appearance-none rounded border py-1 px-2 leading-tight text-gray-700 shadow focus:outline-none"
+                          id="makanan"
+                          type="text"
+                          name="makanan"
+                          value={newMakanan.makanan}
+                          onChange={(e) => onChangeMakanan(e)}
+                          required
+                          min={20}
+                        />
+                        {/* tombol tambah */}
+                        <div className="flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
+                            type="submit"
+                            onClick={onTambahData}
+                          >
+                            Tambah
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* tombol simpan & batal */}
+                    {dataBerubah && (
+                      <div className="flex gap-2">
+                        <div className="flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
+                            type="submit"
+                            onClick={handleSimpan}
+                          >
+                            Simpan
+                          </button>
+                        </div>
+                        <div className="fosem flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-gray-300 py-1 px-2 font-semibold text-gray-800 opacity-100 focus:outline-none`}
+                            type="submit"
+                            onClick={onBatal}
+                          >
+                            Batal
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <table className="min-w-full divide-y divide-gray-200">
                     <div className="min-w-full">
                       {/* TabelHeader */}
                       <TabelHeader
                         HEADERS={[
+                          "",
                           "Makanan",
                           "Sangat Kurus",
                           "Kurus",
@@ -278,15 +365,25 @@ function ForwardChaining() {
                       <tbody className="divide-y divide-gray-200 overflow-auto bg-gray-50">
                         {tabelAturan?.map((aturan, i) => (
                           <tr key={i}>
+                            <div className="py-2">
+                              <div
+                                onClick={() =>
+                                  onDelete(aturan.id || 0, setTabelAturan)
+                                }
+                                className="flex cursor-pointer items-center justify-center rounded-sm bg-red-500 p-1 px-0.5 text-white"
+                              >
+                                <MdOutlineDeleteForever />
+                              </div>
+                            </div>
                             <td className="whitespace-nowrap p-2 text-sm text-gray-500">
                               {aturan.makanan}
                             </td>
-                            {aturan.kategori.map((kat, i) => (
+                            {aturan.kategori.map((kat, j) => (
                               <td
-                                key={i}
+                                key={j}
                                 className="whitespace-nowrap p-2 text-center text-sm text-gray-500"
                               >
-                                {kat ? "✔" : "❌"}
+                                <div>{kat ? `${kat}gr` : "-"}</div>
                               </td>
                             ))}
                           </tr>
@@ -351,7 +448,7 @@ function ForwardChaining() {
                     ).map((menu, i) => (
                       <span key={i} className="font-semibold text-orange-600">
                         {menu}
-                        {i + 1 !== rekomendasiMenu.length ? ", " : ""}
+                        {", "}
                       </span>
                     ))}
                   </span>
