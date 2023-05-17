@@ -363,9 +363,16 @@ function DataDiri({
     const { berat_badan, tinggi_badan, umur, jenis_kelamin, aktivitas } =
       formData;
     let amb = 0;
-    let formula;
+    let formula = <></>;
+    let bbi: number;
 
-    // Adjust AMB based on PERKENI guidelines for UMUR
+    bbi = tinggi_badan - 100 - (tinggi_badan - 100) * (10 / 100);
+    bbi = parseInt(bbi.toFixed(2));
+
+    // Initial amb
+    amb = jenis_kelamin === "laki-laki" ? bbi * 30 : bbi * 25;
+
+    // Adjust AMB based on PERKENI formula for age
     if (umur >= 40 && umur < 60) {
       amb -= amb * (5 / 100);
     } else if (umur >= 60 && umur < 70) {
@@ -374,7 +381,7 @@ function DataDiri({
       amb -= amb * (20 / 100);
     }
 
-    // Adjust AMB based on PERKENI guidelines for AKTIVITAS
+    // Adjust AMB based on PERKENI formula for activity level
     if (aktivitas === "istirahat") {
       amb += amb * (5 / 100);
     } else if (aktivitas === "ringan") {
@@ -387,41 +394,33 @@ function DataDiri({
       amb += amb * (50 / 100);
     }
 
-    if (jenis_kelamin === "laki-laki") {
-      amb = 88.362 + 13.397 * berat_badan + 4.799 * tinggi_badan - 5.677 * umur;
-      amb = parseInt(amb.toFixed(2));
-      formula = (
-        <div className="mt-1 font-mono text-blue-700">
-          <p>Hitung AMB untuk Laki-laki</p>
-          <p>
-            AMB = 88.362 + 13.397 * berat_badan + 4.799 * tinggi_badan - 5.677 *
-            umur
-          </p>
-          <p>
-            AMB = 88.362 + 13.397 * {berat_badan} + 4.799 * {tinggi_badan} -
-            5.677 * {umur}
-          </p>
-          <p>AMB = {amb} kalori</p>
-        </div>
-      );
-    } else if (jenis_kelamin === "perempuan") {
-      amb = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 * umur;
-      amb = parseInt(amb.toFixed(2));
-      formula = (
-        <div className="mt-1 font-mono text-blue-700">
-          <p>Hitung AMB untuk Perempuan</p>
-          <p>
-            AMB = 447.593 + 9.247 * berat_badan + 3.098 * tinggi_badan - 4.33 *
-            umur
-          </p>
-          <p>
-            AMB = 447.593 + 9.247 * {berat_badan} + 3.098 * {tinggi_badan} -
-            4.33 * {umur}
-          </p>
-          <p>AMB = {amb} kalori</p>
-        </div>
-      );
-    }
+    formula = (
+      <div className="mt-1 font-mono text-blue-700">
+        <p>JK = Laki-laki</p>
+        <p>
+          AMB ={" "}
+          {jenis_kelamin === "laki-laki"
+            ? "BBI x 30 kalori"
+            : "BBI x 25 kalori"}
+        </p>
+        <p>
+          Umur = {umur}
+          {umur < 40 && <span>( AMB -= 0%)</span>}
+          {umur >= 40 && umur < 60 && <span>( AMB -= 5%)</span>}
+          {umur >= 60 && umur < 70 && <span>( AMB -= 10%)</span>}
+          {umur >= 70 && <span>( AMB -= 20%)</span>}
+        </p>
+        <p>
+          Aktivitas = {aktivitas}
+          {aktivitas === "istirahat" && <span> (AMB += 5%)</span>}
+          {aktivitas === "ringan" && <span> (AMB += 10%)</span>}
+          {aktivitas === "sedang" && <span> (AMB += 30%)</span>}
+          {aktivitas === "berat" && <span> (AMB += 40%)</span>}
+          {aktivitas === "sangat berat" && <span> (AMB += 50%)</span>}
+        </p>
+        <p>AMB = {amb} kalori</p>
+      </div>
+    );
 
     return [amb, formula];
   };

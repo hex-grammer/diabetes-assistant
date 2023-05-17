@@ -336,16 +336,19 @@ function LogikaFuzzy() {
             {spaces(14)}= {cal} * {persentaseAktivitas}% <br />
             {spaces(14)}= {nilaiAktivitas}
           </div>
-          <div>Total Kalori &nbsp;= Kalori basal - U - JK + BB + AK</div>
           <div>
-            {spaces(14)}= {cal || 0} - {fuzzyUmur.nilai} - {JK} +{" "}
+            Total Kalori &nbsp;= Kalori basal {umur > 40 && "- U "}- JK - BB +
+            AK
+          </div>
+          <div>
+            {spaces(14)}= {cal || 0} {umur > 40 && `- ${umur} `}- {JK} -{" "}
             {fuzzyBeratBadan.nilai} + {nilaiAktivitas}
           </div>
           <div>
             {spaces(14)}={" "}
             {(cal || 0) -
-              fuzzyUmur.nilai -
-              JK +
+              (umur > 40 ? umur : 0) -
+              JK -
               fuzzyBeratBadan.nilai +
               parseInt(nilaiAktivitas)}{" "}
             kalori
