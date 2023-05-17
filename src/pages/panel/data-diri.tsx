@@ -466,8 +466,8 @@ function DataDiri({
         umur: Number(formData.umur),
         email: session?.user?.email,
         username: user.username,
-        kkh: hitungKKH(),
-        imt: hitungIMT(),
+        kkh: hitungKKH()[0],
+        imt: hitungIMT()[0],
       });
       setUpdateTable((t) => !t);
       toast.success("Data berhasil disimpan!");

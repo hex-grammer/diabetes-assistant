@@ -291,69 +291,11 @@ function ForwardChaining() {
                   Tabel Aturan-Makanan
                 </h2>
                 <div className="w-full overflow-x-auto">
-                  {/* Action Tabel Admin */}
-                  <div className="mb-2 flex flex-col-reverse gap-2 p-2 sm:flex-row sm:items-end sm:justify-between sm:p-0">
-                    {/* tambah makanan */}
-                    <div className="flex flex-col items-start text-sm">
-                      <label
-                        className="mb-1 block whitespace-nowrap font-semibold text-gray-700"
-                        htmlFor="makanan"
-                      >
-                        Tambah Data Makanan:
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          className="focus:shadow-outline appearance-none rounded border py-1 px-2 leading-tight text-gray-700 shadow focus:outline-none"
-                          id="makanan"
-                          type="text"
-                          name="makanan"
-                          value={newMakanan.makanan}
-                          onChange={(e) => onChangeMakanan(e)}
-                          required
-                          min={20}
-                        />
-                        {/* tombol tambah */}
-                        <div className="flex items-center justify-between">
-                          <button
-                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
-                            type="submit"
-                            onClick={onTambahData}
-                          >
-                            Tambah
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    {/* tombol simpan & batal */}
-                    {dataBerubah && (
-                      <div className="flex gap-2">
-                        <div className="flex items-center justify-between">
-                          <button
-                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
-                            type="submit"
-                            onClick={handleSimpan}
-                          >
-                            Simpan
-                          </button>
-                        </div>
-                        <div className="fosem flex items-center justify-between">
-                          <button
-                            className={`focus:shadow-outline rounded bg-gray-300 py-1 px-2 font-semibold text-gray-800 opacity-100 focus:outline-none`}
-                            type="submit"
-                            onClick={onBatal}
-                          >
-                            Batal
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
                   <table className="min-w-full divide-y divide-gray-200">
                     <div className="min-w-full">
                       {/* TabelHeader */}
                       <TabelHeader
                         HEADERS={[
-                          "",
                           "Makanan",
                           "Sangat Kurus",
                           "Kurus",
@@ -365,16 +307,6 @@ function ForwardChaining() {
                       <tbody className="divide-y divide-gray-200 overflow-auto bg-gray-50">
                         {tabelAturan?.map((aturan, i) => (
                           <tr key={i}>
-                            <div className="py-2">
-                              <div
-                                onClick={() =>
-                                  onDelete(aturan.id || 0, setTabelAturan)
-                                }
-                                className="flex cursor-pointer items-center justify-center rounded-sm bg-red-500 p-1 px-0.5 text-white"
-                              >
-                                <MdOutlineDeleteForever />
-                              </div>
-                            </div>
                             <td className="whitespace-nowrap p-2 text-sm text-gray-500">
                               {aturan.makanan}
                             </td>
