@@ -396,7 +396,7 @@ function DataDiri({
 
     formula = (
       <div className="mt-1 font-mono text-blue-700">
-        <p>JK = Laki-laki</p>
+        <p>JK = {jenis_kelamin}</p>
         <p>
           AMB ={" "}
           {jenis_kelamin === "laki-laki"
