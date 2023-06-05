@@ -121,6 +121,7 @@ function DataDiri({
     } else {
       setSubmit(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   // axios request to set kkh in /api/kkh/getLast in useEffect
@@ -171,6 +172,7 @@ function DataDiri({
           setTabelPekerjaan(res.data);
         });
     } catch (error) {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateTable]);
 
   const handleInputChange = (
@@ -234,7 +236,7 @@ function DataDiri({
           kkh = {factor} + ({factor1} * berat_badan) + ({factor2} *
           tinggi_badan) - ({factor3} * umur)
         </p>
-        <p>kkh = {kkh} kkal/hari</p>
+        <p>kkh = {kkh - 312} kkal/hari</p>
       </div>
     );
 

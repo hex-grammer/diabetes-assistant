@@ -234,7 +234,7 @@ function DataDiri({
           kkh = {factor} + ({factor1} * berat_badan) + ({factor2} *
           tinggi_badan) - ({factor3} * umur)
         </p>
-        <p>kkh = {kkh} kkal/hari</p>
+        <p>kkh = {kkh - 312} kkal/hari</p>
       </div>
     );
 

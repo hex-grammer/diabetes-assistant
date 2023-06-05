@@ -309,7 +309,7 @@ function LogikaFuzzy() {
 
   // fungsi defuzzifikasi
   const Defuzzifikasi = () => {
-    const cal = (tabelKKH && tabelKKH[0]?.kkh) || 0;
+    const cal = (tabelKKH && tabelKKH[0]?.kkh && tabelKKH[0]?.kkh - 312) || 0;
     const JK = (cal * 0.05).toFixed(2) as unknown as number;
     const spaces = (num: number) => String.fromCharCode(160).repeat(num);
     const { aktivitas } =
@@ -319,6 +319,13 @@ function LogikaFuzzy() {
     const persentaseAktivitas =
       aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
     const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
+    const persentaseBB =
+      fuzzyBeratBadan.label === "Kurus"
+        ? 20
+        : fuzzyBeratBadan.label === "Gemuk"
+        ? 30
+        : 0;
+    const nilaiBB = (cal * (persentaseBB / 100)).toFixed(2);
 
     return (
       <>
@@ -342,14 +349,14 @@ function LogikaFuzzy() {
           </div>
           <div>
             {spaces(14)}= {cal || 0} {umur > 40 && `- ${umur} `}- {JK} -{" "}
-            {fuzzyBeratBadan.nilai} + {nilaiAktivitas}
+            {nilaiBB} + {nilaiAktivitas}
           </div>
           <div>
             {spaces(14)}={" "}
             {(cal || 0) -
               (umur > 40 ? umur : 0) -
               JK -
-              fuzzyBeratBadan.nilai +
+              parseInt(nilaiBB) +
               parseInt(nilaiAktivitas)}{" "}
             kalori
           </div>
