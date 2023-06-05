@@ -192,7 +192,7 @@ function Dashboard() {
               <div className="flex items-end py-2">
                 <span className="text-4xl font-bold text-green-600">
                   {kkh
-                    ? (kkh - 312)
+                    ? (kkh - 73)
                         .toString()
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     : 0}

@@ -309,7 +309,7 @@ function LogikaFuzzy() {
 
   // fungsi defuzzifikasi
   const Defuzzifikasi = () => {
-    const cal = (tabelKKH && tabelKKH[0]?.kkh && tabelKKH[0]?.kkh - 312) || 0;
+    const cal = (tabelKKH && tabelKKH[0]?.kkh && tabelKKH[0]?.kkh - 73) || 0;
     const JK = (cal * 0.05).toFixed(2) as unknown as number;
     const spaces = (num: number) => String.fromCharCode(160).repeat(num);
     const { aktivitas } =
