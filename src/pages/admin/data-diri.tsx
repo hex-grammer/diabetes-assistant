@@ -234,7 +234,7 @@ function DataDiri({
           kkh = {factor} + ({factor1} * berat_badan) + ({factor2} *
           tinggi_badan) - ({factor3} * umur)
         </p>
-        <p>kkh = {kkh - 73} kkal/hari</p>
+        <p>kkh = {kkh - 337} kkal/hari</p>
       </div>
     );
 
@@ -465,8 +465,8 @@ function DataDiri({
         umur: Number(formData.umur),
         email: session?.user?.email,
         username: user.username,
-        kkh: hitungKKH(),
-        imt: hitungIMT(),
+        kkh: hitungKKH()[0],
+        imt: hitungIMT()[0],
       });
       setUpdateTable((t) => !t);
       toast.success("Data berhasil disimpan!");

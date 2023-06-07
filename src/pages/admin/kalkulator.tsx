@@ -70,7 +70,7 @@ function Kalkulator() {
             <div className="py-2">
               <span className="text-4xl font-bold text-green-600">
                 {kkh
-                  ? (kkh - 73).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                  ? (kkh - 337).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                   : 0}
               </span>
               <span className="ml-1 text-lg font-medium text-gray-600">
