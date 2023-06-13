@@ -349,14 +349,16 @@ function LogikaFuzzy() {
           </div>
           <div>
             {spaces(14)}= {cal || 0} {umur > 40 && `- ${umur} `}- {JK} -{" "}
-            {nilaiBB} + {nilaiAktivitas}
+            {/* {nilaiBB} + {nilaiAktivitas} */}
+            {nilaiAktivitas} + {nilaiAktivitas}
           </div>
           <div>
             {spaces(14)}={" "}
             {(cal || 0) -
               (umur > 40 ? umur : 0) -
               JK -
-              parseInt(nilaiBB) +
+              // parseInt(nilaiBB) +
+              parseInt(nilaiAktivitas) +
               parseInt(nilaiAktivitas)}{" "}
             kalori
           </div>

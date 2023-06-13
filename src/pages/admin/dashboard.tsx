@@ -40,6 +40,11 @@ function Dashboard() {
   const [kategoriIMT, setKategoriIMT] = useState("");
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [rekomendasiMenu, setRekomendasiMenu] = useState<string[] | null>([]);
+  const [fuzzyBeratBadan, setFuzzyBeratBadan] = useState({
+    label: "",
+    nilai: 0,
+  });
+  const [labelBB, setLabelBB] = useState("");
   const [newPekerjaan, setNewPekerjaan] = useState({
     nama_pekerjaan: "",
     aktivitas: "ringan",
@@ -125,6 +130,121 @@ function Dashboard() {
       });
   };
 
+  function onAktivitasChange(nama_kerjaan: string, aktivitas: string) {
+    setDataBerubah(true);
+    setTabelPekerjaan((prevTabel) =>
+      prevTabel.map((kerjaan) => {
+        if (kerjaan.nama_pekerjaan === nama_kerjaan) {
+          return {
+            ...kerjaan,
+            aktivitas,
+          };
+        }
+        return kerjaan;
+      })
+    );
+  }
+
+  const FuzzyBeratBadan = () => {
+    let sangatKurus = 0;
+    let kurus = 0;
+    let normal = 0;
+    let gemuk = 0;
+    let sangatGemuk = 0;
+    let label = "";
+
+    const imt = (tabelKKH && tabelKKH[0]?.imt) || 0;
+    console.log("test");
+    if (!imt) {
+      return;
+    }
+    console.log(imt);
+
+    // Menghitung nilai keanggotaan himpunan fuzzy
+    if (imt <= 16.5) {
+      sangatKurus = 1;
+    } else if (imt > 16.5 && imt < 17) {
+      sangatKurus = (17 - imt) / (17 - 16.5);
+      kurus = (imt - 16.5) / (17 - 16.5);
+    } else if (imt > 17 && imt < 18) {
+      kurus = 1;
+    } else if (imt >= 18 && imt <= 18.5) {
+      kurus = (18.5 - imt) / (18.5 - 18);
+      normal = (imt - 18) / (18.5 - 18);
+    } else if (imt > 18.5 && imt < 24.5) {
+      normal = 1;
+    } else if (imt >= 24.5 && imt <= 25) {
+      normal = (25 - imt) / (25 - 24.5);
+      gemuk = (imt - 24.5) / (25 - 24.5);
+    } else if (imt >= 25 && imt <= 26.5) {
+      gemuk = 1;
+    } else if (imt >= 26.5 && imt <= 27) {
+      gemuk = (27 - imt) / (27 - 26.5);
+      sangatGemuk = (imt - 26.5) / (27 - 26.5);
+    } else if (imt > 27) {
+      sangatGemuk = 1;
+    }
+
+    sangatKurus = parseFloat(sangatKurus.toFixed(2));
+    kurus = parseFloat(kurus.toFixed(2));
+    normal = parseFloat(normal.toFixed(2));
+    gemuk = parseFloat(gemuk.toFixed(2));
+    sangatGemuk = parseFloat(sangatGemuk.toFixed(2));
+
+    // set label dan nilai himpunan fuzzy berdasarkan nilai tertinggi
+    if (
+      sangatKurus > kurus &&
+      sangatKurus > normal &&
+      sangatKurus > gemuk &&
+      sangatKurus > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({
+        label: "Sangat Kurus",
+        nilai: sangatKurus,
+      });
+      label = "Sangat Kurus";
+    } else if (
+      kurus > sangatKurus &&
+      kurus > normal &&
+      kurus > gemuk &&
+      kurus > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Kurus", nilai: kurus });
+      label = "Kurus";
+    } else if (
+      normal > sangatKurus &&
+      normal > kurus &&
+      normal > gemuk &&
+      normal > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({
+        label: "Normal",
+        nilai: normal,
+      });
+      label = "normal";
+    } else if (
+      gemuk > sangatKurus &&
+      gemuk > kurus &&
+      gemuk > normal &&
+      gemuk > sangatGemuk
+    ) {
+      setFuzzyBeratBadan({ label: "Gemuk", nilai: gemuk });
+      label = "Gemuk";
+    } else if (
+      sangatGemuk > sangatKurus &&
+      sangatGemuk > kurus &&
+      sangatGemuk > normal &&
+      sangatGemuk > gemuk
+    ) {
+      setFuzzyBeratBadan({
+        label: "Sangat Gemuk",
+        nilai: sangatGemuk,
+      });
+      label = "Obesitas";
+    }
+    return label;
+  };
+
   useEffect(() => {
     const getAssyncSession = async () => {
       const session = await getSession();
@@ -142,25 +262,43 @@ function Dashboard() {
         });
     };
 
+    setLabelBB(FuzzyBeratBadan() || "");
+
     getAssyncSession().catch((err) => {
       console.log(err);
     });
   }, []);
 
-  function onAktivitasChange(nama_kerjaan: string, aktivitas: string) {
-    setDataBerubah(true);
-    setTabelPekerjaan((prevTabel) =>
-      prevTabel.map((kerjaan) => {
-        if (kerjaan.nama_pekerjaan === nama_kerjaan) {
-          return {
-            ...kerjaan,
-            aktivitas,
-          };
-        }
-        return kerjaan;
-      })
-    );
-  }
+  const hitungKKH = () => {
+    let result = 0;
+    if (kkh && tabelKKH) {
+      const cal = kkh - 337;
+      const umur = (tabelKKH[0]?.umur || 0) > 40 ? tabelKKH[0]?.umur || 0 : 0;
+      const JK = (cal * 0.05).toFixed(2) as unknown as number;
+      const persentaseBB =
+        labelBB === "Kurus" ? 20 : labelBB === "Gemuk" ? 30 : 0;
+      const nilaiBB = (cal * (persentaseBB / 100)).toFixed(2);
+      const { aktivitas } =
+        tabelPekerjaan.filter(
+          (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
+        )[0] || {};
+      const persentaseAktivitas =
+        aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
+      const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
+      // result = cal - umur - JK - parseInt(nilaiBB) + parseInt(nilaiAktivitas);
+      result =
+        cal - umur - JK - parseInt(nilaiAktivitas) + parseInt(nilaiAktivitas);
+      // console.log(
+      //   `${cal} - ${umur} - ${JK} - ${parseInt(nilaiBB)} + ${parseInt(
+      //     nilaiAktivitas
+      //   )}`
+      // );
+    } else {
+      result = 0;
+    }
+    result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return result;
+  };
 
   return (
     <Layout>
@@ -191,11 +329,7 @@ function Dashboard() {
               </h2>
               <div className="flex items-end py-2">
                 <span className="text-4xl font-bold text-green-600">
-                  {kkh
-                    ? (kkh - 337)
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                    : 0}
+                  {hitungKKH()}
                 </span>
                 <span className="ml-1 text-lg font-medium text-gray-600">
                   kkal/hari

@@ -3,12 +3,15 @@ import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
-import type { GetServerSidePropsContext } from "next";
 import type { kkh } from "@prisma/client";
 import DataDiri from "./data-diri";
-import { useGlobalContext } from "../../lib/GlobalContext";
+
+type Pekerjaan = {
+  nama_pekerjaan: string;
+  aktivitas: string;
+};
 
 function Dashboard() {
   const router = useRouter();
@@ -17,6 +20,13 @@ function Dashboard() {
   const [kategoriIMT, setKategoriIMT] = useState("");
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
   const [rekomendasiMenu, setRekomendasiMenu] = useState<string[] | null>([]);
+  const [tabelOldPekerjaan, setTabelOldPekerjaan] = useState<Pekerjaan[]>([
+    {
+      nama_pekerjaan: "",
+      aktivitas: "",
+    },
+  ]);
+  const [tabelPekerjaan, setTabelPekerjaan] = useState(tabelOldPekerjaan);
 
   useEffect(() => {
     const getAssyncSession = async () => {
@@ -33,6 +43,37 @@ function Dashboard() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const hitungKKH = () => {
+    let result = 0;
+    if (kkh && tabelKKH) {
+      const cal = kkh - 337;
+      const umur = (tabelKKH[0]?.umur || 0) > 40 ? tabelKKH[0]?.umur || 0 : 0;
+      const JK = (cal * 0.05).toFixed(2) as unknown as number;
+      // const persentaseBB =
+      //   labelBB === "Kurus" ? 20 : labelBB === "Gemuk" ? 30 : 0;
+      // const nilaiBB = (cal * (persentaseBB / 100)).toFixed(2);
+      const { aktivitas } =
+        tabelPekerjaan.filter(
+          (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
+        )[0] || {};
+      const persentaseAktivitas =
+        aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
+      const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
+      // result = cal - umur - JK - parseInt(nilaiBB) + parseInt(nilaiAktivitas);
+      result =
+        cal - umur - JK - parseInt(nilaiAktivitas) + parseInt(nilaiAktivitas);
+      // console.log(
+      //   `${cal} - ${umur} - ${JK} - ${parseInt(nilaiBB)} + ${parseInt(
+      //     nilaiAktivitas
+      //   )}`
+      // );
+    } else {
+      result = 0;
+    }
+    result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return result;
+  };
 
   return (
     <Layout>
@@ -61,9 +102,7 @@ function Dashboard() {
             </h2>
             <div className="flex items-end py-2">
               <span className="text-4xl font-bold text-green-600">
-                {kkh
-                  ? (kkh - 337).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                  : 0}
+                {hitungKKH()}
               </span>
               <span className="ml-1 text-lg font-medium text-gray-600">
                 kkal/hari

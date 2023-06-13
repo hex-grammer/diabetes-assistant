@@ -41,9 +41,6 @@ function ForwardChaining() {
   const [tinggiBadan, setTinggiBadan] = useState(0);
   const [imt, setImt] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
-  const [dataBerubah, setDataBerubah] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(-1);
-  const [editedValue, setEditedValue] = useState("");
 
   const KATEGORI = [
     {
@@ -83,10 +80,6 @@ function ForwardChaining() {
   ]);
 
   const [tabelAturan, setTabelAturan] = useState(oldAturan);
-  const [newMakanan, setNewMakanan] = useState({
-    makanan: "",
-    kategori: [0, 0, 0, 0, 0],
-  });
 
   useEffect(() => {
     try {
@@ -96,27 +89,6 @@ function ForwardChaining() {
       });
     } catch (error) {}
   }, []);
-
-  const toggleKategori = (
-    makananName: string,
-    kategoriIndex: number,
-    newValue: number
-  ) => {
-    setDataBerubah(true);
-    setTabelAturan((prevTabelAturan) =>
-      prevTabelAturan.map((aturan) => {
-        if (aturan.makanan === makananName) {
-          const newKategori = [...aturan.kategori];
-          newKategori[kategoriIndex] = newValue;
-          return {
-            ...aturan,
-            kategori: newKategori,
-          };
-        }
-        return aturan;
-      })
-    );
-  };
 
   const hitungKategoriIMT = (IMT: number) => {
     if (IMT < 17) {
@@ -142,75 +114,7 @@ function ForwardChaining() {
         rekomendasiMenu.push(`${aturan.makanan} (${kat}gr)`);
       }
     });
-    console.log(rekomendasiMenu);
     return rekomendasiMenu;
-  };
-
-  const onChangeMakanan = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMakanan((prev) => {
-      return {
-        ...prev,
-        makanan: e.target.value,
-      };
-    });
-  };
-
-  const onTambahData = () => {
-    if (newMakanan.makanan === "") return;
-    setDataBerubah(true);
-    setTabelAturan((prev) => {
-      return [newMakanan, ...prev];
-    });
-    setNewMakanan({
-      makanan: "",
-      kategori: [0, 0, 0, 0, 0],
-    });
-  };
-
-  const handleSimpan = () => {
-    setDataBerubah(false);
-    setOldAturan(tabelAturan);
-    const newData = [
-      ...tabelAturan.filter((aturan) => {
-        const oldData = oldAturan.find((oldData) => oldData.id === aturan.id);
-        if (!oldData) {
-          return true;
-        }
-        return (
-          JSON.stringify(oldData.kategori) !== JSON.stringify(aturan.kategori)
-        );
-      }),
-    ];
-
-    axios
-      .post("/api/makanan/create", newData)
-      .then(() => {
-        toast.success("Data Berhasil Disimpan!");
-      })
-      .catch(() => {
-        toast.error("Gagal menambah data!");
-      });
-  };
-
-  const onBatal = () => {
-    setDataBerubah(false);
-    setTabelAturan(oldAturan);
-  };
-
-  const onDelete = (
-    id: number,
-    setTabelAturan: React.Dispatch<React.SetStateAction<Aturan[]>>
-  ) => {
-    if (!confirm("Yakin ingin menghapus data ini?")) return;
-
-    axios
-      .delete(`/api/makanan/delete/`, { params: { id } })
-      .then(() => {
-        setTabelAturan((oldData) => oldData.filter((data) => data.id !== id));
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   // if login

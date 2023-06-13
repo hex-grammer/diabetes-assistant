@@ -22,6 +22,12 @@ type Pekerjaan = {
   aktivitas: string;
 };
 
+type Aturan = {
+  id?: number;
+  makanan: string;
+  kategori: number[];
+};
+
 interface DataDiriProps {
   setKKH?: React.Dispatch<React.SetStateAction<number>>;
   setRumusKKH?: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -79,32 +85,24 @@ function DataDiri({
     },
   ]);
 
-  const MAKANAN = {
-    M001: "Beras Merah",
-    M002: "Buah Apel",
-    M003: "Buah Belimbing",
-    M004: "Buah Kiwi",
-    M005: "Buah Nanas",
-    M006: "Buah Pepaya",
-    M007: "Bubur Kacang Hijau",
-    M008: "Ikan Salmon Panggang",
-    M009: "Ikan Tuna Panggang",
-    M010: "Jagung",
-    M011: "Kacang Merah",
-    M012: "Kacang Tanah",
-    M013: "Mentimun",
-    M014: "Sayur Bayam",
-    M015: "Sayur Brokoli",
-    M016: "Sayur Kubis/Kol",
-    M017: "Sayur Sawi Putih",
-    M018: "Susu Bear Brand",
-    M019: "Tahu",
-    M020: "Telur Rebus",
-    M021: "Tempe",
-    M022: "Tomat",
-    M023: "Wortel",
-    M024: "Sayur Sawi Hijau",
-  };
+  const [oldAturan, setOldAturan] = useState<Aturan[]>([
+    {
+      id: 0,
+      makanan: "Loading...",
+      kategori: [0, 0, 0, 0, 0],
+    },
+  ]);
+
+  const [tabelAturan, setTabelAturan] = useState(oldAturan);
+
+  useEffect(() => {
+    try {
+      void axios.get("/api/makanan/getAll").then((res: { data: Aturan[] }) => {
+        setOldAturan(res.data);
+        setTabelAturan(res.data);
+      });
+    } catch (error) {}
+  }, []);
 
   // set submit true jika formData berubah dan tidak kosong
   useEffect(() => {
@@ -121,6 +119,7 @@ function DataDiri({
     } else {
       setSubmit(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   // axios request to set kkh in /api/kkh/getLast in useEffect
@@ -171,6 +170,7 @@ function DataDiri({
           setTabelPekerjaan(res.data);
         });
     } catch (error) {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateTable]);
 
   const handleInputChange = (
@@ -261,76 +261,58 @@ function DataDiri({
     return [imtRounded, formula];
   };
 
+  const KATEGORI = [
+    {
+      kategori: "Sangat Kurus",
+      minIMT: 0,
+      maxIMT: 17,
+    },
+    {
+      kategori: "Kurus",
+      minIMT: 17,
+      maxIMT: 18.5,
+    },
+    {
+      kategori: "Normal",
+      minIMT: 18.5,
+      maxIMT: 25,
+    },
+    {
+      kategori: "Gemuk",
+      minIMT: 25,
+      maxIMT: 27,
+    },
+    {
+      kategori: "Obesitas",
+      minIMT: 27,
+      maxIMT: "∞",
+    },
+  ];
+
+  const tampilkanRekomendasiMenu = (kategori: string) => {
+    const rekomendasiMenu: string[] = [];
+    tabelAturan.forEach((aturan) => {
+      const kat =
+        aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)];
+      if (kat) {
+        rekomendasiMenu.push(`${aturan.makanan} (${kat}gr)`);
+      }
+    });
+    return rekomendasiMenu;
+  };
+
   // fungsi untuk menghitung Kategori IMT
   const hitungKategoriIMT = () => {
     const imt = hitungIMT()[0];
     if (imt < 17) {
-      setRekomendasiMenu &&
-        setRekomendasiMenu([
-          MAKANAN.M001,
-          MAKANAN.M002,
-          MAKANAN.M004,
-          MAKANAN.M006,
-          MAKANAN.M008,
-          MAKANAN.M009,
-          MAKANAN.M014,
-          MAKANAN.M016,
-          MAKANAN.M017,
-          MAKANAN.M018,
-          MAKANAN.M019,
-          MAKANAN.M020,
-          MAKANAN.M023,
-        ]);
       return "Sangat Kurus";
     } else if (imt >= 17 && imt <= 18.5) {
-      setRekomendasiMenu &&
-        setRekomendasiMenu([
-          MAKANAN.M001,
-          MAKANAN.M002,
-          MAKANAN.M006,
-          MAKANAN.M008,
-          MAKANAN.M009,
-          MAKANAN.M010,
-          MAKANAN.M013,
-          MAKANAN.M019,
-          MAKANAN.M021,
-          MAKANAN.M022,
-          MAKANAN.M023,
-          MAKANAN.M024,
-        ]);
       return "Kurus";
     } else if (imt >= 18.5 && imt <= 25) {
-      setRekomendasiMenu &&
-        setRekomendasiMenu([
-          MAKANAN.M001,
-          MAKANAN.M006,
-          MAKANAN.M007,
-          MAKANAN.M008,
-          MAKANAN.M009,
-          MAKANAN.M010,
-          MAKANAN.M011,
-          MAKANAN.M014,
-          MAKANAN.M018,
-        ]);
       return "Normal";
     } else if (imt >= 25 && imt <= 27) {
-      setRekomendasiMenu &&
-        setRekomendasiMenu([
-          MAKANAN.M001,
-          MAKANAN.M006,
-          MAKANAN.M009,
-          MAKANAN.M010,
-          MAKANAN.M014,
-        ]);
       return "Gemuk";
     } else if (imt >= 27) {
-      setRekomendasiMenu &&
-        setRekomendasiMenu([
-          MAKANAN.M001,
-          MAKANAN.M008,
-          MAKANAN.M014,
-          MAKANAN.M015,
-        ]);
       return "Obesitas";
     }
   };
@@ -424,6 +406,13 @@ function DataDiri({
 
     return [amb, formula];
   };
+
+  useEffect(() => {
+    const rek = tampilkanRekomendasiMenu(hitungKategoriIMT() || "");
+    if (rek.length > 0 && setRekomendasiMenu) {
+      setRekomendasiMenu(rek);
+    }
+  }, [hitungKategoriIMT, setRekomendasiMenu, tampilkanRekomendasiMenu]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

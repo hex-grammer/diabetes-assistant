@@ -64,9 +64,7 @@ function Kalkulator() {
           </div>
           {/* KKH */}
           <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-3">
-            <h2 className="mb-2 text-xl font-bold uppercase">
-              Kebutuhan Kalori Harian
-            </h2>
+            <h2 className="mb-2 text-xl font-bold uppercase">Kalori Tetap</h2>
             <div className="py-2">
               <span className="text-4xl font-bold text-green-600">
                 {kkh
@@ -79,8 +77,8 @@ function Kalkulator() {
             </div>
             <div className="flex flex-col justify-center">
               <span className="text-sm text-gray-700">
-                Kebutuhan kalori harian (KKH) adalah jumlah kalori yang
-                dibutuhkan untuk menjaga kesehatan dan beraktivitas sehari-hari.
+                Kalori tetap adalah jumlah kalori yang akan digunakan untuk
+                mencari nilai kebutuhan kalori harian.
               </span>
             </div>
             <div className="flex flex-col justify-center">
