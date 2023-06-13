@@ -128,7 +128,7 @@ function Dashboard() {
                     {tabelKKH && tabelKKH[0]?.imt}
                   </span>
                 }{" "}
-                {<span className="lowercase">({kategoriIMT}) </span>}
+                {/* {<span className="lowercase">({kategoriIMT}) </span>} */}
                 adalah:{" "}
                 {rekomendasiMenu?.map((menu, i) => (
                   <span key={i} className="font-semibold text-orange-600">
