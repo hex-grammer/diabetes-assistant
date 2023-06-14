@@ -360,12 +360,14 @@ function LogikaFuzzy() {
           </div>
           <div>
             {spaces(14)}={" "}
-            {(cal || 0) -
+            {(
+              (cal || 0) -
               nilaiUmur -
               JK -
               // parseInt(nilaiBB) +
               parseInt(nilaiAktivitas) +
-              parseInt(nilaiAktivitas)}{" "}
+              parseInt(nilaiAktivitas)
+            ).toFixed(2)}{" "}
             kalori
           </div>
         </div>

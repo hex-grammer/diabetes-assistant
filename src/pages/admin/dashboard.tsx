@@ -310,7 +310,7 @@ function Dashboard() {
       result = 0;
     }
     result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return result;
+    return result.toFixed(2);
   };
 
   return (
