@@ -166,7 +166,7 @@ function ForwardChaining() {
           {domLoaded && (
             <>
               {/* PERHITUNGAN IMT */}
-              <div className="h-fit rounded-md bg-gray-50 px-4 py-2 shadow-md sm:col-span-3">
+              <div className="h-fit rounded-md bg-gray-50 px-4 py-2 shadow-md sm:col-span-4 sm:col-start-2">
                 <h2 className="mb-1 font-bold uppercase">1. Perhitungan IMT</h2>
                 <div className="text-sm">
                   <div className="mb-1">
@@ -190,14 +190,13 @@ function ForwardChaining() {
                 </div>
               </div>
               {/* Tabel Aturan-Makanan */}
-              <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-4 sm:row-start-1">
+              {/* <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-4 sm:row-start-1">
                 <h2 className="mb-2 text-center text-xl font-bold uppercase">
                   Tabel Aturan-Makanan
                 </h2>
                 <div className="w-full overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <div className="min-w-full">
-                      {/* TabelHeader */}
                       <TabelHeader
                         HEADERS={[
                           "Makanan",
@@ -228,22 +227,17 @@ function ForwardChaining() {
                     </div>
                   </table>
                 </div>
-              </div>
+              </div> */}
               {/* Tabel Kategori IMT */}
-              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
+              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-4 sm:col-start-2">
                 <h2 className="mb-1 font-bold uppercase">2. Kategori IMT</h2>
                 <div className="flex flex-col justify-between gap-2 sm:flex-row">
-                  {/* keterangan */}
                   <div className="flex gap-2 text-sm sm:w-2/5">
                     Tabel berikut menunjukkan kategori IMT yang terbagi menjadi
                     5 kategori berdasarkan range nilai IMT.
                   </div>
-                  {/* tabel MIN_IMT, MAX_IMT, KATEGORI */}
                   <div className="flex flex-1 justify-center overflow-x-auto rounded-md bg-white">
                     <table className="divide-y divide-gray-200">
-                      {/* <div className="sm:max-h-[70vh]"> */}
-                      {/* TabelHeader */}
-                      {/* <TabelHeader HEADERS={["Min_IMT", "Max_IMT", "Kategori"]} /> */}
                       <tbody className="divide-y divide-gray-200 overflow-auto">
                         {KATEGORI?.map((kat, i) => (
                           <tr key={i}>
@@ -265,13 +259,12 @@ function ForwardChaining() {
                           </tr>
                         ))}
                       </tbody>
-                      {/* </div> */}
                     </table>
                   </div>
                 </div>
               </div>
               {/* REKOMENDASI MENU */}
-              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
+              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-4 sm:col-start-2">
                 <h2 className="mb-1 font-bold uppercase">
                   3. Rekomendasi Menu
                 </h2>

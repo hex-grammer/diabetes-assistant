@@ -60,9 +60,21 @@ function Dashboard() {
       const persentaseAktivitas =
         aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
       const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
+      const nilaiUmur =
+        umur > 70
+          ? cal * 0.2
+          : umur > 60
+          ? cal * 0.1
+          : umur > 40
+          ? cal * 0.05
+          : 0;
       // result = cal - umur - JK - parseInt(nilaiBB) + parseInt(nilaiAktivitas);
       result =
-        cal - umur - JK - parseInt(nilaiAktivitas) + parseInt(nilaiAktivitas);
+        cal -
+        nilaiUmur -
+        JK -
+        parseInt(nilaiAktivitas) +
+        parseInt(nilaiAktivitas);
       // console.log(
       //   `${cal} - ${umur} - ${JK} - ${parseInt(nilaiBB)} + ${parseInt(
       //     nilaiAktivitas

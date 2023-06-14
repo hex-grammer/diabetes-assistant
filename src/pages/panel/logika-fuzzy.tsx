@@ -326,6 +326,14 @@ function LogikaFuzzy() {
         ? 30
         : 0;
     const nilaiBB = (cal * (persentaseBB / 100)).toFixed(2);
+    const nilaiUmur =
+      umur > 70
+        ? cal * 0.2
+        : umur > 60
+        ? cal * 0.1
+        : umur > 40
+        ? cal * 0.05
+        : 0;
 
     return (
       <>
@@ -343,19 +351,16 @@ function LogikaFuzzy() {
             {spaces(14)}= {cal} * {persentaseAktivitas}% <br />
             {spaces(14)}= {nilaiAktivitas}
           </div>
+          <div>Total Kalori &nbsp;= Kalori basal - U - JK - BB + AK</div>
           <div>
-            Total Kalori &nbsp;= Kalori basal {umur > 40 && "- U "}- JK - BB +
-            AK
-          </div>
-          <div>
-            {spaces(14)}= {cal || 0} {umur > 40 && `- ${umur} `}- {JK} -{" "}
+            {spaces(14)}= {cal || 0} {`- ${nilaiUmur.toFixed(2)} `}- {JK} -{" "}
             {/* {nilaiBB} + {nilaiAktivitas} */}
             {nilaiAktivitas} + {nilaiAktivitas}
           </div>
           <div>
             {spaces(14)}={" "}
             {(cal || 0) -
-              (umur > 40 ? umur : 0) -
+              nilaiUmur -
               JK -
               // parseInt(nilaiBB) +
               parseInt(nilaiAktivitas) +
