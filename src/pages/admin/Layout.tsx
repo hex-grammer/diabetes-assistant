@@ -7,7 +7,7 @@ import { GiBrain, GiWeightScale } from "react-icons/gi";
 import { SlCalculator } from "react-icons/sl";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
-import { HiScale } from "react-icons/hi2";
+import { HiOutlineUsers, HiScale } from "react-icons/hi2";
 import { RiFileUserLine, RiTeamLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 
@@ -32,10 +32,10 @@ function Layout(props: Props) {
   const { pathname } = router;
   const path = pathname.split("/")[2];
 
-  useEffect(() => {
-    // reload on url change
-    // router.reload();
-  }, [path]);
+  // useEffect(() => {
+  // reload on url change
+  // router.push();
+  // }, [path]);
 
   return (
     <div className="font-poppins flex h-screen overflow-hidden">
@@ -55,6 +55,10 @@ function Layout(props: Props) {
           {
             title: "Kalkulator",
             icon: <GiWeightScale />,
+          },
+          {
+            title: "Data User",
+            icon: <HiOutlineUsers />,
           },
           // {
           //   title: "Makanan",
