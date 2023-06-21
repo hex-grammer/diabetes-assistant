@@ -23,8 +23,6 @@ const SideMenu = (props: Props) => {
   const { materi } = router.query;
   const selectedMenu = materi || path;
 
-  const { setLoading } = useGlobalContext();
-
   const handleAnimation = () => {
     if (props.menuStatus === "open") {
       return "animate-slideIn right-0";
@@ -46,9 +44,17 @@ const SideMenu = (props: Props) => {
         window.location.href = `/admin/${eachMenu}`;
         return;
       }
+      if (router.pathname.includes("dashboard")) {
+        window.location.href = `/admin/${eachMenu}`;
+        return;
+      }
       await router.push(`/admin/${eachMenu}`);
     } else {
       if (router.pathname.includes("logika-fuzzy")) {
+        window.location.href = `/panel/${eachMenu}`;
+        return;
+      }
+      if (router.pathname.includes("dashboard")) {
         window.location.href = `/panel/${eachMenu}`;
         return;
       }

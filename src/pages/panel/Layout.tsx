@@ -7,7 +7,9 @@ import { GiBrain, GiWeightScale } from "react-icons/gi";
 import { SlCalculator } from "react-icons/sl";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
-import { HiScale } from "react-icons/hi2";
+import { HiOutlineUserCircle, HiOutlineUsers, HiScale } from "react-icons/hi2";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 type Props = {
   children?: JSX.Element;
@@ -27,8 +29,49 @@ const Loading = () => {
 };
 
 function Layout(props: Props) {
+  const { data: session } = useSession();
+  console.log(session);
   const [menuStatus, setMenuStatus] = useState("no");
   const { loading } = useGlobalContext();
+  // get url path
+  const router = useRouter();
+  const { pathname } = router;
+  const path = pathname.split("/")[2] as string;
+
+  useEffect(() => {
+    // reload on url change
+    void router.push(path);
+  }, [pathname]);
+
+  const MENU = session
+    ? [
+        { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
+        { title: "Logika Fuzzy", icon: <GiBrain /> },
+        {
+          title: "Forward Chaining",
+          icon: <TiMediaFastForwardOutline />,
+        },
+        {
+          title: "Kalkulator",
+          icon: <GiWeightScale />,
+        },
+        {
+          title: "Profil",
+          icon: <HiOutlineUserCircle />,
+        },
+      ]
+    : [
+        { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
+        { title: "Logika Fuzzy", icon: <GiBrain /> },
+        {
+          title: "Forward Chaining",
+          icon: <TiMediaFastForwardOutline />,
+        },
+        {
+          title: "Kalkulator",
+          icon: <GiWeightScale />,
+        },
+      ];
 
   return (
     <div className="font-poppins flex h-screen overflow-hidden">
@@ -38,38 +81,12 @@ function Layout(props: Props) {
       <SideMenu
         menuStatus={menuStatus}
         setMenuStatus={setMenuStatus}
-        menuLists={[
-          { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
-          // {
-          //   title: "Makanan",
-          //   icon: <MdOutlineFoodBank />,
-          // },
-          { title: "Logika Fuzzy", icon: <GiBrain /> },
-          {
-            title: "Forward Chaining",
-            icon: <TiMediaFastForwardOutline />,
-          },
-          {
-            title: "Kalkulator",
-            icon: <GiWeightScale />,
-          },
-          // {
-          //   title: "Perbandingan Metode",
-          //   icon: <HiScale />,
-          // },
-          // {
-          //   title: "Data Diri",
-          //   icon: <RiFileUserLine />,
-          // },
-          // { title: "Peserta",  icon: <RiTeamLine /> },
-        ]}
+        menuLists={MENU}
       />
       <div className="flex w-full flex-col">
         <Header setMenuStatus={setMenuStatus} />
         {/* BODY/CONTENT */}
         <div className="relative grid h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover bg-right text-gray-700">
-          {/* floating div to cover the background */}
-          {/* <div className="absolute w-full bg-gray-100 bg-opacity-40 sm:h-full" /> */}
           {loading ? <Loading /> : props?.children}
         </div>
       </div>

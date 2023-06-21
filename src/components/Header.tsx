@@ -17,6 +17,8 @@ const Header = (props: Props) => {
 
   // useeffect to get user from localstorage
   useEffect(() => {
+    console.log("session");
+    console.log(session);
     const userLocal = JSON.parse(
       localStorage.getItem("user") as string
     ) as User;

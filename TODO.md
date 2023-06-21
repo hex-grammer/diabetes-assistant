@@ -9,6 +9,7 @@ Project Description
 
 ### In Progress
 
+- [ ] Feat: update profile  
 
 ### Done ✓
 

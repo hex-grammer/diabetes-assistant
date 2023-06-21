@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
 import type { kkh } from "@prisma/client";
 import DataDiri from "./data-diri";
@@ -14,6 +14,16 @@ type Pekerjaan = {
 };
 
 function Dashboard() {
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      const login = localStorage.getItem("login");
+      if (login !== "true") {
+        void router.push("/login");
+      }
+    },
+  });
+
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
   const [kkh, setKKH] = useState(0);
@@ -27,22 +37,6 @@ function Dashboard() {
     },
   ]);
   const [tabelPekerjaan, setTabelPekerjaan] = useState(tabelOldPekerjaan);
-
-  useEffect(() => {
-    const getAssyncSession = async () => {
-      const session = await getSession();
-      const login = localStorage.getItem("login");
-
-      if (login !== "true" && !session) {
-        void router.push("/login");
-      }
-    };
-
-    getAssyncSession().catch((err) => {
-      console.log(err);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const hitungKKH = () => {
     let result = 0;

@@ -26,9 +26,9 @@ const Login: NextPage = () => {
 
   // handle login
   const handleLogin = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    e.preventDefault();
+    e && e.preventDefault();
 
     // cek apakah username dan password sudah diisi
     if (username === "" || password === "") {
@@ -127,6 +127,12 @@ const Login: NextPage = () => {
               handleChange(e);
             }}
             className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+            // on enter press
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                void handleLogin();
+              }
+            }}
           />
         </div>
 

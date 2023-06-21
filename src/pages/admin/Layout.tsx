@@ -30,12 +30,12 @@ function Layout(props: Props) {
   // get url path
   const router = useRouter();
   const { pathname } = router;
-  const path = pathname.split("/")[2];
+  const path = pathname.split("/")[2] as string;
 
-  // useEffect(() => {
-  // reload on url change
-  // router.push();
-  // }, [path]);
+  useEffect(() => {
+    // reload on url change
+    void router.push(path);
+  }, [path]);
 
   return (
     <div className="font-poppins flex h-screen overflow-hidden">
