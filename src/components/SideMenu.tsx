@@ -12,10 +12,11 @@ type Props = {
     title: string;
     icon: JSX.Element;
   }[];
+  admin?: boolean;
   setMenuStatus: (arg: string) => void;
 };
 
-const SideMenu = (props: Props) => {
+const SideMenu = ({ admin = false, ...props }: Props) => {
   const router = useRouter();
   const path = router.pathname.includes("admin")
     ? router.pathname.replace("/admin/panel/", "")
@@ -64,9 +65,13 @@ const SideMenu = (props: Props) => {
 
   return (
     <div
-      className={`${handleAnimation()} absolute z-50 flex h-screen w-full flex-col border-r-[1px] border-gray-500 border-opacity-50 bg-primary text-gray-100 sm:relative sm:right-0 sm:w-[22%] sm:animate-none `}
+      className={`${handleAnimation()} ${
+        admin ? "bg-primary-dark shadow-md" : "bg-primary"
+      } absolute z-50 flex h-screen w-full flex-col border-r-[1px] border-gray-500 border-opacity-50 text-gray-100 sm:relative sm:right-0 sm:w-[22%] sm:animate-none `}
     >
-      <div className="mb-4 flex items-center justify-between border-none border-gray-500 bg-primary-dark px-6 sm:border-b-[1px]">
+      <div
+        className={`mb-4 flex items-center justify-between border-none border-gray-500 bg-primary-dark px-6 sm:border-b-[1px]`}
+      >
         <Link
           href={"/"}
           className="font-fredoka flex  min-h-[10vh] items-center text-2xl text-primary sm:min-h-[8vh]"
@@ -95,7 +100,11 @@ const SideMenu = (props: Props) => {
             key={i}
             // href={eachMenu === "materi" ? "/materi" : `/materi/${eachMenu}`}
             className={`mx-3 my-0.5 flex cursor-pointer items-center rounded-sm py-2 px-4 text-left hover:bg-primary-dark ${
-              selectedMenu.includes(eachMenu) ? "bg-primary-dark" : ""
+              selectedMenu.includes(eachMenu)
+                ? !admin
+                  ? "bg-primary-dark"
+                  : "bg-primary"
+                : ""
             }`}
             onClick={(e) => void onMenuClick(e, eachMenu)}
           >

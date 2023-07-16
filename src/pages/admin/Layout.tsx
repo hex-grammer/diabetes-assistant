@@ -4,12 +4,11 @@ import SideMenu from "../../components/SideMenu";
 import { useGlobalContext } from "../../lib/GlobalContext";
 import Head from "next/head";
 import { GiBrain, GiWeightScale } from "react-icons/gi";
-import { SlCalculator } from "react-icons/sl";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
 import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
-import { HiOutlineUsers, HiScale } from "react-icons/hi2";
-import { RiFileUserLine, RiTeamLine } from "react-icons/ri";
+import { HiOutlineUsers } from "react-icons/hi2";
 import { useRouter } from "next/router";
+import { BiFoodMenu } from "react-icons/bi";
 
 type Props = {
   children?: JSX.Element;
@@ -43,19 +42,20 @@ function Layout(props: Props) {
         <title>Diabetes Assistant</title>
       </Head>
       <SideMenu
+        admin
         menuStatus={menuStatus}
         setMenuStatus={setMenuStatus}
         menuLists={[
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
-          { title: "Logika Fuzzy", icon: <GiBrain /> },
+          // { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
-            title: "Forward Chaining",
-            icon: <TiMediaFastForwardOutline />,
+            title: "Data Makanan",
+            icon: <BiFoodMenu />,
           },
-          {
-            title: "Kalkulator",
-            icon: <GiWeightScale />,
-          },
+          // {
+          //   title: "Kalkulator",
+          //   icon: <GiWeightScale />,
+          // },
           {
             title: "Data User",
             icon: <HiOutlineUsers />,
@@ -72,7 +72,7 @@ function Layout(props: Props) {
         ]}
       />
       <div className="flex w-full flex-col">
-        <Header setMenuStatus={setMenuStatus} />
+        <Header setMenuStatus={setMenuStatus} admin />
         {/* BODY/CONTENT */}
         <div className="relative h-full w-full overflow-y-auto bg-gray-200 bg-[url('/bg-panel.jpg')] bg-cover bg-right text-gray-700">
           {/* floating div to cover the background */}

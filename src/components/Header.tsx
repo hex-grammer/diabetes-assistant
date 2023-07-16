@@ -7,10 +7,11 @@ import Avatar from "react-avatar";
 import { AiOutlineMenu } from "react-icons/ai";
 
 type Props = {
+  admin?: boolean;
   setMenuStatus: (arg: string) => void;
 };
 
-const Header = (props: Props) => {
+const Header = ({ admin = false, ...props }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
   const [user, setUser] = useState<User | null>(null);
@@ -38,7 +39,11 @@ const Header = (props: Props) => {
   }, []);
 
   return (
-    <div className="flex min-h-[10vh] items-center justify-between bg-primary py-2 px-6 text-white shadow-md sm:min-h-[8vh] sm:justify-end">
+    <div
+      className={`flex min-h-[10vh] items-center justify-between ${
+        admin ? "bg-primary-dark" : "bg-primary"
+      } py-2 px-6 text-white shadow-md sm:min-h-[8vh] sm:justify-end`}
+    >
       {/* profil */}
       <div className="flex items-center sm:flex-row-reverse ">
         {/* image but use <img/> */}

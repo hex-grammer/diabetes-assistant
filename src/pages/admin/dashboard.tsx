@@ -18,7 +18,7 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
           <th
             key={index}
             scope="col"
-            className={`whitespace-nowrap p-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 `}
+            className={`whitespace-nowrap p-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-700`}
           >
             {header}
           </th>
@@ -29,6 +29,7 @@ const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
 };
 
 type Pekerjaan = {
+  id: number;
   nama_pekerjaan: string;
   aktivitas: string;
 };
@@ -36,22 +37,23 @@ type Pekerjaan = {
 function Dashboard() {
   const router = useRouter();
   const paths = router.pathname.split("/").slice(2);
-  const [kkh, setKKH] = useState(0);
-  const [kategoriIMT, setKategoriIMT] = useState("");
   const [tabelKKH, setTabelKKH] = useState<kkh[] | null>([]);
-  const [rekomendasiMenu, setRekomendasiMenu] = useState<string[] | null>([]);
   const [fuzzyBeratBadan, setFuzzyBeratBadan] = useState({
     label: "",
     nilai: 0,
   });
   const [labelBB, setLabelBB] = useState("");
+  const [editPekerjaanIndex, setEditPekerjaanIndex] = useState(-1);
+  const [editKerjaan, setEditKerjaan] = useState("");
   const [newPekerjaan, setNewPekerjaan] = useState({
+    id: 0,
     nama_pekerjaan: "",
     aktivitas: "ringan",
   });
   const [dataBerubah, setDataBerubah] = useState(false);
   const [tabelOldPekerjaan, setTabelOldPekerjaan] = useState<Pekerjaan[]>([
     {
+      id: 0,
       nama_pekerjaan: "",
       aktivitas: "",
     },
@@ -74,29 +76,49 @@ function Dashboard() {
       return [newPekerjaan, ...prev];
     });
     setNewPekerjaan({
+      id: 0,
       nama_pekerjaan: "",
       aktivitas: "",
     });
   };
 
+  function updateKerjaanById(id: number, newMakanan: string): void {
+    setDataBerubah(true);
+    const kerjaanBaru = tabelPekerjaan.map((item) => {
+      if (item.id === id) {
+        return { ...item, nama_pekerjaan: newMakanan };
+      }
+      return item;
+    });
+    setTabelPekerjaan(kerjaanBaru);
+  }
+
+  const onKerjaanChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    setDataBerubah(true);
+    setEditKerjaan(e.target.value);
+    updateKerjaanById(id, e.target.value);
+  };
+
   const handleSimpan = () => {
     setDataBerubah(false);
     setTabelOldPekerjaan(tabelPekerjaan);
-    const newData = [
-      ...tabelPekerjaan.filter((kerjaan) => {
-        const oldData = tabelOldPekerjaan.find(
-          (oldData) => oldData.nama_pekerjaan === kerjaan.nama_pekerjaan
-        );
-        if (!oldData) {
-          return true;
-        }
-        return (
-          JSON.stringify(oldData.aktivitas) !==
-          JSON.stringify(kerjaan.aktivitas)
-        );
-      }),
-    ];
+    const newData = tabelPekerjaan.filter((newDataItem) => {
+      const oldData = tabelOldPekerjaan.find(
+        (oldDataItem) => oldDataItem.id === newDataItem.id
+      );
+      if (!oldData) {
+        return true;
+      }
+      return (
+        newDataItem.nama_pekerjaan !== oldData.nama_pekerjaan ||
+        newDataItem.aktivitas !== oldData.aktivitas
+      );
+    });
 
+    // console.log(newData);
     axios
       .post("/api/pekerjaan/create", newData)
       .then(() => {
@@ -269,49 +291,20 @@ function Dashboard() {
     });
   }, []);
 
-  const hitungKKH = () => {
-    let result = 0;
-    if (kkh && tabelKKH) {
-      const cal = kkh - 337;
-      const umur = (tabelKKH[0]?.umur || 0) > 40 ? tabelKKH[0]?.umur || 0 : 0;
-      const JK = (cal * 0.05).toFixed(2) as unknown as number;
-      const persentaseBB =
-        labelBB === "Kurus" ? 20 : labelBB === "Gemuk" ? 30 : 0;
-      const nilaiBB = (cal * (persentaseBB / 100)).toFixed(2);
-      const { aktivitas } =
-        tabelPekerjaan.filter(
-          (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
-        )[0] || {};
-      const persentaseAktivitas =
-        aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
-      const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
-      const nilaiUmur =
-        umur > 70
-          ? cal * 0.2
-          : umur > 60
-          ? cal * 0.1
-          : umur > 40
-          ? cal * 0.05
-          : 0;
+  useEffect(() => {
+    try {
+      void axios.get("/api/kkh/getLast").then((res: { data: kkh[] }) => {
+        setTabelKKH && setTabelKKH(res.data);
+      });
 
-      // result = cal - umur - JK - parseInt(nilaiBB) + parseInt(nilaiAktivitas);
-      result =
-        cal -
-        nilaiUmur -
-        JK -
-        parseInt(nilaiAktivitas) +
-        parseInt(nilaiAktivitas);
-      // console.log(
-      //   `${cal} - ${umur} - ${JK} - ${parseInt(nilaiBB)} + ${parseInt(
-      //     nilaiAktivitas
-      //   )}`
-      // );
-    } else {
-      result = 0;
-    }
-    result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return result.toFixed(2);
-  };
+      void axios
+        .get("/api/pekerjaan/getAll")
+        .then((res: { data: Pekerjaan[] }) => {
+          setTabelPekerjaan(res.data);
+        });
+    } catch (error) {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Layout>
@@ -321,7 +314,7 @@ function Dashboard() {
             <h1 className="text-2xl font-bold uppercase">{paths} </h1>
           </div>
           {/* DATA DIRI */}
-          <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:row-span-3">
+          {/* <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:row-span-3">
             <h2 className="mb-2 text-center text-xl font-bold uppercase">
               Data Diri
             </h2>
@@ -332,11 +325,11 @@ function Dashboard() {
               setKKH={setKKH}
               updateData={true}
             />
-          </div>
+          </div> */}
           {/* 1st column */}
-          <div className="flex flex-col gap-4 sm:col-span-2 sm:col-start-3">
+          <div className="flex flex-col gap-4 sm:col-span-2">
             {/* KKH */}
-            <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-3">
+            {/* <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-3">
               <h2 className="mb-2 text-xl font-bold uppercase">
                 Kebutuhan Kalori Harian
               </h2>
@@ -355,7 +348,7 @@ function Dashboard() {
                   sehari-hari.
                 </span>
               </div>
-            </div>
+            </div> */}
             {/* TABEL PEKERJAAN */}
             <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-5">
               <h2 className="mb-2 text-center text-xl font-bold uppercase">
@@ -411,12 +404,13 @@ function Dashboard() {
                   </div>
                 )}
               </div>
-              <div className="w-full overflow-x-auto sm:max-h-[30vh]">
+              <div className="w-full overflow-x-auto sm:max-h-[70vh]">
                 <table className="min-w-full divide-y divide-gray-200 ">
                   <TabelHeader HEADERS={["", "Nama Pekerjaan", "Aktivitas"]} />
                   <tbody className="divide-y divide-gray-200 bg-gray-50">
                     {tabelPekerjaan?.map((kerjaan, i) => (
                       <tr key={i}>
+                        {/* delete */}
                         <td className="py-2">
                           <div
                             onClick={() =>
@@ -430,9 +424,29 @@ function Dashboard() {
                             <MdOutlineDeleteForever />
                           </div>
                         </td>
-                        <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
-                          {kerjaan.nama_pekerjaan}
+                        {/* nama pekerjaan */}
+                        <td
+                          className="whitespace-nowrap p-2 text-sm text-gray-500"
+                          onClick={() => {
+                            setEditPekerjaanIndex(parseInt(`${i}`));
+                            setEditKerjaan(kerjaan.nama_pekerjaan);
+                          }}
+                        >
+                          {editPekerjaanIndex === parseInt(`${i}`) ? (
+                            <input
+                              type="text"
+                              value={editKerjaan}
+                              onChange={(e) => onKerjaanChange(e, kerjaan.id)}
+                              className="w-fit cursor-pointer bg-transparent outline-none"
+                              autoFocus
+                            />
+                          ) : (
+                            <div className="cursor-pointer">
+                              {kerjaan.nama_pekerjaan}
+                            </div>
+                          )}
                         </td>
+                        {/* aktivitas */}
                         <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
                           <select
                             // className=""
@@ -461,9 +475,9 @@ function Dashboard() {
             </div>
           </div>
           {/* 2nd column */}
-          <div className="flex flex-col gap-4 sm:col-span-2 sm:col-start-5">
+          <div className="flex flex-col gap-4 sm:col-span-4">
             {/* REKOMENDASI MENU */}
-            <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-5">
+            {/* <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-5">
               <h2 className="mb-2 text-xl font-bold uppercase">
                 Rekomendasi Menu
               </h2>
@@ -476,7 +490,6 @@ function Dashboard() {
                       {tabelKKH && tabelKKH[0]?.imt}
                     </span>
                   }{" "}
-                  {/* {<span className="lowercase">({kategoriIMT}) </span>} */}
                   adalah:{" "}
                   {rekomendasiMenu?.map((menu, i) => (
                     <span key={i} className="font-semibold text-orange-600">
@@ -486,7 +499,7 @@ function Dashboard() {
                   ))}
                 </span>
               </div>
-            </div>
+            </div> */}
             {/* RIWAYAT KKH */}
             <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-3">
               <h2 className="mb-2 text-center text-xl font-bold uppercase">
@@ -506,13 +519,19 @@ function Dashboard() {
                         scope="col"
                         className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
+                        USER
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      >
                         Tanggal
                       </th>
                       <th
                         scope="col"
                         className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        KKH
+                        Kalori Harian
                       </th>
                       <th
                         scope="col"
@@ -524,13 +543,13 @@ function Dashboard() {
                         scope="col"
                         className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Berat Badan
+                        BB (kg)
                       </th>
                       <th
                         scope="col"
                         className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Tinggi Badan
+                        TB (cm)
                       </th>
                       <th
                         scope="col"
@@ -545,6 +564,9 @@ function Dashboard() {
                       <tr key={kkh.id_kkh}>
                         <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
                           {i + 1}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
+                          {kkh.email || kkh.username}
                         </td>
                         <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
                           {kkh.created_at

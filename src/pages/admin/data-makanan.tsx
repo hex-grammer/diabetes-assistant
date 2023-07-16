@@ -36,42 +36,15 @@ function ForwardChaining() {
   const router = useRouter();
   const { data: session } = useSession();
   const paths = router.pathname.split("/").slice(2);
-  const [rekomendasiMenu, setRekomendasiMenu] = useState<string[]>([]);
-  const [beratBadan, setBeratBadan] = useState(0);
-  const [tinggiBadan, setTinggiBadan] = useState(0);
-  const [imt, setImt] = useState(0);
+  // const [beratBadan, setBeratBadan] = useState(0);
+  // const [tinggiBadan, setTinggiBadan] = useState(0);
+  // const [imt, setImt] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
   const [dataBerubah, setDataBerubah] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedValue, setEditedValue] = useState("");
-
-  const KATEGORI = [
-    {
-      kategori: "Sangat Kurus",
-      minIMT: 0,
-      maxIMT: 17,
-    },
-    {
-      kategori: "Kurus",
-      minIMT: 17,
-      maxIMT: 18.5,
-    },
-    {
-      kategori: "Normal",
-      minIMT: 18.5,
-      maxIMT: 25,
-    },
-    {
-      kategori: "Gemuk",
-      minIMT: 25,
-      maxIMT: 27,
-    },
-    {
-      kategori: "Obesitas",
-      minIMT: 27,
-      maxIMT: "∞",
-    },
-  ];
+  const [editMakananIndex, setEditMakananIndex] = useState(-1);
+  const [newMenu, setNewMenu] = useState("");
 
   // usestate aturan
   const [oldAturan, setOldAturan] = useState<Aturan[]>([
@@ -97,6 +70,10 @@ function ForwardChaining() {
     } catch (error) {}
   }, []);
 
+  useEffect(() => {
+    console.log(tabelAturan);
+  }, [tabelAturan]);
+
   const toggleKategori = (
     makananName: string,
     kategoriIndex: number,
@@ -118,35 +95,7 @@ function ForwardChaining() {
     );
   };
 
-  const hitungKategoriIMT = (IMT: number) => {
-    if (IMT < 17) {
-      return "Sangat Kurus";
-    } else if (IMT >= 17 && IMT <= 18.5) {
-      return "Kurus";
-    } else if (IMT >= 18.5 && IMT <= 25) {
-      return "Normal";
-    } else if (IMT >= 25 && IMT <= 27) {
-      return "Gemuk";
-    } else if (IMT >= 27) {
-      return "Obesitas";
-    }
-  };
-
-  // fungsi tampilkan rekomendasi menu berdasarkan tabelAturan dan kategori
-  const tampilkanRekomendasiMenu = (kategori: string) => {
-    const rekomendasiMenu: string[] = [];
-    tabelAturan.forEach((aturan) => {
-      const kat =
-        aturan.kategori[KATEGORI.findIndex((k) => k.kategori === kategori)];
-      if (kat) {
-        rekomendasiMenu.push(`${aturan.makanan} (${kat}gr)`);
-      }
-    });
-    console.log(rekomendasiMenu);
-    return rekomendasiMenu;
-  };
-
-  const onChangeMakanan = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onTambahChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMakanan((prev) => {
       return {
         ...prev,
@@ -167,6 +116,27 @@ function ForwardChaining() {
     });
   };
 
+  function updateMakananById(id: number, newMakanan: string): void {
+    setDataBerubah(true);
+    const aturanBaru = tabelAturan.map((item) => {
+      if (item.id === id) {
+        return { ...item, makanan: newMakanan };
+      }
+      return item;
+    });
+
+    setTabelAturan(aturanBaru);
+  }
+
+  const onMakanChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    setDataBerubah(true);
+    setNewMenu(e.target.value);
+    updateMakananById(id, e.target.value);
+  };
+
   const handleSimpan = () => {
     setDataBerubah(false);
     setOldAturan(tabelAturan);
@@ -177,7 +147,9 @@ function ForwardChaining() {
           return true;
         }
         return (
-          JSON.stringify(oldData.kategori) !== JSON.stringify(aturan.kategori)
+          JSON.stringify(oldData.kategori) !==
+            JSON.stringify(aturan.kategori) ||
+          JSON.stringify(oldData.makanan) !== JSON.stringify(aturan.makanan)
         );
       }),
     ];
@@ -195,6 +167,7 @@ function ForwardChaining() {
   const onBatal = () => {
     setDataBerubah(false);
     setTabelAturan(oldAturan);
+    setEditMakananIndex(-1);
   };
 
   const onDelete = (
@@ -236,19 +209,18 @@ function ForwardChaining() {
     const userLocal = JSON.parse(localStorage.getItem("user") || "{}") as User;
 
     try {
-      void axios
-        .get("/api/kkh/getLast", {
-          params: {
-            dataLength: 4,
-            email: session?.user?.email,
-            username: userLocal.username,
-          },
-        })
-        .then((res: { data: kkh[] }) => {
-          setBeratBadan(res.data[0]?.berat_badan || 0);
-          setTinggiBadan(res.data[0]?.tinggi_badan || 1);
-          setImt(res.data[0]?.imt || 0);
-        });
+      void axios.get("/api/kkh/getLast", {
+        params: {
+          dataLength: 4,
+          email: session?.user?.email,
+          username: userLocal.username,
+        },
+      });
+      // .then((res: { data: kkh[] }) => {
+      //   setBeratBadan(res.data[0]?.berat_badan || 0);
+      //   setTinggiBadan(res.data[0]?.tinggi_badan || 1);
+      //   setImt(res.data[0]?.imt || 0);
+      // });
     } catch (error) {}
   }, []);
 
@@ -262,7 +234,7 @@ function ForwardChaining() {
           {domLoaded && (
             <>
               {/* PERHITUNGAN IMT */}
-              <div className="h-fit rounded-md bg-gray-50 px-4 py-2 shadow-md sm:col-span-3">
+              {/* <div className="h-fit rounded-md bg-gray-50 px-4 py-2 shadow-md sm:col-span-3">
                 <h2 className="mb-1 font-bold uppercase">1. Perhitungan IMT</h2>
                 <div className="text-sm">
                   <div className="mb-1">
@@ -284,9 +256,9 @@ function ForwardChaining() {
                     <div>&nbsp;&nbsp;&nbsp;&nbsp;= {imt}</div>
                   </span>
                 </div>
-              </div>
+              </div> */}
               {/* Tabel Aturan-Makanan */}
-              <div className="row-start-5 h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-4 sm:row-span-4 sm:row-start-1">
+              <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-2">
                 <h2 className="mb-2 text-center text-xl font-bold uppercase">
                   Tabel Aturan-Makanan
                 </h2>
@@ -308,7 +280,7 @@ function ForwardChaining() {
                           type="text"
                           name="makanan"
                           value={newMakanan.makanan}
-                          onChange={(e) => onChangeMakanan(e)}
+                          onChange={(e) => onTambahChange(e)}
                           required
                           min={20}
                         />
@@ -365,7 +337,8 @@ function ForwardChaining() {
                       <tbody className="divide-y divide-gray-200 overflow-auto bg-gray-50">
                         {tabelAturan?.map((aturan, i) => (
                           <tr key={i}>
-                            <div className="py-2">
+                            {/* delete */}
+                            <td className="w-fit p-1">
                               <div
                                 onClick={() =>
                                   onDelete(aturan.id || 0, setTabelAturan)
@@ -374,10 +347,34 @@ function ForwardChaining() {
                               >
                                 <MdOutlineDeleteForever />
                               </div>
-                            </div>
-                            <td className="whitespace-nowrap p-2 text-sm text-gray-500">
-                              {aturan.makanan}
                             </td>
+
+                            {/* nama makanan */}
+                            <td
+                              className="whitespace-nowrap p-2 text-sm text-gray-500"
+                              onClick={() => {
+                                setEditMakananIndex(parseInt(`${i}`));
+                                setNewMenu(aturan.makanan);
+                              }}
+                            >
+                              {editMakananIndex === parseInt(`${i}`) ? (
+                                <input
+                                  type="text"
+                                  value={newMenu}
+                                  onChange={(e) =>
+                                    onMakanChange(e, aturan.id || 0)
+                                  }
+                                  className="w-fit cursor-pointer bg-transparent outline-none"
+                                  autoFocus
+                                />
+                              ) : (
+                                <div className="cursor-pointer">
+                                  {aturan.makanan}
+                                </div>
+                              )}
+                            </td>
+
+                            {/* kategori */}
                             {aturan.kategori.map((kat, j) => (
                               <td
                                 key={j}
@@ -405,7 +402,7 @@ function ForwardChaining() {
                                 ) : (
                                   <div
                                     onClick={() => {
-                                      setEditedValue(kat.toString());
+                                      setEditedValue(kat?.toString() || "0");
                                       setEditingIndex(parseInt(`${i}${j}`));
                                     }}
                                     className="cursor-pointer"
@@ -423,20 +420,15 @@ function ForwardChaining() {
                 </div>
               </div>
               {/* Tabel Kategori IMT */}
-              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
+              {/* <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
                 <h2 className="mb-1 font-bold uppercase">2. Kategori IMT</h2>
                 <div className="flex flex-col justify-between gap-2 sm:flex-row">
-                  {/* keterangan */}
                   <div className="flex gap-2 text-sm sm:w-2/5">
                     Tabel berikut menunjukkan kategori IMT yang terbagi menjadi
                     5 kategori berdasarkan range nilai IMT.
                   </div>
-                  {/* tabel MIN_IMT, MAX_IMT, KATEGORI */}
                   <div className="flex flex-1 justify-center overflow-x-auto rounded-md bg-white">
                     <table className="divide-y divide-gray-200">
-                      {/* <div className="sm:max-h-[70vh]"> */}
-                      {/* TabelHeader */}
-                      {/* <TabelHeader HEADERS={["Min_IMT", "Max_IMT", "Kategori"]} /> */}
                       <tbody className="divide-y divide-gray-200 overflow-auto">
                         {KATEGORI?.map((kat, i) => (
                           <tr key={i}>
@@ -458,13 +450,12 @@ function ForwardChaining() {
                           </tr>
                         ))}
                       </tbody>
-                      {/* </div> */}
                     </table>
                   </div>
                 </div>
-              </div>
+              </div> */}
               {/* REKOMENDASI MENU */}
-              <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
+              {/* <div className="h-fit rounded-md bg-gray-50 py-2 px-4 shadow-md sm:col-span-3">
                 <h2 className="mb-1 font-bold uppercase">
                   3. Rekomendasi Menu
                 </h2>
@@ -482,7 +473,7 @@ function ForwardChaining() {
                     ))}
                   </span>
                 </div>
-              </div>
+              </div> */}
             </>
           )}
         </div>

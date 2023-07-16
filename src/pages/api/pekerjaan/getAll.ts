@@ -13,12 +13,7 @@ export default async function handler(
         },
       });
 
-      const pekerjaan = result.map((item) => ({
-        nama_pekerjaan: item.nama_pekerjaan,
-        aktivitas: item.aktivitas,
-      }));
-
-      res.status(200).json(pekerjaan);
+      res.status(200).json(result);
     } catch (error) {
       res
         .status(500)

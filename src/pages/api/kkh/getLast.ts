@@ -16,6 +16,18 @@ export default async function handler(
     const session = await getServerSession(req, res, authOptions);
     const { dataLength } = req.query;
     const { email, username } = req.query;
+
+    // if req.query is empty, get all data
+    if (!dataLength) {
+      const allKkhs = await prisma.kkh.findMany({
+        orderBy: { created_at: "desc" },
+        take: 25,
+      });
+
+      res.status(200).json(allKkhs);
+      return;
+    }
+
     try {
       let latestKkhs;
       if (email) {

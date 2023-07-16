@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../server/db";
 
 interface PekerjaanRequestBody {
+  id: number;
   nama_pekerjaan: string;
   aktivitas: string;
 }
@@ -13,11 +14,12 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const requestBody = req.body as PekerjaanRequestBody[];
+      console.log(requestBody);
       const result = await Promise.all(
         requestBody.map(async (data) => {
           const existingData = await prisma.pekerjaan.findUnique({
             where: {
-              nama_pekerjaan: data.nama_pekerjaan,
+              id: data.id,
             },
           });
 
@@ -25,9 +27,10 @@ export default async function handler(
             if (existingData.aktivitas !== data.aktivitas) {
               return await prisma.pekerjaan.update({
                 where: {
-                  id: existingData.id,
+                  id: data.id,
                 },
                 data: {
+                  nama_pekerjaan: data.nama_pekerjaan,
                   aktivitas: data.aktivitas,
                 },
               });
@@ -37,6 +40,7 @@ export default async function handler(
           } else {
             return await prisma.pekerjaan.create({
               data: {
+                id: data.id,
                 nama_pekerjaan: data.nama_pekerjaan,
                 aktivitas: data.aktivitas,
               },

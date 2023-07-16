@@ -41,12 +41,9 @@ function Dashboard() {
   const hitungKKH = () => {
     let result = 0;
     if (kkh && tabelKKH) {
-      const cal = kkh - 337;
+      const cal = kkh + 109;
       const umur = (tabelKKH[0]?.umur || 0) > 40 ? tabelKKH[0]?.umur || 0 : 0;
       const JK = (cal * 0.05).toFixed(2) as unknown as number;
-      // const persentaseBB =
-      //   labelBB === "Kurus" ? 20 : labelBB === "Gemuk" ? 30 : 0;
-      // const nilaiBB = (cal * (persentaseBB / 100)).toFixed(2);
       const { aktivitas } =
         tabelPekerjaan.filter(
           (item) => tabelKKH && item.nama_pekerjaan === tabelKKH[0]?.pekerjaan
@@ -62,18 +59,12 @@ function Dashboard() {
           : umur > 40
           ? cal * 0.05
           : 0;
-      // result = cal - umur - JK - parseInt(nilaiBB) + parseInt(nilaiAktivitas);
       result =
         cal -
         nilaiUmur -
         JK -
         parseInt(nilaiAktivitas) +
         parseInt(nilaiAktivitas);
-      // console.log(
-      //   `${cal} - ${umur} - ${JK} - ${parseInt(nilaiBB)} + ${parseInt(
-      //     nilaiAktivitas
-      //   )}`
-      // );
     } else {
       result = 0;
     }
@@ -170,7 +161,7 @@ function Dashboard() {
                       scope="col"
                       className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                     >
-                      KKH
+                      Kalori Harian
                     </th>
                     <th
                       scope="col"
@@ -182,13 +173,13 @@ function Dashboard() {
                       scope="col"
                       className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                     >
-                      Berat Badan
+                      BB (kg)
                     </th>
                     <th
                       scope="col"
                       className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                     >
-                      Tinggi Badan
+                      TB (cm)
                     </th>
                     <th
                       scope="col"
@@ -212,7 +203,8 @@ function Dashboard() {
                       <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
                         {kkh.kkh
                           .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}{" "}
+                        kkal/hari
                       </td>
                       <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
                         {kkh.imt}

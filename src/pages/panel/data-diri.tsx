@@ -227,6 +227,35 @@ function DataDiri({
 
     kkh = Math.round(kkh);
 
+    // pengurangan
+    // const cal = kkh - 337;
+    // const JK = (cal * 0.05).toFixed(2) as unknown as number;
+    // const persentaseAktivitas =
+    //   aktivitas === "ringan" ? 20 : aktivitas === "sedang" ? 30 : 40;
+    // const nilaiAktivitas = (cal * (persentaseAktivitas / 100)).toFixed(2);
+    // let nilaiUmur = 0;
+    // switch (true) {
+    //   case umur > 70:
+    //     nilaiUmur = cal * 0.2;
+    //     break;
+    //   case umur > 60:
+    //     nilaiUmur = cal * 0.1;
+    //     break;
+    //   case umur > 40:
+    //     nilaiUmur = cal * 0.05;
+    //     break;
+    //   default:
+    //     nilaiUmur = 0;
+    // }
+    // kkh =
+    //   cal -
+    //   nilaiUmur -
+    //   JK -
+    //   parseInt(nilaiAktivitas) +
+    //   parseInt(nilaiAktivitas);
+
+    // kkh = Math.round(kkh);
+
     const formula = (
       <div className="mt-1 font-mono text-blue-700">
         <p>Jenis Kelamin = {jenis_kelamin}</p>

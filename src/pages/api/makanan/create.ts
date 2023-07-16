@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../server/db";
 
 interface AturanRequestBody {
+  id: number;
   makanan: string;
   kategori: boolean[];
 }
@@ -17,18 +18,18 @@ export default async function handler(
         requestBody.map(async (data) => {
           const existingData = await prisma.aturan.findUnique({
             where: {
-              makanan: data.makanan,
+              id: data.id,
             },
           });
 
           if (existingData) {
-            if (existingData.kategori !== data.kategori.join(",")) {
+            if (existingData.makanan !== data.makanan) {
               return await prisma.aturan.update({
                 where: {
-                  id: existingData.id,
+                  id: data.id,
                 },
                 data: {
-                  kategori: data.kategori.join(","),
+                  makanan: data.makanan,
                 },
               });
             } else {
@@ -37,6 +38,7 @@ export default async function handler(
           } else {
             return await prisma.aturan.create({
               data: {
+                id: data.id,
                 makanan: data.makanan,
                 kategori: data.kategori.join(","),
               },
