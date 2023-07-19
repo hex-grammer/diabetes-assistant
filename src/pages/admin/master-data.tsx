@@ -32,6 +32,12 @@ type Aturan = {
   kategori: number[];
 };
 
+type Pekerjaan = {
+  id: number;
+  nama_pekerjaan: string;
+  aktivitas: string;
+};
+
 function ForwardChaining() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -40,11 +46,134 @@ function ForwardChaining() {
   // const [tinggiBadan, setTinggiBadan] = useState(0);
   // const [imt, setImt] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
-  const [dataBerubah, setDataBerubah] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedValue, setEditedValue] = useState("");
   const [editMakananIndex, setEditMakananIndex] = useState(-1);
   const [newMenu, setNewMenu] = useState("");
+  const [editPekerjaanIndex, setEditPekerjaanIndex] = useState(-1);
+  const [editKerjaan, setEditKerjaan] = useState("");
+  const [newPekerjaan, setNewPekerjaan] = useState({
+    id: 0,
+    nama_pekerjaan: "",
+    aktivitas: "ringan",
+  });
+  const [dataBerubah, setDataBerubah] = useState(false);
+  const [dataPekerjaanBerubah, setDataPekerjaanBerubah] = useState(false);
+  const [tabelOldPekerjaan, setTabelOldPekerjaan] = useState<Pekerjaan[]>([
+    {
+      id: 0,
+      nama_pekerjaan: "",
+      aktivitas: "",
+    },
+  ]);
+  const [tabelPekerjaan, setTabelPekerjaan] = useState(tabelOldPekerjaan);
+
+  const onChangePekerjaan = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPekerjaan((prev) => {
+      return {
+        ...prev,
+        nama_pekerjaan: e.target.value,
+      };
+    });
+  };
+
+  const onTambahDataPekerjaan = () => {
+    if (newPekerjaan.nama_pekerjaan === "") return;
+    setDataPekerjaanBerubah(true);
+    setTabelPekerjaan((prev) => {
+      return [newPekerjaan, ...prev];
+    });
+    setNewPekerjaan({
+      id: 0,
+      nama_pekerjaan: "",
+      aktivitas: "",
+    });
+  };
+
+  function updateKerjaanById(id: number, newMakanan: string): void {
+    setDataPekerjaanBerubah(true);
+    const kerjaanBaru = tabelPekerjaan.map((item) => {
+      if (item.id === id) {
+        return { ...item, nama_pekerjaan: newMakanan };
+      }
+      return item;
+    });
+    setTabelPekerjaan(kerjaanBaru);
+  }
+
+  const onKerjaanChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    setDataPekerjaanBerubah(true);
+    setEditKerjaan(e.target.value);
+    updateKerjaanById(id, e.target.value);
+  };
+
+  const handleSimpanPekerjaan = () => {
+    setDataPekerjaanBerubah(false);
+    setTabelOldPekerjaan(tabelPekerjaan);
+    const newData = tabelPekerjaan.filter((newDataItem) => {
+      const oldData = tabelOldPekerjaan.find(
+        (oldDataItem) => oldDataItem.id === newDataItem.id
+      );
+      if (!oldData) {
+        return true;
+      }
+      return (
+        newDataItem.nama_pekerjaan !== oldData.nama_pekerjaan ||
+        newDataItem.aktivitas !== oldData.aktivitas
+      );
+    });
+
+    // console.log(newData);
+    axios
+      .post("/api/pekerjaan/create", newData)
+      .then(() => {
+        toast.success("Data Berhasil Disimpan!");
+      })
+      .catch(() => {
+        toast.error("Gagal menambah data!");
+      });
+  };
+
+  const onBatalPekerjaan = () => {
+    setDataPekerjaanBerubah(false);
+    setTabelPekerjaan(tabelOldPekerjaan);
+  };
+
+  const onDeletePekerjaan = (
+    nama_pekerjaan: string,
+    setTabelPekerjaan: React.Dispatch<React.SetStateAction<Pekerjaan[]>>
+  ) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+    axios
+      .delete(`/api/pekerjaan/delete/`, { params: { nama_pekerjaan } })
+      .then(() => {
+        setTabelPekerjaan((oldData) =>
+          oldData.filter((data) => data.nama_pekerjaan !== nama_pekerjaan)
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  function onAktivitasChange(nama_kerjaan: string, aktivitas: string) {
+    setDataPekerjaanBerubah(true);
+    setTabelPekerjaan((prevTabel) =>
+      prevTabel.map((kerjaan) => {
+        if (kerjaan.nama_pekerjaan === nama_kerjaan) {
+          return {
+            ...kerjaan,
+            aktivitas,
+          };
+        }
+        return kerjaan;
+      })
+    );
+  }
 
   // usestate aturan
   const [oldAturan, setOldAturan] = useState<Aturan[]>([
@@ -73,6 +202,28 @@ function ForwardChaining() {
   useEffect(() => {
     console.log(tabelAturan);
   }, [tabelAturan]);
+
+  useEffect(() => {
+    const getAssyncSession = async () => {
+      const session = await getSession();
+      const login = localStorage.getItem("login");
+
+      if (login !== "true" && !session) {
+        void router.push("/login");
+      }
+
+      await axios
+        .get("/api/pekerjaan/getAll")
+        .then((res: { data: Pekerjaan[] }) => {
+          setTabelOldPekerjaan(res.data);
+          setTabelPekerjaan(res.data);
+        });
+    };
+
+    getAssyncSession().catch((err) => {
+      console.log(err);
+    });
+  }, []);
 
   const toggleKategori = (
     makananName: string,
@@ -216,12 +367,18 @@ function ForwardChaining() {
           username: userLocal.username,
         },
       });
-      // .then((res: { data: kkh[] }) => {
-      //   setBeratBadan(res.data[0]?.berat_badan || 0);
-      //   setTinggiBadan(res.data[0]?.tinggi_badan || 1);
-      //   setImt(res.data[0]?.imt || 0);
-      // });
     } catch (error) {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      void axios
+        .get("/api/pekerjaan/getAll")
+        .then((res: { data: Pekerjaan[] }) => {
+          setTabelPekerjaan(res.data);
+        });
+    } catch (error) {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -233,32 +390,139 @@ function ForwardChaining() {
           </div>
           {domLoaded && (
             <>
-              {/* PERHITUNGAN IMT */}
-              {/* <div className="h-fit rounded-md bg-gray-50 px-4 py-2 shadow-md sm:col-span-3">
-                <h2 className="mb-1 font-bold uppercase">1. Perhitungan IMT</h2>
-                <div className="text-sm">
-                  <div className="mb-1">
-                    Berikut adalah proses perhitungan Index Massa Tubuh (IMT)
-                    anda:
+              {/* pekerjaan */}
+              <div className="flex flex-col gap-4 sm:col-span-2">
+                {/* TABEL PEKERJAAN */}
+                <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-2 sm:col-start-5">
+                  <h2 className="mb-2 text-center text-xl font-bold uppercase">
+                    Tabel Pekerjaan
+                  </h2>
+                  {/* Action Tabel Admin */}
+                  <div className="mb-1 flex w-full flex-col-reverse gap-2 py-2 sm:items-end sm:justify-between">
+                    {/* tambah makanan */}
+                    <div className="flex w-full flex-col items-start text-sm">
+                      <div className="flex w-full gap-2">
+                        <input
+                          className="focus:shadow-outline w-full appearance-none rounded border py-2 px-2 leading-tight text-gray-700 shadow focus:outline-none"
+                          id="makanan"
+                          type="text"
+                          name="makanan"
+                          placeholder="Pekerjaan Baru"
+                          value={newPekerjaan.nama_pekerjaan}
+                          onChange={(e) => onChangePekerjaan(e)}
+                        />
+                        {/* tombol tambah */}
+                        <div className="flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-blue-500 py-2 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
+                            type="submit"
+                            onClick={onTambahDataPekerjaan}
+                          >
+                            Tambah
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* tombol simpan & batal */}
+                    {dataPekerjaanBerubah && (
+                      <div className="flex gap-2">
+                        <div className="flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-blue-500 py-1 px-2 font-bold text-white opacity-100 hover:bg-blue-600 focus:outline-none`}
+                            type="submit"
+                            onClick={handleSimpanPekerjaan}
+                          >
+                            Simpan
+                          </button>
+                        </div>
+                        <div className="fosem flex items-center justify-between">
+                          <button
+                            className={`focus:shadow-outline rounded bg-gray-300 py-1 px-2 font-semibold text-gray-800 opacity-100 focus:outline-none`}
+                            type="submit"
+                            onClick={onBatalPekerjaan}
+                          >
+                            Batal
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <span className="font-mono text-blue-700">
-                    <div>Berat badan(BB) &nbsp;= {beratBadan} kg</div>
-                    <div>
-                      Tinggi badan(TB) = {tinggiBadan} cm ≈{" "}
-                      {tinggiBadan && tinggiBadan / 100} m
-                    </div>
-                    <div>IMT = BB/(TB x TB)</div>
-                    <div>
-                      &nbsp;&nbsp;&nbsp;&nbsp;= {beratBadan} / (
-                      {tinggiBadan && tinggiBadan / 100} x{" "}
-                      {tinggiBadan && tinggiBadan / 100}) = {imt}
-                    </div>
-                    <div>&nbsp;&nbsp;&nbsp;&nbsp;= {imt}</div>
-                  </span>
+                  <div className="w-full overflow-x-auto sm:max-h-[70vh]">
+                    <table className="min-w-full divide-y divide-gray-200 ">
+                      <TabelHeader
+                        HEADERS={["", "Nama Pekerjaan", "Aktivitas"]}
+                      />
+                      <tbody className="divide-y divide-gray-200 bg-gray-50">
+                        {tabelPekerjaan?.map((kerjaan, i) => (
+                          <tr key={i}>
+                            {/* delete */}
+                            <td className="py-2">
+                              <div
+                                onClick={() =>
+                                  onDeletePekerjaan(
+                                    kerjaan.nama_pekerjaan || "",
+                                    setTabelPekerjaan
+                                  )
+                                }
+                                className="flex cursor-pointer items-center justify-center rounded-sm bg-red-500 p-1 px-0.5 text-white"
+                              >
+                                <MdOutlineDeleteForever />
+                              </div>
+                            </td>
+                            {/* nama pekerjaan */}
+                            <td
+                              className="whitespace-nowrap p-2 text-sm text-gray-500"
+                              onClick={() => {
+                                setEditPekerjaanIndex(parseInt(`${i}`));
+                                setEditKerjaan(kerjaan.nama_pekerjaan);
+                              }}
+                            >
+                              {editPekerjaanIndex === parseInt(`${i}`) ? (
+                                <input
+                                  type="text"
+                                  value={editKerjaan}
+                                  onChange={(e) =>
+                                    onKerjaanChange(e, kerjaan.id)
+                                  }
+                                  className="w-fit cursor-pointer bg-transparent outline-none"
+                                  autoFocus
+                                />
+                              ) : (
+                                <div className="cursor-pointer">
+                                  {kerjaan.nama_pekerjaan}
+                                </div>
+                              )}
+                            </td>
+                            {/* aktivitas */}
+                            <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
+                              <select
+                                // className=""
+                                id="aktivitas"
+                                name="aktivitas"
+                                value={kerjaan.aktivitas}
+                                onChange={(e) =>
+                                  void onAktivitasChange(
+                                    kerjaan.nama_pekerjaan,
+                                    e.target.value
+                                  )
+                                }
+                                required
+                              >
+                                <option value="">Pilih Aktivitas</option>
+                                <option value="ringan">Ringan</option>
+                                <option value="sedang">Sedang</option>
+                                <option value="berat">Berat</option>
+                              </select>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div> */}
+              </div>
               {/* Tabel Aturan-Makanan */}
-              <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-3 sm:col-start-2">
+              <div className="h-fit rounded-md bg-gray-50 p-4 shadow-md sm:col-span-4 sm:col-start-3">
                 <h2 className="mb-2 text-center text-xl font-bold uppercase">
                   Tabel Aturan-Makanan
                 </h2>

@@ -21,7 +21,7 @@ export default async function handler(
     if (!dataLength) {
       const allKkhs = await prisma.kkh.findMany({
         orderBy: { created_at: "desc" },
-        take: 25,
+        take: 30,
       });
 
       res.status(200).json(allKkhs);

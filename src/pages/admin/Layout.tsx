@@ -3,12 +3,11 @@ import Header from "../../components/Header";
 import SideMenu from "../../components/SideMenu";
 import { useGlobalContext } from "../../lib/GlobalContext";
 import Head from "next/head";
-import { GiBrain, GiWeightScale } from "react-icons/gi";
-import { TiMediaFastForwardOutline } from "react-icons/ti";
-import { MdOutlineFoodBank, MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { useRouter } from "next/router";
 import { BiFoodMenu } from "react-icons/bi";
+import { CgUserList } from "react-icons/cg";
 
 type Props = {
   children?: JSX.Element;
@@ -49,8 +48,12 @@ function Layout(props: Props) {
           { title: "Dashboard", icon: <MdOutlineSpaceDashboard /> },
           // { title: "Logika Fuzzy", icon: <GiBrain /> },
           {
-            title: "Data Makanan",
+            title: "Master Data",
             icon: <BiFoodMenu />,
+          },
+          {
+            title: "History User",
+            icon: <CgUserList />,
           },
           // {
           //   title: "Kalkulator",
