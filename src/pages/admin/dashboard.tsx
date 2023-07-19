@@ -64,8 +64,7 @@ function Dashboard() {
                 >
                   History User
                 </Link>{" "}
-                - Halaman yang berisi riwayat KKH (Konsultasi Kesehatan Harian)
-                dari pengguna aplikasi.
+                - Halaman yang berisi riwayat KKH dari pengguna aplikasi.
               </li>
               <li>
                 <Link
