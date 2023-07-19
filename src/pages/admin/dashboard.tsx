@@ -1,43 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Layout from "./Layout";
-import { useRouter } from "next/router";
-import { getSession, useSession } from "next-auth/react";
-import "react-toastify/dist/ReactToastify.css";
-import type { kkh } from "@prisma/client";
-import DataDiri from "./data-diri";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { MdOutlineDeleteForever } from "react-icons/md";
 import Link from "next/link";
 
-const TabelHeader = ({ HEADERS }: { HEADERS: string[] }) => {
-  return (
-    <thead className="">
-      <tr>
-        {HEADERS.map((header, index) => (
-          <th
-            key={index}
-            scope="col"
-            className={`whitespace-nowrap p-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-700`}
-          >
-            {header}
-          </th>
-        ))}
-      </tr>
-    </thead>
-  );
-};
-
-type Pekerjaan = {
-  id: number;
-  nama_pekerjaan: string;
-  aktivitas: string;
-};
-
 function Dashboard() {
-  const router = useRouter();
-
   return (
     <Layout>
       <>
@@ -115,7 +80,6 @@ function Dashboard() {
             </ul>
           </div>
         </div>
-        <ToastContainer position="top-right" />
       </>
     </Layout>
   );
